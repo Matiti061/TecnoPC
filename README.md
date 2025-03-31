@@ -55,6 +55,30 @@ En este archivo es la interfaz, esta todo hecho con PyQt6 listo para ejecutar
 
 * [PyCharm](https://www.jetbrains.com/pycharm/): IDE para programar en Python (Gracias Esteban por tanto)
 
+## Licencia
+
+* El repositorio esta licenciado bajo la licencia MIT, la pudes ver por [aquí](https://github.com/Matiti061/TecnoPC/blob/main/LICENSE)
+
+## PARA HACER
+
+Solo para uso interno de programadores en este repositorio
+
+### Necesario
+
+* [ ] Pendiente: Agregar funciones de Busqueda de productos, Agregar item, Finalizar Venta, agregar estadisticas (Archivo: interfaz_tienda.py)
+* [ ] Pendiente: Mejorar el diseño de la pagina con Qt Designer o algun otro editor
+* [X] OK: Agregar la funcion de poder cancelar una venta de manera rapida
+* [X] OK: Agregar tabla de ID de productos, Nombre, tipo, etc.
+* [X] OK: Colocar un filtro de busqueda de los productos
+* [X] OK: Poder cambiar entre tiendas al igual que entre vendedores en el apartado de Ventas
+* [ ] Pendiente: Agregar algun tipo de limite al lugar de agregar items en la pestaña de Ventas
+* [X] OK: Poder calcular las comisiones de cada vendedor (Plus para que el profe nos quiera mucho, aunque falta mejorarlo)
+
+### No tan necesario pero bonito
+
+* [ ] Pendiente: Cambiar las ciudades de las tiendas (Hay ciudades aleatorias las cuales tienen nombres de PM pero se ubican en las ciudades que mas venden de cada sector de Chile) (Si quieren poner alguna tienda, adelante)
+* [X] OK: Poner limite al lugar de "Precio Max" en el apartado de Inventario
+* [ ] Pendiente: Agregar algo de gerente como en AeroChinquihue (No lo dijo el profe pero si alguien lo quiere hacer adelante, no me quiero calentar la cabeza en eso los quiero mucho) 
 
 
 
