@@ -2,12 +2,12 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from models.componente import Componente
-from models.vendedor import Vendedor
-from models.tienda import Tienda
-from controllers.inventario_controller import InventarioController
-from controllers.venta_controller import VentaController
-from views.interfaz_tienda import InterfazTienda
+from Models.componente import Componente
+from Models.vendedor import Vendedor
+from Models.tienda import Tienda
+from Controllers.inventario_controller import InventarioController
+from Controllers.venta_controller import VentaController
+from Views.interfaz_tienda import InterfazTienda
 
 from PyQt6.QtWidgets import QApplication
 
