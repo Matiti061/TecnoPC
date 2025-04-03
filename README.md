@@ -71,7 +71,7 @@ Solo para uso interno de programadores en este repositorio
 * [X] OK: Agregar tabla de ID de productos, Nombre, tipo, etc.
 * [X] OK: Colocar un filtro de busqueda de los productos
 * [X] OK: Poder cambiar entre tiendas al igual que entre vendedores en el apartado de Ventas
-* [X] Pendiente: Agregar algun tipo de limite al lugar de agregar items en la pestaña de Ventas
+* [X] OK: Agregar algun tipo de limite al lugar de agregar items en la pestaña de Ventas
 * [X] OK: Poder calcular las comisiones de cada vendedor (Plus para que el profe nos quiera mucho, aunque falta mejorarlo)
 
 ### No tan necesario pero bonito
