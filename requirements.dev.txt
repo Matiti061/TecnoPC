@@ -1,0 +1,2 @@
+pylint==3.3.6
+pymarkdownlnt==0.9.29
