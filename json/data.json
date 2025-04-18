@@ -1,0 +1,89 @@
+{
+    "Tiendas": [
+        {
+            "id": 1,
+            "nombre": "Tienda Bosquemar",
+            "direccion": "Av. Bosquemar 123",
+            "ciudad": "Viña del Mar",
+            "telefono": "32-2123456",
+            "email": "bosquemar@tecnopc.cl",
+            "vendedor": [
+                {}
+            ]
+        },
+        {
+            "id": 2,
+            "nombre": "Tienda Mirasol", 
+            "direccion": "Calle Mirasol 456", 
+            "ciudad": "Santiago", 
+            "telefono": "2-2987654", 
+            "email": "mirasol@tecnopc.cl"
+        }, 
+        {
+            "id": 3, 
+            "nombre": "Tienda ValleVolcanes",
+            "direccion": "Av. ValleVolcanes 789",
+            "ciudad": "Temuco",
+            "telefono": "45-2654321",
+            "email": "vallevolcanes@tecnopc.cl"
+        }
+    ],
+    "Componentes": [
+        {
+            "id": 1,
+            "nombre": "Kingston Fury 16GB",
+            "tipo": "RAM",
+            "marca": "Kingston", 
+            "descripcion": "DDR4 3200MHz",
+            "precio": 75.99
+        },
+        {
+            "id": 2,
+            "nombre": "Intel Core i5-12400F",
+            "tipo": "Procesador",
+            "marca": "Intel",
+            "descripcion": "6 núcleos, 12 hilos",
+            "precio": 199.99
+        },
+        {
+            "id": 3,
+            "nombre": "Samsung 970 EVO Plus 1TB",
+            "tipo": "SSD",
+            "marca": "Samsung",
+            "descripcion": "NVMe M.2",
+            "precio": 129.99
+        }
+    ],
+    "Vendedores": [
+        {
+            "id": 1,
+            "nombre": "Juan",
+            "apellido": "Pérez",
+            "email": "juan.perez@tecnopc.cl",
+            "telefono": "987654321",
+            "tienda": "tienda bosquemar",
+            "fecha_contratacion": "2023-01-15",
+            "ventas": []
+        },
+        {
+            "id": 2,
+            "nombre": "Maria",
+            "apellido": "Gomez",
+            "email": "maria.gomez@tecnopc.cl",
+            "telefono": "987654322",
+            "tienda": "tienda mirasol",
+            "fecha_contratacion": "2023-02-20",
+            "ventas": []
+        },
+        {
+            "id": 3,
+            "nombre": "Carlos", 
+            "apellido": "López",
+            "email": "carlos.lopez@tecnopc.cl",
+            "telefono": "987654323",
+            "tienda": "tienda valle volcanes",
+            "fecha_contratacion": "2023-03-10",
+            "ventas": []
+        }
+    ]
+}
