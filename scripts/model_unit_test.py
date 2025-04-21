@@ -2,7 +2,10 @@
 
 import os
 from package.model import *
-os.remove("data.json")
+try:
+    os.remove("data.json")
+except FileNotFoundError:
+    pass
 model = Model()
 
 store_uuids = [
