@@ -77,3 +77,11 @@ class ViewModel:
 
     def delete_manager(self, manager_uuid: str):
         pass
+    
+    def validate_user(self, name: str, rut: str) -> bool:
+        # Example validation logic
+        if not name or not rut:
+            return False
+        if len(rut) < 8 or not rut.isdigit():
+            return False
+        return True

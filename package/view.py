@@ -190,13 +190,26 @@ class Login(BaseWidget):
             "Comisiones",
             f"Comisiones para {self.widget.month_comboBox.currentText()} de {anio} calculadas."
         )
+        
+    
+ 
 
 class View(BaseWidget):
+    
     def __init__(self, viewmodel):
-        super().__init__(os.path.join("ui","login_dialog.ui"))
+        super().__init__(os.path.join("ui", "login_dialog.ui"))
         self.viewmodel = viewmodel
         self.widget.login_btn.clicked.connect(self.handle_login)
         
     def handle_login(self):
-        self.widget = Login(self.viewmodel)
-        self.widget.show()
+        name = self.widget.lineEditName.text()
+        rut = self.widget.lineEditRut.text()
+        
+        if self.viewmodel.validate_user(name, rut) == True:
+            self.widget = Login(self.viewmodel)
+            self.widget.show()
+        else:
+            QtWidgets.QMessageBox.warning(self.widget, "Error", "Nombre o RUT incorrectos.")   
+
+        
+           
