@@ -31,6 +31,7 @@ class Ui_login_window(object):
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.labelName = QLabel(self.verticalLayoutWidget)
         self.labelName.setObjectName(u"labelName")
+        self.labelName.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
 
         self.verticalLayout.addWidget(self.labelName)
 
