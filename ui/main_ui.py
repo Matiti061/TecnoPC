@@ -168,11 +168,6 @@ class Ui_Form(object):
 
         self.footer_layout.addWidget(self.edit_component_btn)
 
-        self.transfer_btn = QPushButton(self.tab)
-        self.transfer_btn.setObjectName(u"transfer_btn")
-
-        self.footer_layout.addWidget(self.transfer_btn)
-
 
         self.verticalLayout_2.addLayout(self.footer_layout)
 
@@ -227,15 +222,16 @@ class Ui_Form(object):
         self.groupBox_2.setSizePolicy(sizePolicy3)
         self.verticalLayout_5 = QVBoxLayout(self.groupBox_2)
         self.verticalLayout_5.setObjectName(u"verticalLayout_5")
-        self.label_6 = QLabel(self.groupBox_2)
-        self.label_6.setObjectName(u"label_6")
+        self.status_label = QLabel(self.groupBox_2)
+        self.status_label.setObjectName(u"status_label")
+        self.status_label.setEnabled(True)
         sizePolicy4 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         sizePolicy4.setHorizontalStretch(0)
         sizePolicy4.setVerticalStretch(0)
-        sizePolicy4.setHeightForWidth(self.label_6.sizePolicy().hasHeightForWidth())
-        self.label_6.setSizePolicy(sizePolicy4)
+        sizePolicy4.setHeightForWidth(self.status_label.sizePolicy().hasHeightForWidth())
+        self.status_label.setSizePolicy(sizePolicy4)
 
-        self.verticalLayout_5.addWidget(self.label_6)
+        self.verticalLayout_5.addWidget(self.status_label)
 
         self.item_sale_table = QTableWidget(self.groupBox_2)
         if (self.item_sale_table.columnCount() < 5):
@@ -290,16 +286,16 @@ class Ui_Form(object):
 
         self.horizontalLayout_3 = QHBoxLayout()
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
-        self.label_9 = QLabel(self.groupBox_2)
-        self.label_9.setObjectName(u"label_9")
+        self.price_label = QLabel(self.groupBox_2)
+        self.price_label.setObjectName(u"price_label")
         font1 = QFont()
         font1.setFamilies([u"Arial"])
         font1.setPointSize(14)
         font1.setBold(True)
         font1.setStrikeOut(False)
-        self.label_9.setFont(font1)
+        self.price_label.setFont(font1)
 
-        self.horizontalLayout_3.addWidget(self.label_9)
+        self.horizontalLayout_3.addWidget(self.price_label)
 
         self.cancel_btn = QPushButton(self.groupBox_2)
         self.cancel_btn.setObjectName(u"cancel_btn")
@@ -458,7 +454,6 @@ class Ui_Form(object):
         self.search_btn.setText(QCoreApplication.translate("Form", u"Buscar", None))
         self.add_component_btn.setText(QCoreApplication.translate("Form", u"Agregar Componente", None))
         self.edit_component_btn.setText(QCoreApplication.translate("Form", u"Editar Componente", None))
-        self.transfer_btn.setText(QCoreApplication.translate("Form", u"Transferir entre Tiendas", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QCoreApplication.translate("Form", u"Inventario", None))
         self.groupBox.setTitle(QCoreApplication.translate("Form", u"Nueva Venta", None))
         self.label_3.setText(QCoreApplication.translate("Form", u"Vendedor:", None))
@@ -466,11 +461,11 @@ class Ui_Form(object):
         self.new_sell_btn.setText(QCoreApplication.translate("Form", u"Iniciar Nueva Venta", None))
         self.label_5.setText("")
         self.groupBox_2.setTitle(QCoreApplication.translate("Form", u"Venta Actual", None))
-        self.label_6.setText(QCoreApplication.translate("Form", u"No hay venta en curso", None))
+        self.status_label.setText(QCoreApplication.translate("Form", u"No hay venta en curso", None))
         self.label_7.setText(QCoreApplication.translate("Form", u"Componente:", None))
         self.label_8.setText(QCoreApplication.translate("Form", u"Cantidad:", None))
         self.add_item_btn.setText(QCoreApplication.translate("Form", u"Agregar Item", None))
-        self.label_9.setText(QCoreApplication.translate("Form", u"Total: $0.00", None))
+        self.price_label.setText(QCoreApplication.translate("Form", u"Total: 0 CLP", None))
         self.cancel_btn.setText(QCoreApplication.translate("Form", u"Cancelar Venta", None))
         self.end_sell_btn.setText(QCoreApplication.translate("Form", u"Finalizar Venta", None))
         self.groupBox_3.setTitle(QCoreApplication.translate("Form", u"Historial de Ventas", None))
