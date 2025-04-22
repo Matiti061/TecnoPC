@@ -213,13 +213,6 @@
            </property>
           </widget>
          </item>
-         <item>
-          <widget class="QPushButton" name="transfer_btn">
-           <property name="text">
-            <string>Transferir entre Tiendas</string>
-           </property>
-          </widget>
-         </item>
         </layout>
        </item>
       </layout>
@@ -285,7 +278,10 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_5">
           <item>
-           <widget class="QLabel" name="label_6">
+           <widget class="QLabel" name="status_label">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
               <horstretch>0</horstretch>
@@ -375,7 +371,7 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,0,0">
             <item>
-             <widget class="QLabel" name="label_9">
+             <widget class="QLabel" name="price_label">
               <property name="font">
                <font>
                 <family>Arial</family>
@@ -385,7 +381,7 @@
                </font>
               </property>
               <property name="text">
-               <string>Total: $0.00</string>
+               <string>Total: 0 CLP</string>
               </property>
              </widget>
             </item>
