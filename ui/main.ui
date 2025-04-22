@@ -10,13 +10,71 @@
     <x>0</x>
     <y>0</y>
     <width>736</width>
-    <height>565</height>
+    <height>560</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>TecnoPC - Sistema de Gestión</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <layout class="QHBoxLayout" name="header_layout">
+     <property name="sizeConstraint">
+      <enum>QLayout::SizeConstraint::SetMaximumSize</enum>
+     </property>
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="font">
+        <font>
+         <family>Arial</family>
+         <pointsize>20</pointsize>
+         <italic>false</italic>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>TecnoPC</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <property name="sizeConstraint">
+        <enum>QLayout::SizeConstraint::SetMaximumSize</enum>
+       </property>
+       <item>
+        <widget class="QLabel" name="label_2">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Tienda:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="shopComboBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
    <item row="1" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
@@ -76,7 +134,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="marca_edit"/>
+           <widget class="QLineEdit" name="brand_edit"/>
           </item>
           <item>
            <widget class="QLabel" name="precio_min_label">
@@ -86,7 +144,10 @@
            </widget>
           </item>
           <item>
-           <widget class="QDoubleSpinBox" name="precio_min">
+           <widget class="QDoubleSpinBox" name="price_min">
+            <property name="decimals">
+             <number>0</number>
+            </property>
             <property name="maximum">
              <double>100000.000000000000000</double>
             </property>
@@ -100,7 +161,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QDoubleSpinBox" name="precio_max">
+           <widget class="QDoubleSpinBox" name="price_max">
             <property name="maximum">
              <double>100000.000000000000000</double>
             </property>
@@ -113,7 +174,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="buscar_btn">
+           <widget class="QPushButton" name="search_btn">
             <property name="text">
              <string>Buscar</string>
             </property>
@@ -287,7 +348,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QSpinBox" name="spinBox">
+             <widget class="QSpinBox" name="quantity_spinBox">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
                 <horstretch>0</horstretch>
@@ -514,64 +575,6 @@
       </layout>
      </widget>
     </widget>
-   </item>
-   <item row="0" column="0">
-    <layout class="QHBoxLayout" name="header_layout">
-     <property name="sizeConstraint">
-      <enum>QLayout::SizeConstraint::SetMaximumSize</enum>
-     </property>
-     <item>
-      <widget class="QLabel" name="label">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="font">
-        <font>
-         <family>Arial</family>
-         <pointsize>20</pointsize>
-         <italic>false</italic>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>TecnoPC</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <property name="sizeConstraint">
-        <enum>QLayout::SizeConstraint::SetMaximumSize</enum>
-       </property>
-       <item>
-        <widget class="QLabel" name="label_2">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>Tienda:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QComboBox" name="shopComboBox">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-    </layout>
    </item>
   </layout>
  </widget>
