@@ -10,7 +10,7 @@ class BaseWidget(QtUiTools.QUiLoader):
     def show(self):
         self.widget.show()
 
-class View(BaseWidget):
+class Login(BaseWidget):
     def __init__(self, viewmodel):
         super().__init__(os.path.join("ui","main.ui"))
         self.viewmodel = viewmodel
@@ -18,11 +18,10 @@ class View(BaseWidget):
         # vars
         self.tabs = self.widget.tabWidget
         self.tabs.currentChanged.connect(self.handle_dinamic_data)
-        self.data = self.viewmodel.get_data()
 
-        self.shops = self.data["Tiendas"]
-        self.salesmans = self.data["Vendedores"]
-        self.components = self.data["Componentes"]
+        self.shops = self.viewmodel.get_stores()
+        self.salesmans = self.viewmodel.get_workers()
+        self.components = self.viewmodel.get_products()
 
         self.type = [
             "Todos",
@@ -37,7 +36,7 @@ class View(BaseWidget):
 
         # adding data
         for shop in self.shops:
-            self.widget.shopComboBox.addItem(f"{shop['nombre']} - {shop['direccion']}", shop)
+            self.widget.shopComboBox.addItem(f"{shop['name']} - {shop['address']}", shop)
         for item in self.type:
             self.widget.type_comboBox.addItem(item, item)
         self.widget.inventory_table.setHorizontalHeaderLabels([
@@ -68,13 +67,13 @@ class View(BaseWidget):
         if tab == 1:
             for salesman in self.salesmans:
                 self.widget.seller_comboBox.addItem(
-                    f"{salesman['nombre']} - {salesman['tienda']}",
+                    f"{salesman['name']} - {salesman['lastName']}",
                     salesman
                 )
 
             for component in self.components:
                 self.widget.components_comboBox.addItem(
-                    f"{component['nombre']} - {component['tipo']}",
+                    f"{component['model']} - {component['category']}",
                     component
                 )
             self.widget.item_sale_table.setHorizontalHeaderLabels([
@@ -191,3 +190,13 @@ class View(BaseWidget):
             "Comisiones",
             f"Comisiones para {self.widget.month_comboBox.currentText()} de {anio} calculadas."
         )
+
+class View(BaseWidget):
+    def __init__(self, viewmodel):
+        super().__init__(os.path.join("ui","login_dialog.ui"))
+        self.viewmodel = viewmodel
+        self.widget.login_btn.clicked.connect(self.handle_login)
+        
+    def handle_login(self):
+        self.widget = Login(self.viewmodel)
+        self.widget.show()
