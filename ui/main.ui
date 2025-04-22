@@ -3,14 +3,14 @@
  <class>Form</class>
  <widget class="QWidget" name="Form">
   <property name="windowModality">
-   <enum>Qt::WindowModality::NonModal</enum>
+   <enum>Qt::NonModal</enum>
   </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>736</width>
-    <height>565</height>
+    <height>566</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -86,9 +86,9 @@
            </widget>
           </item>
           <item>
-           <widget class="QDoubleSpinBox" name="precio_min">
+           <widget class="QSpinBox" name="precio_min">
             <property name="maximum">
-             <double>100000.000000000000000</double>
+             <number>2000000</number>
             </property>
            </widget>
           </item>
@@ -100,15 +100,9 @@
            </widget>
           </item>
           <item>
-           <widget class="QDoubleSpinBox" name="precio_max">
+           <widget class="QSpinBox" name="precio_max">
             <property name="maximum">
-             <double>100000.000000000000000</double>
-            </property>
-            <property name="singleStep">
-             <double>100000.000000000000000</double>
-            </property>
-            <property name="value">
-             <double>100000.000000000000000</double>
+             <number>2000000</number>
             </property>
            </widget>
           </item>
@@ -141,14 +135,28 @@
          <item>
           <widget class="QPushButton" name="add_component_btn">
            <property name="text">
-            <string>Agregar Componente</string>
+            <string>Agregar Producto</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QPushButton" name="edit_component_btn">
            <property name="text">
-            <string>Editar Componente</string>
+            <string>Editar Producto</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="elim_component_btn">
+           <property name="text">
+            <string>Eliminar Producto</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="replace_component_btn">
+           <property name="text">
+            <string>Remplazar Producto</string>
            </property>
           </widget>
          </item>
@@ -319,12 +327,13 @@
                <font>
                 <family>Arial</family>
                 <pointsize>14</pointsize>
+                <weight>75</weight>
                 <bold>true</bold>
                 <strikeout>false</strikeout>
                </font>
               </property>
               <property name="text">
-               <string>Total: $0.00</string>
+               <string>Total: $0</string>
               </property>
              </widget>
             </item>
@@ -406,6 +415,20 @@
              <widget class="QPushButton" name="add_saleman_btn">
               <property name="text">
                <string>Agregar Vendedores</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="replace_saleman_btn">
+              <property name="text">
+               <string>Remplazar Vendedores</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="elim_saleman_btn">
+              <property name="text">
+               <string>Eliminar vendedores</string>
               </property>
              </widget>
             </item>
@@ -518,7 +541,7 @@
    <item row="0" column="0">
     <layout class="QHBoxLayout" name="header_layout">
      <property name="sizeConstraint">
-      <enum>QLayout::SizeConstraint::SetMaximumSize</enum>
+      <enum>QLayout::SetDefaultConstraint</enum>
      </property>
      <item>
       <widget class="QLabel" name="label">
@@ -532,6 +555,7 @@
         <font>
          <family>Arial</family>
          <pointsize>20</pointsize>
+         <weight>75</weight>
          <italic>false</italic>
          <bold>true</bold>
         </font>
@@ -544,7 +568,7 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <property name="sizeConstraint">
-        <enum>QLayout::SizeConstraint::SetMaximumSize</enum>
+        <enum>QLayout::SetDefaultConstraint</enum>
        </property>
        <item>
         <widget class="QLabel" name="label_2">

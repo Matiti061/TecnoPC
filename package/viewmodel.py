@@ -15,13 +15,13 @@ class ViewModel:
         pass
 
     def get_stores(self) -> list:
-        pass
+        return self._model.get_stores()
 
     def get_workers(self) -> list:
-        pass
+        return self._model.get_workers()
 
     def get_products(self) -> list:
-        pass
+        return self._model.get_products()
 
     def edit_store(self, store_uuid: str, store: Store):
         pass
