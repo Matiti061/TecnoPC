@@ -62,7 +62,7 @@ class Ui_login_window(object):
     # setupUi
 
     def retranslateUi(self, login_window):
-        login_window.setWindowTitle(QCoreApplication.translate("login_window", u"Form", None))
+        login_window.setWindowTitle(QCoreApplication.translate("login_window", u"Inicio Sesi\u00f3n", None))
         self.labelName.setText(QCoreApplication.translate("login_window", u"Nombre:", None))
         self.labelRut.setText(QCoreApplication.translate("login_window", u"Rut:", None))
         self.login_btn.setText(QCoreApplication.translate("login_window", u"Inicar sesi\u00f3n", None))
