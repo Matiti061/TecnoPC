@@ -1,15 +1,9 @@
 # pylint: disable=I1101
 import os
 from PySide6 import QtUiTools, QtWidgets
+from tomlkit import value
 
-"""
-    Esteba si lees esto quedaron algunas cosas pendiente
-    que seria el agregar/editar un componente desde la vista
-    y agregar/editar un vendedor desde la vista
-    eso seria desde la clase addComponentDialog y addSellerDialog en la 
-    funcion save y get_data, ademas para mostrar los datos de las ventas de un vendedor 
-    y las comisiones no es posible
-"""
+from package.model import Product, Worker
 
 class BaseWidget(QtUiTools.QUiLoader):
     def __init__(self, ui_path):
@@ -19,19 +13,19 @@ class BaseWidget(QtUiTools.QUiLoader):
     def show(self):
         self.widget.show()
 
-class Login(BaseWidget):
+class LoginView(BaseWidget):
     def __init__(self, viewmodel):
         super().__init__(os.path.join("ui","login_dialog.ui"))
         self.viewmodel = viewmodel
+
         self.widget.login_btn.clicked.connect(self.handle_login)
-        self.main_view = None 
 
     def handle_login(self):
         name = self.widget.lineEditName.text()
         rut = self.widget.lineEditRut.text()
 
-        if self.viewmodel.validate_user(name, rut):
-            self.main_view = View(self.viewmodel, name) 
+        if self.viewmodel.validate_user(name, rut) == True:
+            self.main_view = View(self.viewmodel) 
             self.main_view.show()
             self.widget.close() 
         else:
@@ -39,141 +33,12 @@ class Login(BaseWidget):
                 self.widget, "Error", "Nombre o RUT incorrectos."
             )
 
-    def handle_dinamic_data(self, tab: int): # es para hacer que los datos aparescan en el tab 2,3
-
-        if tab == 1:
-            for salesman in self.salesmans:
-                self.widget.seller_comboBox.addItem(
-                    f"{salesman['name']} - {salesman['lastName']}",
-                    salesman
-                )
-
-            for component in self.components:
-                self.widget.components_comboBox.addItem(
-                    f"{component['model']} - {component['category']}",
-                    component
-                )
-            self.widget.item_sale_table.setHorizontalHeaderLabels([
-                "ID",
-                "Componente",
-                "Precio",
-                "Cantidad",
-                "Subtotal"
-            ])
-            self.widget.history_sale_table.setHorizontalHeaderLabels([
-                "ID",
-                "Fecha",
-                "Vendedor",
-                "Tienda",
-                "Items",
-                "Total"
-            ])
-        elif tab == 2:
-            months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-                 "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
-            for i, month in enumerate(months, 1):
-                self.widget.month_comboBox.addItem(month, i)
-            for year in range(2023, 2026):
-                self.widget.year_comboBox.addItem(str(year), year)
-            self.widget.comission_table.setHorizontalHeaderLabels([
-                "Vendedor",
-                "Ventas Totales",
-                "# Ventas",
-                "Comision"
-            ])
-            self.widget.salesman_table.setHorizontalHeaderLabels([
-                "ID",
-                "Nombre",
-                "Email",
-                "Teléfono",
-                "Tienda"
-            ])
-
-    # Métodos de acción para los distintos eventos (archivo de origen: interfaz_tienda.py)
-
-    def buscar_componentes(self):
-        """Ejecuta la búsqueda de componentes según los filtros."""
-        # Aquí se implementaría la lógica de búsqueda
-        QtWidgets.QMessageBox.information(
-            self.widget,
-            "Búsqueda",
-            "Función de búsqueda no implementada."
-        )
-
-    def mostrar_form_agregar_componente(self):
-        """Muestra el formulario para agregar un nuevo componente."""
-        QtWidgets.QMessageBox.information(self.widget, "Agregar Componente",
-                               "Función para agregar componente no implementada.")
-
-    def iniciar_nueva_venta(self):
-        """Inicia una nueva venta."""
-        if not self.widget.cliente_edit.text():
-            QtWidgets.QMessageBox.warning(self.widget, "Error", "Debe ingresar un cliente.")
-            return
-
-        # Obtener vendedor y tienda seleccionados
-        vendedor = self.widget.seller_comboBox.currentData()
-        tienda = self.widget.shopComboBox.currentData()
-
-        # Crear nueva venta
-        # Aquí se implementaría la lógica con el controlador_ventas
-
-        self.widget.label_6.setText(f"Venta en curso: Cliente {self.widget.cliente_edit.text()}")
-        QtWidgets.QMessageBox.information(
-            self.widget,
-            "Nueva Venta",
-            "Venta iniciada correctamente."
-        )
-
-    def agregar_item_venta(self):
-        """Agrega un ítem a la venta actual."""
-        QtWidgets.QMessageBox.information(self.widget, "Agregar Ítem",
-                               "Función para agregar ítem no implementada.")
-
-    def finalizar_venta(self):
-        """Finaliza la venta actual."""
-        QtWidgets.QMessageBox.information(self.widget, "Finalizar Venta",
-                               "Función para finalizar venta no implementada.")
-
-    def cancelar_venta(self):
-        """Cancela la venta actual."""
-        self.widget.label_6.setText("No hay venta en curso")
-        QtWidgets.QMessageBox.information(self.widget, "Cancelar Venta",
-                               "Venta cancelada correctamente.")
-
-    def mostrar_form_agregar_vendedor(self):
-        """Muestra el formulario para agregar un nuevo vendedor."""
-        QtWidgets.QMessageBox.information(self.widget, "Agregar Vendedor",
-                               "Función para agregar vendedor no implementada.")
-
-    def mostrar_estadisticas_vendedor(self):
-        """Muestra estadísticas de ventas del vendedor seleccionado."""
-        # Obtener vendedor seleccionado
-        selected_items = self.widget.salesman_table.selectedItems()
-        if not selected_items:
-            QtWidgets.QMessageBox.warning(self.widget, "Error", "Debe seleccionar un vendedor.")
-            return
-
-        QtWidgets.QMessageBox.information(self.widget, "Estadísticas",
-                               "Función para mostrar estadísticas no implementada.")
-
-    def calcular_comisiones(self):
-        """Calcula las comisiones de los vendedores."""
-        mes = self.widget.month_comboBox.currentData()
-        anio = self.widget.year_comboBox.currentData()
-
-        QtWidgets.QMessageBox.information(
-            self.widget,
-            "Comisiones",
-            f"Comisiones para {self.widget.month_comboBox.currentText()} de {anio} calculadas."
-        )
-
-
 class View(BaseWidget):
-    def __init__(self, viewmodel, user_name: str):
+    def __init__(self, viewmodel):
         super().__init__(os.path.join("ui","main.ui"))
         self.viewmodel = viewmodel
-        self.widget.user_label.setText(f"Usuario: {user_name}") 
+
+        # vars
         self.tabs = self.widget.tabWidget
         self.tabs.currentChanged.connect(self.handle_dinamic_data)
 
@@ -185,9 +50,11 @@ class View(BaseWidget):
             "Todos",
             "RAM",
             "Procesador",
-            "Tarjeta Gráfica",
-            "Placa Madre",
+            "Tarjeta gráfica",
+            "Placa madre",
+            "Fuente de poder",
             "SSD",
+            "HDD",
             "Refrigeración",
             "Disipador de Calor"
         ]
@@ -198,7 +65,7 @@ class View(BaseWidget):
         for item in self.type:
             self.widget.type_comboBox.addItem(item, item)
         self.widget.inventory_table.setHorizontalHeaderLabels([
-            "ID", "Nombre", "Tipo", "Marca", "Precio", "Stock", "Tienda"
+            "ID", "Nombre", "Tipo", "Marca", "Precio"
         ])
         self.update_table_inventory()
         # btns
@@ -207,15 +74,12 @@ class View(BaseWidget):
         self.widget.add_component_btn.clicked.connect(self.show_form_add_component)
         self.widget.edit_component_btn.clicked.connect(self.edit_component)
         # - tab 2
-        self.widget.new_sell_btn # nueva venta - duda si dejarlo
         self.widget.add_item_btn.clicked.connect(self.add_item_sell)
         self.widget.cancel_btn.clicked.connect(self.cancelar_sell)
         self.widget.end_sell_btn.clicked.connect(self.end_sell)
         # - tab 3
         self.widget.add_saleman_btn.clicked.connect(self.show_form_add_seller)
         self.widget.edit_saleman_btn.clicked.connect(self.show_form_edit_seller)
-        self.widget.view_stats_btn.clicked.connect(self.show_seller_stats)
-        self.widget.calculation_comission
 
     def handle_dinamic_data(self, tab: int):
         if tab == 1:
@@ -235,29 +99,7 @@ class View(BaseWidget):
                 "Cantidad",
                 "Subtotal"
             ])
-            self.widget.history_sale_table.setHorizontalHeaderLabels([
-                "ID",
-                "Fecha",
-                "Vendedor",
-                "Tienda",
-                "Items",
-                "Total"
-            ])
         elif tab == 2:
-            months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-                 "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
-            self.widget.month_comboBox.clear()
-            self.widget.year_comboBox.clear()
-            for i, month in enumerate(months, 1):
-                self.widget.month_comboBox.addItem(month, i)
-            for year in range(2023, 2026):
-                self.widget.year_comboBox.addItem(str(year), year)
-            self.widget.comission_table.setHorizontalHeaderLabels([
-                "Vendedor",
-                "Ventas Totales",
-                "# Ventas",
-                "Comision"
-            ])
             self.widget.salesman_table.setHorizontalHeaderLabels([
                 "ID",
                 "Nombre",
@@ -269,16 +111,26 @@ class View(BaseWidget):
 
     def search_components(self):
         """Ejecuta la búsqueda de componentes según los filtros."""
-        valueMin = int(self.widget.price_min.text())
-        valueMax = int(self.widget.price_max.text())
-        brand = self.widget.brand_edit.text()
+        valueMin_text = int(self.widget.price_min.text())
+        valueMax_text = int(self.widget.price_max.text())
+        brand_input = self.widget.brand_edit.text()
         component_type = self.widget.type_comboBox.currentData()
+        all_components_value = "Todos"
 
+        valueMin = int(valueMin_text) if valueMin_text else None
+        valueMax = int(valueMax_text) if valueMax_text else None
+        
         self.widget.inventory_table.setRowCount(0)
-        filtered_components = [
-            item for item in self.components
-            if valueMin <= item['price'] <= valueMax and item['brand'] == brand and item['category'] == component_type
-        ]
+        filtered_components = []
+        for item in self.components:
+            matches_category = (component_type == all_components_value) or (item['category'] == component_type)
+            matches_brand = not brand_input or item['brand'].lower() == brand_input.lower()
+            matches_min_price = valueMin is None or item['price'] >= valueMin
+            matches_max_price = valueMax is None or item['price'] <= valueMax
+
+            if matches_category and matches_brand and matches_min_price and matches_max_price:
+                filtered_components.append(item)
+
         self.widget.inventory_table.setRowCount(len(filtered_components))
         for row, item in enumerate(filtered_components):
             self.widget.inventory_table.setItem(row, 0, QtWidgets.QTableWidgetItem(item['uuid']))
@@ -286,8 +138,6 @@ class View(BaseWidget):
             self.widget.inventory_table.setItem(row, 2, QtWidgets.QTableWidgetItem(item['category']))
             self.widget.inventory_table.setItem(row, 3, QtWidgets.QTableWidgetItem(item['brand']))
             self.widget.inventory_table.setItem(row, 4, QtWidgets.QTableWidgetItem(str(item['price'])))
-            self.widget.inventory_table.setItem(row, 5, QtWidgets.QTableWidgetItem("0"))
-            self.widget.inventory_table.setItem(row, 6, QtWidgets.QTableWidgetItem("Tienda"))
 
     def show_form_add_component(self):
         """Muestra el formulario para agregar un nuevo componente."""
@@ -295,21 +145,9 @@ class View(BaseWidget):
         form.exec_()
 
         if form.result() == QtWidgets.QDialog.Accepted:
-            data_new_component = form.get_data()
-            self.components.append(data_new_component)
-            """
-            self.widget.inventory_table.setRowCount(len(self.components))
-            for row, item in enumerate(self.components):
-                self.widget.inventory_table.setItem(row, 0, QtWidgets.QTableWidgetItem(item['uuid']))
-                self.widget.inventory_table.setItem(row, 1, QtWidgets.QTableWidgetItem(item['model']))
-                self.widget.inventory_table.setItem(row, 2, QtWidgets.QTableWidgetItem(item['category']))
-                self.widget.inventory_table.setItem(row, 3, QtWidgets.QTableWidgetItem(item['brand']))
-                self.widget.inventory_table.setItem(row, 4, QtWidgets.QTableWidgetItem(str(item['price'])))
-                self.widget.inventory_table.setItem(row, 5, QtWidgets.QTableWidgetItem("0"))
-                self.widget.inventory_table.setItem(row, 6, QtWidgets.QTableWidgetItem("Tienda"))
-            """
-    
-    def edit_component(self):# fix!!!
+            self.update_table_inventory()
+
+    def edit_component(self):
         """ Edita un componente seleccionado. """
         row_sel = self.widget.inventory_table.currentRow()
 
@@ -341,35 +179,11 @@ class View(BaseWidget):
             result = dialog_edit.exec_()
 
             if result == QtWidgets.QDialog.Accepted:
-                new_data = dialog_edit.get_data()
-                for i, item in enumerate(self.components):
-                    if item['uuid'] == data_component['uuid']: # fix!!!!
-                        break
                 self.update_table_inventory()
             else:
                 QtWidgets.QMessageBox.warning(self.widget, "Error", "No se pudo editar el componente.")
 
-    def iniciar_nueva_venta(self):# dudar dejarlo
-        """Inicia una nueva venta."""
-        if not self.widget.cliente_edit.text():
-            QtWidgets.QMessageBox.warning(self.widget, "Error", "Debe ingresar un cliente.")
-            return
-
-        # Obtener vendedor y tienda seleccionados
-        vendedor = self.widget.seller_comboBox.currentData()
-        tienda = self.widget.shopComboBox.currentData()
-
-        # Crear nueva venta
-        # Aquí se implementaría la lógica con el controlador_ventas
-
-        self.widget.label_6.setText(f"Venta en curso: Cliente {self.widget.cliente_edit.text()}")
-        QtWidgets.QMessageBox.information(
-            self.widget,
-            "Nueva Venta",
-            "Venta iniciada correctamente."
-        )
-
-    def add_item_sell(self): # complete
+    def add_item_sell(self):
         """Agrega un ítem a la venta actual."""
         if self.widget.status_label:
             self.widget.status_label.hide()
@@ -382,8 +196,9 @@ class View(BaseWidget):
             if self.widget.item_sale_table.item(i, 0).text() == sel['uuid']:
                 current_quantity = int(self.widget.item_sale_table.item(i, 3).text())
                 self.widget.item_sale_table.setItem(i, 3, QtWidgets.QTableWidgetItem(str(current_quantity + quantity)))
-                subtotal = int(self.widget.item_sale_table.item(i, 2).text()) * (current_quantity + quantity)
-                self.widget.item_sale_table.setItem(i, 4, QtWidgets.QTableWidgetItem(str(subtotal)))
+                self.widget.item_sale_table.setItem(i, 4, QtWidgets.QTableWidgetItem(str(
+                    int(self.widget.item_sale_table.item(i, 2).text()) * (current_quantity + quantity)
+                )))
                 pase = False
 
         if self.widget.item_sale_table.rowCount() == 0 and pase == True:
@@ -392,8 +207,7 @@ class View(BaseWidget):
             self.widget.item_sale_table.setItem(0, 1, QtWidgets.QTableWidgetItem(sel['model']))
             self.widget.item_sale_table.setItem(0, 2, QtWidgets.QTableWidgetItem(str(sel['price'])))
             self.widget.item_sale_table.setItem(0, 3, QtWidgets.QTableWidgetItem(str(quantity)))
-            subtotal = sel['price'] * quantity
-            self.widget.item_sale_table.setItem(0, 4, QtWidgets.QTableWidgetItem(str(subtotal)))
+            self.widget.item_sale_table.setItem(0, 4, QtWidgets.QTableWidgetItem(str(sel['price'] * quantity)))
         elif self.widget.item_sale_table.rowCount() > 0 and pase == True:
             row = self.widget.item_sale_table.rowCount()
             self.widget.item_sale_table.setRowCount(row + 1)
@@ -401,15 +215,14 @@ class View(BaseWidget):
             self.widget.item_sale_table.setItem(row, 1, QtWidgets.QTableWidgetItem(sel['model']))
             self.widget.item_sale_table.setItem(row, 2, QtWidgets.QTableWidgetItem(str(sel['price'])))
             self.widget.item_sale_table.setItem(row, 3, QtWidgets.QTableWidgetItem(str(quantity)))
-            subtotal = sel['price'] * quantity
-            self.widget.item_sale_table.setItem(row, 4, QtWidgets.QTableWidgetItem(str(subtotal)))
+            self.widget.item_sale_table.setItem(row, 4, QtWidgets.QTableWidgetItem(str(sel['price'] * quantity)))
 
         for i in range(self.widget.item_sale_table.rowCount()):
             subtotal += int(self.widget.item_sale_table.item(i, 4).text())
 
         self.widget.price_label.setText(f"Precio: {subtotal} CLP")
 
-    def end_sell(self): # complete
+    def end_sell(self):
         """Finaliza la venta actual."""
         items = []
         for i in range(self.widget.item_sale_table.rowCount()):
@@ -436,7 +249,7 @@ class View(BaseWidget):
         recivo += f"Total: {total} CLP\nGracias por su compra!"
         QtWidgets.QMessageBox.information(self.widget, "Recibo de Venta", recivo)
 
-    def cancelar_sell(self): # complete
+    def cancelar_sell(self):
         """Cancela la venta actual."""
         self.widget.status_label.setText("No hay venta en curso")
         self.widget.status_label.show()
@@ -454,8 +267,6 @@ class View(BaseWidget):
         form.exec_()
 
         if form.result() == QtWidgets.QDialog.Accepted:
-            data_new_seller = form.get_data()
-            self.salesmans.append(data_new_seller)
             self.update_table_sellers()
         else:
             QtWidgets.QMessageBox.warning(self.widget, "Error", "Se cancelo el agregar vendedor.")
@@ -495,9 +306,8 @@ class View(BaseWidget):
                 self.salesmans[i] = new_data
         pass
 
-    def show_seller_stats(self): # faltan datos
+    def show_seller_stats(self):
         """Muestra estadísticas de ventas del vendedor seleccionado."""
-        # Obtener vendedor seleccionado
         selected_items = self.widget.salesman_table.selectedItems()
         if not selected_items:
             QtWidgets.QMessageBox.warning(self.widget, "Error", "Debe seleccionar un vendedor.")
@@ -505,18 +315,6 @@ class View(BaseWidget):
 
         QtWidgets.QMessageBox.information(self.widget, "Estadísticas",
                                "Función para mostrar estadísticas no implementada.")
-
-    def calcular_comisiones(self): # faltan datos
-        """Calcula las comisiones de los vendedores."""
-        mes = self.widget.month_comboBox.currentData()
-        anio = self.widget.year_comboBox.currentData()
-
-        QtWidgets.QMessageBox.information(
-            self.widget,
-            "Comisiones",
-            f"Comisiones para {self.widget.month_comboBox.currentText()} de {anio} calculadas."
-        )
-    # ----
 
     def update_table_inventory(self):
         self.widget.inventory_table.clearContents()
@@ -527,8 +325,6 @@ class View(BaseWidget):
             self.widget.inventory_table.setItem(row, 2, QtWidgets.QTableWidgetItem(item['category']))
             self.widget.inventory_table.setItem(row, 3, QtWidgets.QTableWidgetItem(item['brand']))
             self.widget.inventory_table.setItem(row, 4, QtWidgets.QTableWidgetItem(str(item['price'])))
-            self.widget.inventory_table.setItem(row, 5, QtWidgets.QTableWidgetItem("0"))
-            self.widget.inventory_table.setItem(row, 6, QtWidgets.QTableWidgetItem("Tienda"))
     
     def update_table_sellers(self):
         self.widget.salesman_table.clearContents()
@@ -580,7 +376,7 @@ class AddComponentDialog(QtWidgets.QDialog):
         price = self.widget.price_spinBox.value()
         description = self.widget.description_edit.text()
 
-        new_product = {
+        self.new_product = {
             "brand": brand,
             "model": name,
             "category": ctype,
@@ -588,7 +384,6 @@ class AddComponentDialog(QtWidgets.QDialog):
             "price": price
         }
 
-        self.data_component = new_product
         if not name or not brand or not description or not price:
             QtWidgets.QMessageBox.warning(self.widget, "Error", "Todos los campos son obligatorios.")
             return
@@ -597,13 +392,14 @@ class AddComponentDialog(QtWidgets.QDialog):
             if component['model'] == name and component['category'] == ctype:
                 QtWidgets.QMessageBox.warning(self.widget, "Error", "El componente ya existe.")
                 return
+        self.viewmodel.add_product(Product(brand, name, ctype, description, price))
         self.accept()
     def reject(self):
         """Rechaza el diálogo."""
         super().reject()
     def get_data(self):
         """Devuelve los datos del nuevo componente."""
-        return self.data_component
+        return self.new_product
     
 class addSellerDialog(QtWidgets.QDialog):
     def __init__(self, viewmodel, parent=None):
@@ -614,7 +410,7 @@ class addSellerDialog(QtWidgets.QDialog):
 
         self.widget.save_btn.clicked.connect(self.save)
         self.widget.cancel_btn.clicked.connect(self.reject)
-
+        self.data_seller = {}
     def save(self):
         """Guarda el nuevo vendedor."""
         name = self.widget.name_edit.text()
@@ -622,7 +418,7 @@ class addSellerDialog(QtWidgets.QDialog):
         email = self.widget.mail_edit.text()
         phone = self.widget.phone_edit.text()
         
-        new_worker = {
+        self.data_seller = {
             "name": name,
             "lastName": lastname,
             "mail": email,
@@ -638,11 +434,10 @@ class addSellerDialog(QtWidgets.QDialog):
                 QtWidgets.QMessageBox.warning(self.widget, "Error", "El vendedor ya existe.")
                 return
         
-        self.viewmodel.add_worker(new_worker)
+        self.viewmodel.add_worker(Worker(name, lastname, phone, email))
         super().accept()
     def reject(self):
         super().reject()
     def get_data(self):
         # aqui seria para devolver los datos
-        pass
-           
+        return self.data_seller
