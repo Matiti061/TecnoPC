@@ -146,10 +146,10 @@ class Ui_Form(object):
         self.verticalLayout_2.addWidget(self.filtro_group)
 
         self.inventory_table = QTableWidget(self.tab)
-        if (self.inventory_table.columnCount() < 7):
-            self.inventory_table.setColumnCount(7)
+        if (self.inventory_table.columnCount() < 5):
+            self.inventory_table.setColumnCount(5)
         self.inventory_table.setObjectName(u"inventory_table")
-        self.inventory_table.setColumnCount(7)
+        self.inventory_table.setColumnCount(5)
 
         self.verticalLayout_2.addWidget(self.inventory_table)
 
