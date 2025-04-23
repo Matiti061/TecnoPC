@@ -1,6 +1,6 @@
 # TecnoPC
 
-![Imagen de AeroChinquihue](assets/TecnoPCj.jpg)
+![Imagen de TecnoPC](assets/TecnoPCj.jpg)
 
 **Los mejores componentes para tu PC**
 
