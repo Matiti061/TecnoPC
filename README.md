@@ -1,30 +1,49 @@
 # TecnoPC
 
+![Imagen de AeroChinquihue](assets/TecnoPCj.jpg)
+
 **Los mejores componentes para tu PC**
 
 Este programa es funcional (de momento) en Python 3.13.2  **No probado en otras versiones**
 
+## Requisitos
+
+En caso de querer desarrollar, instalar las dependencias necesarias usando:
+
+> pip install -r requirements.dev.txt -r requirements.txt
+
+En caso de querer solo ejecutar el programa, instalar las dependencias necesarias usando:
+
+> pip install -r requirements.txt
+
 ## Ejecutacion del programa
 
-Solo con que ejecutes el archivo main esta bien, por ejemplo:
+- Mover archivo *model_unit_test.py* a la carpeta raiz (Mismo nivel quie el archivo main), para que se ejecuten los datos
 
-> $ python main.py
+- Luego de eso si ejecutar el archivo main.py escribiendo en la terminal:
+
+> python main.py
+
 
 ## Estructura de los archivos momentanea
 
-### Controllers
+### Package
 
-Todos los archivos controladores tales como el inventario y la venta de productos
+Modelos del programa para la ejecucion de la interfaz
 
-### Models
+### Scripts
 
-Carpeta que da cada modelo de venta, de inventario, componente, etc.
+Se encuentra el archivo de model_unit_test.py para poder generar todo lo que son datos 
 
-### Views
+#### Temp
 
-En este archivo es la interfaz, esta todo hecho con PyQt6 listo para ejecutar
+Subcarpeta dentro de Scripts la cual contiene todos los controladores del programa
 
-#### De manera suelta se encuentra el archivo main, no esta dentro de una carpeta especifica
+### UI
+
+Archivos UI los cuales mantienen las interfaces (Deja agrupado los archivos de interfaces)
+
+#### De manera suelta se encuentra el archivo main en la carpeta raiz
 
 ## Software necesario
 
@@ -51,7 +70,8 @@ Solo para uso interno de programadores en este repositorio
 
 ### Necesario
 
-* [ ] Pendiente: Agregar funciones de Busqueda de productos, Agregar item,
+* [X] OK: Agregar funcion de inicio de sesion (Funcion lista implementada en la rama main)
+* [x] OK: Agregar funciones de Busqueda de productos, Agregar item,
 Finalizar Venta, agregar estadisticas (Archivo: interfaz_tienda.py)
 * [X] OK: Agregar la funcion de poder cancelar una venta de manera rapida
 * [X] OK: Agregar tabla de ID de productos, Nombre, tipo, etc.
@@ -62,14 +82,14 @@ apartado de Ventas
 de Ventas
 * [X] OK: Poder calcular las comisiones de cada vendedor (Plus para que el profe
 nos quiera mucho, aunque falta mejorarlo)
+* [x] OK: Cambiar la moneda de dolares a pesos chilenos (USD to CLP)
 
-### No tan necesario pero bonito
+### No tan necesario but to do igual
 
-* [ ] Pendiente: Mejorar el diseño de la pagina con Qt Designer o algun otro editor
-* [ ] Pendiente: Cambiar las ciudades de las tiendas (Hay ciudades aleatorias
+* [X] OK: Mejorar el diseño de la pagina con Qt Designer o algun otro editor
+* [X] OK: Cambiar las ciudades de las tiendas (Hay ciudades aleatorias
 las cuales tienen nombres de PM pero se ubican en las ciudades que mas venden de
 cada sector de Chile) (Si quieren poner alguna tienda, adelante)
 * [X] OK: Poner limite al lugar de "Precio Max" en el apartado de Inventario
-* [ ] Pendiente: Agregar algo de gerente como en AeroChinquihue (No lo dijo el
-profe pero si alguien lo quiere hacer adelante, no me quiero calentar la cabeza
-en eso los quiero mucho)
+
+
