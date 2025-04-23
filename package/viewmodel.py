@@ -1,7 +1,6 @@
 # pylint: disable=C0114,C0115,C0116
 from .model import Model, Store, Worker, Product, Manager
 
-
 class ViewModel:
     def __init__(self, model: Model):
         self._model = model
@@ -85,6 +84,7 @@ class ViewModel:
     def validate_user(self, name: str, rut: str) -> bool:
         if not name or not rut:
             return False
-        if len(rut) < 9 or not (rut[:-1].isdigit() and (rut[-1].isdigit() or rut[-1] in 'Kk')): #ahora el ingreso del rut acepta verificador K
+        if len(rut) < 9 or not (rut[:-1].isdigit() and (rut[-1].isdigit() or rut[-1] in 'Kk')): 
+            #ahora el ingreso del rut acepta verificador K
             return False
         return True
