@@ -22,7 +22,22 @@ worker_uuids = [
 product_uuids = [
     model.add_product(Product("Kingston", "Fury 16GB", "RAM", "DDR4 3200MHz", 75990)),
     model.add_product(Product("Intel", "Core i5-12400F", "Procesador", "6 núcleos, 12 hilos", 199990)),
-    model.add_product(Product("Samsung", "970 EVO Plus 1TB", "SSD", "NVMe M.2", 129990))
+    model.add_product(Product("Samsung", "970 EVO Plus 1TB", "SSD", "NVMe M.2", 129990)),
+    model.add_product(Product("Asus", "ROG Strix B550-F", "Placa madre", "ATX, AM4", 129990)),
+    model.add_product(Product("Corsair", "RM750x", "Fuente de poder", "750W, 80 Plus Gold", 89990)),
+    model.add_product(Product("Ryzen", "5 5600X", "Procesador", "6 núcleos, 12 hilos", 159990)),
+    model.add_product(Product("Gigabyte", "AORUS GeForce RTX 3060", "Tarjeta gráfica", "12GB GDDR6", 499990)),
+    model.add_product(Product("Kingston", "A2000 500GB", "SSD", "NVMe M.2", 49990)),
+    model.add_product(Product("Gigastone", "Game Turbo 1TB", "SSD", "SATA III", 39990)),
+    model.add_product(Product("Gigastone", "Game Turbo 2X16 GB", "RAM", "DDR4 3200MHZ", 649990)),
+    model.add_product(Product("Asus", "ROG Strix B550-F", "Placa madre", "ATX, AM4", 129990)),
+    model.add_product(Product("Intel", "Core i7-12700K", "Procesador", "12 núcleos, 20 hilos", 299990)),
+    model.add_product(Product("Corsair", "Vengeance LPX 32GB", "RAM", "DDR4 3200MHz", 129990)),
+    model.add_product(Product("Seagate", "Barracuda 2TB", "HDD", "7200 RPM, SATA III", 49990)),
+    model.add_product(Product("Western Digital", "Blue 1TB", "HDD", "7200 RPM, SATA III", 39990)),
+    model.add_product(Product("AMD", "ROG STRIX B550-F", "Placa madre", "ATX, AM4", 129990)),
+    model.add_product(Product("MSI", "MAG B550M Mortar", "Placa madre", "Micro-ATX, AM4", 89990)),
+
 ]
 
 model.add_product_to_store(store_uuids[0], product_uuids[2])
