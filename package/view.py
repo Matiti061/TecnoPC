@@ -6,9 +6,9 @@ from tomlkit import value
 from package.model import Product, Worker
 
 class BaseWidget(QtUiTools.QUiLoader):
-    def __init__(self, path):
+    def __init__(self, ui_path):
         super().__init__()
-        self.widget = self.load(path)
+        self.widget = self.load(ui_path)
 
     def show(self):
         self.widget.show()
@@ -21,8 +21,17 @@ class LoginView(BaseWidget):
         self.widget.login_btn.clicked.connect(self.handle_login)
 
     def handle_login(self):
-        self.widget = View(self.viewmodel)
-        self.widget.show()
+        name = self.widget.lineEditName.text()
+        rut = self.widget.lineEditRut.text()
+
+        if self.viewmodel.validate_user(name, rut) == True:
+            self.main_view = View(self.viewmodel) 
+            self.main_view.show()
+            self.widget.close() 
+        else:
+            QtWidgets.QMessageBox.warning(
+                self.widget, "Error", "Nombre o RUT incorrectos."
+            )
 
 class View(BaseWidget):
     def __init__(self, viewmodel):
