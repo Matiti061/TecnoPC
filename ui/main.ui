@@ -3,20 +3,184 @@
  <class>Form</class>
  <widget class="QWidget" name="Form">
   <property name="windowModality">
-   <enum>Qt::NonModal</enum>
+   <enum>Qt::WindowModality::NonModal</enum>
   </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>736</width>
-    <height>566</height>
+    <height>560</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>TecnoPC - Sistema de Gestión</string>
   </property>
+  <property name="styleSheet">
+    <string>
+    QWidget {
+      background-color: #2D2D2D;
+      color: #E0E0E0;
+      font-family: "Segoe UI", Arial, sans-serif;
+    }
+
+    QGroupBox {
+      border: 1px solid #5A5A5A;
+      border-radius: 6px;
+      margin-top: 10px;
+      color: #B0B0B0;
+    }
+
+    QGroupBox::title {
+      subcontrol-origin: margin;
+      left: 10px;
+      padding: 0 3px;
+      color: #E0E0E0
+    }
+
+    QTabWidget::pane {
+      border: none;
+      background: #3D3D3D;
+    }
+
+    QTabBar::tab {
+      background: #4A4A4A;
+      color: #E0E0E0;
+      padding: 6px 12px;
+      border-bottom: 2px solid transparent;
+    }
+
+    QTabBar::tab:selected {
+      background: #3D3D3D;
+      border-bottom: 2px solid #1A73E8;
+    }
+
+    QPushButton {
+      background-color: #1A73E8;
+      color: #FFFFFF;
+      border: none;
+      border-radius: 4px;
+      padding: 6px 14px;
+    }
+
+    QPushButton:hover {
+      background-color: #1558B0;
+    }
+
+    QPushButton:disabled {
+      background-color: #5A5A5A;
+      color: #9E9E9E;
+    }
+
+    QComboBox, QLineEdit, QSpinBox {
+      background-color: #4A4A4A;
+      border: 1px solid #5A5A5A;
+      border-radius: 4px;
+      padding: 4px;
+      color: #E0E0E0;
+    }
+
+    QComboBox:hover, QLineEdit:hover, QSpinBox:hover {
+      border-color: #1A73E8;
+    }
+
+    QTableWidget {
+        background-color: #3D3D3D;
+        color: #E0E0E0;
+        gridline-color: #5A5A5A;
+    }
+
+    QHeaderView::section {
+        background-color: #4A4A4A;
+        color: #E0E0E0;
+        border: 1px solid #5A5A5A;
+        padding: 4px;
+    }
+
+    QScrollBar:vertical, QScrollBar:horizontal {
+        background: #3D3D3D;
+        width: 12px;
+    }
+
+    QScrollBar::handle {
+        background: #5A5A5A;
+        border-radius: 4px;
+    }
+
+    QScrollBar::add-line, QScrollBar::sub-line {
+        background: none;
+    }
+  </string>
+  </property>
   <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <layout class="QHBoxLayout" name="header_layout">
+     <property name="sizeConstraint">
+      <enum>QLayout::SizeConstraint::SetMaximumSize</enum>
+     </property>
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="font">
+        <font>
+         <family>Arial</family>
+         <pointsize>20</pointsize>
+         <italic>false</italic>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>TecnoPC</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <property name="sizeConstraint">
+        <enum>QLayout::SizeConstraint::SetMaximumSize</enum>
+       </property>
+       <item>
+        <widget class="QLabel" name="label_2">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Tienda:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="shopComboBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+          <item>
+    <widget class="QLabel" name="user_label">
+        <property name="text">
+        <string>Usuario: —</string>
+        </property>
+        <property name="alignment">
+          <set>Qt::AlignRight</set>
+        </property>
+      </widget>
+    </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
    <item row="1" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
@@ -76,7 +240,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="marca_edit"/>
+           <widget class="QLineEdit" name="brand_edit"/>
           </item>
           <item>
            <widget class="QLabel" name="precio_min_label">
@@ -86,9 +250,12 @@
            </widget>
           </item>
           <item>
-           <widget class="QSpinBox" name="precio_min">
+           <widget class="QDoubleSpinBox" name="price_min">
+            <property name="decimals">
+             <number>0</number>
+            </property>
             <property name="maximum">
-             <number>2000000</number>
+             <double>100000.000000000000000</double>
             </property>
            </widget>
           </item>
@@ -100,14 +267,20 @@
            </widget>
           </item>
           <item>
-           <widget class="QSpinBox" name="precio_max">
+           <widget class="QDoubleSpinBox" name="price_max">
             <property name="maximum">
-             <number>2000000</number>
+             <double>100000.000000000000000</double>
+            </property>
+            <property name="singleStep">
+             <double>100000.000000000000000</double>
+            </property>
+            <property name="value">
+             <double>100000.000000000000000</double>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="buscar_btn">
+           <widget class="QPushButton" name="search_btn">
             <property name="text">
              <string>Buscar</string>
             </property>
@@ -135,35 +308,14 @@
          <item>
           <widget class="QPushButton" name="add_component_btn">
            <property name="text">
-            <string>Agregar Producto</string>
+            <string>Agregar Componente</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QPushButton" name="edit_component_btn">
            <property name="text">
-            <string>Editar Producto</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="elim_component_btn">
-           <property name="text">
-            <string>Eliminar Producto</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="replace_component_btn">
-           <property name="text">
-            <string>Remplazar Producto</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="transfer_btn">
-           <property name="text">
-            <string>Transferir entre Tiendas</string>
+            <string>Editar Componente</string>
            </property>
           </widget>
          </item>
@@ -232,7 +384,10 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_5">
           <item>
-           <widget class="QLabel" name="label_6">
+           <widget class="QLabel" name="status_label">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
               <horstretch>0</horstretch>
@@ -295,7 +450,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QSpinBox" name="spinBox">
+             <widget class="QSpinBox" name="quantity_spinBox">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
                 <horstretch>0</horstretch>
@@ -322,18 +477,17 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,0,0">
             <item>
-             <widget class="QLabel" name="label_9">
+             <widget class="QLabel" name="price_label">
               <property name="font">
                <font>
                 <family>Arial</family>
                 <pointsize>14</pointsize>
-                <weight>75</weight>
                 <bold>true</bold>
                 <strikeout>false</strikeout>
                </font>
               </property>
               <property name="text">
-               <string>Total: $0</string>
+               <string>Total: 0 CLP</string>
               </property>
              </widget>
             </item>
@@ -415,20 +569,6 @@
              <widget class="QPushButton" name="add_saleman_btn">
               <property name="text">
                <string>Agregar Vendedores</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="replace_saleman_btn">
-              <property name="text">
-               <string>Remplazar Vendedores</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="elim_saleman_btn">
-              <property name="text">
-               <string>Eliminar vendedores</string>
               </property>
              </widget>
             </item>
@@ -537,65 +677,6 @@
       </layout>
      </widget>
     </widget>
-   </item>
-   <item row="0" column="0">
-    <layout class="QHBoxLayout" name="header_layout">
-     <property name="sizeConstraint">
-      <enum>QLayout::SetDefaultConstraint</enum>
-     </property>
-     <item>
-      <widget class="QLabel" name="label">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="font">
-        <font>
-         <family>Arial</family>
-         <pointsize>20</pointsize>
-         <weight>75</weight>
-         <italic>false</italic>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>TecnoPC</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <property name="sizeConstraint">
-        <enum>QLayout::SetDefaultConstraint</enum>
-       </property>
-       <item>
-        <widget class="QLabel" name="label_2">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>Tienda:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QComboBox" name="shopComboBox">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-    </layout>
    </item>
   </layout>
  </widget>
