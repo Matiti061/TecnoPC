@@ -41,9 +41,11 @@ class View(BaseWidget):
             "Todos",
             "RAM",
             "Procesador",
-            "Tarjeta Gráfica",
-            "Placa Madre",
+            "Tarjeta gráfica",
+            "Placa madre",
+            "Fuente de poder",
             "SSD",
+            "HDD",
             "Refrigeración",
             "Disipador de Calor"
         ]
@@ -102,8 +104,9 @@ class View(BaseWidget):
         """Ejecuta la búsqueda de componentes según los filtros."""
         valueMin_text = int(self.widget.price_min.text())
         valueMax_text = int(self.widget.price_max.text())
-        brand = self.widget.brand_edit.text()
+        brand_input = self.widget.brand_edit.text()
         component_type = self.widget.type_comboBox.currentData()
+        all_components_value = "Todos"
 
         valueMin = int(valueMin_text) if valueMin_text else None
         valueMax = int(valueMax_text) if valueMax_text else None
@@ -111,8 +114,8 @@ class View(BaseWidget):
         self.widget.inventory_table.setRowCount(0)
         filtered_components = []
         for item in self.components:
-            matches_category = item['category'] == component_type
-            matches_brand = not brand or item['brand'] == brand
+            matches_category = (component_type == all_components_value) or (item['category'] == component_type)
+            matches_brand = not brand_input or item['brand'].lower() == brand_input.lower()
             matches_min_price = valueMin is None or item['price'] >= valueMin
             matches_max_price = valueMax is None or item['price'] <= valueMax
 
