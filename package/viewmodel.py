@@ -80,3 +80,11 @@ class ViewModel:
 
     def delete_manager(self, manager_uuid: str):
         return self._model.delete_manager(manager_uuid)
+    
+    def validate_user(self, name: str, rut: str) -> bool:
+        if not name or not rut:
+            return False
+        if len(rut) < 9 or not (rut[:-1].isdigit() and (rut[-1].isdigit() or rut[-1] in 'Kk')): 
+            #ahora el ingreso del rut acepta verificador K
+            return False
+        return True

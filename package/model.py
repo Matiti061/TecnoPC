@@ -106,7 +106,7 @@ class Model:
         })
         self._save()
         return worker_uuid
-
+    
     def add_product(self, product: Product):
         """
         Adds a product to the deserialized JSON file.
