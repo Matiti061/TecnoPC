@@ -144,12 +144,9 @@
            </widget>
           </item>
           <item>
-           <widget class="QDoubleSpinBox" name="price_min">
-            <property name="decimals">
-             <number>0</number>
-            </property>
+           <widget class="QSpinBox" name="price_min">
             <property name="maximum">
-             <double>100000.000000000000000</double>
+             <number>600000</number>
             </property>
            </widget>
           </item>
@@ -161,15 +158,9 @@
            </widget>
           </item>
           <item>
-           <widget class="QDoubleSpinBox" name="price_max">
+           <widget class="QSpinBox" name="price_max">
             <property name="maximum">
-             <double>100000.000000000000000</double>
-            </property>
-            <property name="singleStep">
-             <double>100000.000000000000000</double>
-            </property>
-            <property name="value">
-             <double>100000.000000000000000</double>
+             <number>600000</number>
             </property>
            </widget>
           </item>
@@ -247,13 +238,6 @@
           </item>
           <item row="1" column="1">
            <widget class="QLineEdit" name="client_edit"/>
-          </item>
-          <item row="2" column="1">
-           <widget class="QPushButton" name="new_sell_btn">
-            <property name="text">
-             <string>Iniciar Nueva Venta</string>
-            </property>
-           </widget>
           </item>
           <item row="2" column="0">
            <widget class="QLabel" name="label_5">
@@ -404,34 +388,6 @@
          </layout>
         </widget>
        </item>
-       <item>
-        <widget class="QGroupBox" name="groupBox_3">
-         <property name="title">
-          <string>Historial de Ventas</string>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout_4">
-          <item>
-           <widget class="QTableWidget" name="history_sale_table">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="columnCount">
-             <number>6</number>
-            </property>
-            <column/>
-            <column/>
-            <column/>
-            <column/>
-            <column/>
-            <column/>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="tab_3">
@@ -442,7 +398,7 @@
        <item>
         <widget class="QGroupBox" name="groupBox_4">
          <property name="title">
-          <string>Vendedores</string>
+          <string>Conocenos</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_6">
           <item>
@@ -473,13 +429,6 @@
               </property>
              </widget>
             </item>
-            <item>
-             <widget class="QPushButton" name="view_stats_btn">
-              <property name="text">
-               <string>Ver Estadisticas</string>
-              </property>
-             </widget>
-            </item>
            </layout>
           </item>
          </layout>
@@ -488,81 +437,30 @@
        <item>
         <widget class="QGroupBox" name="groupBox_5">
          <property name="title">
-          <string>Comisiones</string>
+          <string>Informacion de la empresa</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_7">
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_5">
-            <item>
-             <widget class="QLabel" name="label_10">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text">
-               <string>Mes:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QComboBox" name="month_comboBox">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="label_11">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text">
-               <string>Año:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QComboBox" name="year_comboBox">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="calculation_comission">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text">
-               <string>Calcular Comisiones</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <widget class="QTableWidget" name="comission_table">
-            <property name="columnCount">
-             <number>4</number>
+           <widget class="QLabel" name="label_6">
+            <property name="font">
+             <font>
+              <family>Arial</family>
+              <pointsize>9</pointsize>
+             </font>
             </property>
-            <column/>
-            <column/>
-            <column/>
-            <column/>
+            <property name="text">
+             <string>TecnoPC. 
+
+Una organización fundada en 2023 como respuesta a la necesidad de nuestros clientes y mejoramiento 
+
+en la prestación de servicios integrales en tecnología de la información, orientada en apoyar a nuestros 
+
+clientes en sus procesos de negocio Es hoy, una empresa de conocimiento moderna, flexible, ejemplar y competitiva,
+
+que busca siempre cumplir con las satisfacciones de sus clientes en general. Disponemos de una atención inmediata 
+
+donde realizamos una revisión eficaz y oportuna para darle solución a sus problemas tecnológicos.</string>
+            </property>
            </widget>
           </item>
          </layout>

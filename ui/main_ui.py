@@ -15,11 +15,11 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QComboBox, QDoubleSpinBox, QFormLayout,
-    QGridLayout, QGroupBox, QHBoxLayout, QHeaderView,
-    QLabel, QLayout, QLineEdit, QPushButton,
-    QSizePolicy, QSpinBox, QTabWidget, QTableWidget,
-    QTableWidgetItem, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QComboBox, QFormLayout, QGridLayout,
+    QGroupBox, QHBoxLayout, QHeaderView, QLabel,
+    QLayout, QLineEdit, QPushButton, QSizePolicy,
+    QSpinBox, QTabWidget, QTableWidget, QTableWidgetItem,
+    QVBoxLayout, QWidget)
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -120,10 +120,9 @@ class Ui_Form(object):
 
         self.horizontalLayout_6.addWidget(self.precio_min_label)
 
-        self.price_min = QDoubleSpinBox(self.filtro_group)
+        self.price_min = QSpinBox(self.filtro_group)
         self.price_min.setObjectName(u"price_min")
-        self.price_min.setDecimals(0)
-        self.price_min.setMaximum(100000.000000000000000)
+        self.price_min.setMaximum(600000)
 
         self.horizontalLayout_6.addWidget(self.price_min)
 
@@ -132,11 +131,9 @@ class Ui_Form(object):
 
         self.horizontalLayout_6.addWidget(self.precio_max_label)
 
-        self.price_max = QDoubleSpinBox(self.filtro_group)
+        self.price_max = QSpinBox(self.filtro_group)
         self.price_max.setObjectName(u"price_max")
-        self.price_max.setMaximum(100000.000000000000000)
-        self.price_max.setSingleStep(100000.000000000000000)
-        self.price_max.setValue(100000.000000000000000)
+        self.price_max.setMaximum(600000)
 
         self.horizontalLayout_6.addWidget(self.price_max)
 
@@ -199,11 +196,6 @@ class Ui_Form(object):
         self.client_edit.setObjectName(u"client_edit")
 
         self.formLayout_2.setWidget(1, QFormLayout.FieldRole, self.client_edit)
-
-        self.new_sell_btn = QPushButton(self.groupBox)
-        self.new_sell_btn.setObjectName(u"new_sell_btn")
-
-        self.formLayout_2.setWidget(2, QFormLayout.FieldRole, self.new_sell_btn)
 
         self.label_5 = QLabel(self.groupBox)
         self.label_5.setObjectName(u"label_5")
@@ -314,26 +306,6 @@ class Ui_Form(object):
 
         self.verticalLayout.addWidget(self.groupBox_2)
 
-        self.groupBox_3 = QGroupBox(self.tab_2)
-        self.groupBox_3.setObjectName(u"groupBox_3")
-        self.verticalLayout_4 = QVBoxLayout(self.groupBox_3)
-        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
-        self.history_sale_table = QTableWidget(self.groupBox_3)
-        if (self.history_sale_table.columnCount() < 6):
-            self.history_sale_table.setColumnCount(6)
-        self.history_sale_table.setObjectName(u"history_sale_table")
-        sizePolicy6 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
-        sizePolicy6.setHorizontalStretch(0)
-        sizePolicy6.setVerticalStretch(0)
-        sizePolicy6.setHeightForWidth(self.history_sale_table.sizePolicy().hasHeightForWidth())
-        self.history_sale_table.setSizePolicy(sizePolicy6)
-        self.history_sale_table.setColumnCount(6)
-
-        self.verticalLayout_4.addWidget(self.history_sale_table)
-
-
-        self.verticalLayout.addWidget(self.groupBox_3)
-
         self.tabWidget.addTab(self.tab_2, "")
         self.tab_3 = QWidget()
         self.tab_3.setObjectName(u"tab_3")
@@ -363,11 +335,6 @@ class Ui_Form(object):
 
         self.horizontalLayout_4.addWidget(self.edit_saleman_btn)
 
-        self.view_stats_btn = QPushButton(self.groupBox_4)
-        self.view_stats_btn.setObjectName(u"view_stats_btn")
-
-        self.horizontalLayout_4.addWidget(self.view_stats_btn)
-
 
         self.verticalLayout_6.addLayout(self.horizontalLayout_4)
 
@@ -378,53 +345,14 @@ class Ui_Form(object):
         self.groupBox_5.setObjectName(u"groupBox_5")
         self.verticalLayout_7 = QVBoxLayout(self.groupBox_5)
         self.verticalLayout_7.setObjectName(u"verticalLayout_7")
-        self.horizontalLayout_5 = QHBoxLayout()
-        self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
-        self.label_10 = QLabel(self.groupBox_5)
-        self.label_10.setObjectName(u"label_10")
-        sizePolicy.setHeightForWidth(self.label_10.sizePolicy().hasHeightForWidth())
-        self.label_10.setSizePolicy(sizePolicy)
+        self.label_6 = QLabel(self.groupBox_5)
+        self.label_6.setObjectName(u"label_6")
+        font2 = QFont()
+        font2.setFamilies([u"Arial"])
+        font2.setPointSize(9)
+        self.label_6.setFont(font2)
 
-        self.horizontalLayout_5.addWidget(self.label_10)
-
-        self.month_comboBox = QComboBox(self.groupBox_5)
-        self.month_comboBox.setObjectName(u"month_comboBox")
-        sizePolicy5.setHeightForWidth(self.month_comboBox.sizePolicy().hasHeightForWidth())
-        self.month_comboBox.setSizePolicy(sizePolicy5)
-
-        self.horizontalLayout_5.addWidget(self.month_comboBox)
-
-        self.label_11 = QLabel(self.groupBox_5)
-        self.label_11.setObjectName(u"label_11")
-        sizePolicy.setHeightForWidth(self.label_11.sizePolicy().hasHeightForWidth())
-        self.label_11.setSizePolicy(sizePolicy)
-
-        self.horizontalLayout_5.addWidget(self.label_11)
-
-        self.year_comboBox = QComboBox(self.groupBox_5)
-        self.year_comboBox.setObjectName(u"year_comboBox")
-        sizePolicy.setHeightForWidth(self.year_comboBox.sizePolicy().hasHeightForWidth())
-        self.year_comboBox.setSizePolicy(sizePolicy)
-
-        self.horizontalLayout_5.addWidget(self.year_comboBox)
-
-        self.calculation_comission = QPushButton(self.groupBox_5)
-        self.calculation_comission.setObjectName(u"calculation_comission")
-        sizePolicy.setHeightForWidth(self.calculation_comission.sizePolicy().hasHeightForWidth())
-        self.calculation_comission.setSizePolicy(sizePolicy)
-
-        self.horizontalLayout_5.addWidget(self.calculation_comission)
-
-
-        self.verticalLayout_7.addLayout(self.horizontalLayout_5)
-
-        self.comission_table = QTableWidget(self.groupBox_5)
-        if (self.comission_table.columnCount() < 4):
-            self.comission_table.setColumnCount(4)
-        self.comission_table.setObjectName(u"comission_table")
-        self.comission_table.setColumnCount(4)
-
-        self.verticalLayout_7.addWidget(self.comission_table)
+        self.verticalLayout_7.addWidget(self.label_6)
 
 
         self.verticalLayout_3.addWidget(self.groupBox_5)
@@ -458,7 +386,6 @@ class Ui_Form(object):
         self.groupBox.setTitle(QCoreApplication.translate("Form", u"Nueva Venta", None))
         self.label_3.setText(QCoreApplication.translate("Form", u"Vendedor:", None))
         self.label_4.setText(QCoreApplication.translate("Form", u"Cliente:", None))
-        self.new_sell_btn.setText(QCoreApplication.translate("Form", u"Iniciar Nueva Venta", None))
         self.label_5.setText("")
         self.groupBox_2.setTitle(QCoreApplication.translate("Form", u"Venta Actual", None))
         self.status_label.setText(QCoreApplication.translate("Form", u"No hay venta en curso", None))
@@ -468,16 +395,22 @@ class Ui_Form(object):
         self.price_label.setText(QCoreApplication.translate("Form", u"Total: 0 CLP", None))
         self.cancel_btn.setText(QCoreApplication.translate("Form", u"Cancelar Venta", None))
         self.end_sell_btn.setText(QCoreApplication.translate("Form", u"Finalizar Venta", None))
-        self.groupBox_3.setTitle(QCoreApplication.translate("Form", u"Historial de Ventas", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QCoreApplication.translate("Form", u"Ventas", None))
-        self.groupBox_4.setTitle(QCoreApplication.translate("Form", u"Vendedores", None))
+        self.groupBox_4.setTitle(QCoreApplication.translate("Form", u"Conocenos", None))
         self.add_saleman_btn.setText(QCoreApplication.translate("Form", u"Agregar Vendedores", None))
         self.edit_saleman_btn.setText(QCoreApplication.translate("Form", u"Editar Vendedores", None))
-        self.view_stats_btn.setText(QCoreApplication.translate("Form", u"Ver Estadisticas", None))
-        self.groupBox_5.setTitle(QCoreApplication.translate("Form", u"Comisiones", None))
-        self.label_10.setText(QCoreApplication.translate("Form", u"Mes:", None))
-        self.label_11.setText(QCoreApplication.translate("Form", u"A\u00f1o:", None))
-        self.calculation_comission.setText(QCoreApplication.translate("Form", u"Calcular Comisiones", None))
+        self.groupBox_5.setTitle(QCoreApplication.translate("Form", u"Informacion de la empresa", None))
+        self.label_6.setText(QCoreApplication.translate("Form", u"TecnoPC. \n"
+"\n"
+"Una organizaci\u00f3n fundada en 2023 como respuesta a la necesidad de nuestros clientes y mejoramiento \n"
+"\n"
+"en la prestaci\u00f3n de servicios integrales en tecnolog\u00eda de la informaci\u00f3n, orientada en apoyar a nuestros \n"
+"\n"
+"clientes en sus procesos de negocio Es hoy, una empresa de conocimiento moderna, flexible, ejemplar y competitiva,\n"
+"\n"
+"que busca siempre cumplir con las satisfacciones de sus clientes en general. Disponemos de una atenci\u00f3n inmediata \n"
+"\n"
+"donde realizamos una revisi\u00f3n eficaz y oportuna para darle soluci\u00f3n a sus problemas tecnol\u00f3gicos.", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), QCoreApplication.translate("Form", u"Vendedores", None))
     # retranslateUi
 
