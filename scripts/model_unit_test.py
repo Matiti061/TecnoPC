@@ -11,13 +11,19 @@ model = Model()
 store_uuids = [
     model.add_store(Store("Tienda Bosquemar", "Av. Bosquemar 123", "Viña del Mar", "322123456", "bosquemar@tecnopc.cl")),
     model.add_store(Store("Tienda Mirasol", "Calle Mirasol 456", "Santiago", "22987654", "mirasol@tecnopc.cl")),
-    model.add_store(Store("Tienda ValleVolcanes", "Av. ValleVolcanes 789", "Temuco", "452654321", "vallevolcanes@tecnopc.cl"))
+    model.add_store(Store("Tienda ValleVolcanes", "Av. ValleVolcanes 789", "Temuco", "452654321", "vallevolcanes@tecnopc.cl")),
+    model.add_store(Store("Tienda La Serena", "Calle La Serena 321", "La Serena", "512345678", "laserena@tecnopc.cl")),
+    model.add_store(Store("Tienda Antofagasta", "Av. Antofagasta 654", "Antofagasta", "412345678", "antofagasta@tecnopc.cl"))
+    
 
 ]
 worker_uuids = [
     model.add_worker(Worker("Juan", "Pérez", "987654321", "juan.perez@tecnopc.cl")),
     model.add_worker(Worker("Maria", "Gomez", "987654322", "maria.gomez@tecnopc.cl")),
-    model.add_worker(Worker("Carlos", "López", "987654323", "carlos.lopez@tecnopc.cl"))
+    model.add_worker(Worker("Carlos", "López", "987654323", "carlos.lopez@tecnopc.cl")),
+    model.add_worker(Worker("Esteban", "Martinez", "987654324", "esteban.martinez@tecnopc.cl")),
+    model.add_worker(Worker("Jesus", "Minitti", "945612783", "jesus.minitti@tecnopc.cl"))
+
 ]
 product_uuids = [
     model.add_product(Product("Kingston", "Fury 16GB", "RAM", "DDR4 3200MHz", 75990)),
