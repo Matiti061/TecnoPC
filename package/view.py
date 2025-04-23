@@ -1,6 +1,7 @@
 # pylint: disable=I1101
 import os
 from PySide6 import QtUiTools, QtWidgets
+from tomlkit import value
 
 from package.model import Product, Worker
 
@@ -53,7 +54,7 @@ class View(BaseWidget):
         for item in self.type:
             self.widget.type_comboBox.addItem(item, item)
         self.widget.inventory_table.setHorizontalHeaderLabels([
-            "ID", "Nombre", "Tipo", "Marca", "Precio", "Stock", "Tienda"
+            "ID", "Nombre", "Tipo", "Marca", "Precio"
         ])
         self.update_table_inventory()
         # btns
@@ -99,16 +100,25 @@ class View(BaseWidget):
 
     def search_components(self):
         """Ejecuta la búsqueda de componentes según los filtros."""
-        valueMin = int(self.widget.price_min.text())
-        valueMax = int(self.widget.price_max.text())
+        valueMin_text = int(self.widget.price_min.text())
+        valueMax_text = int(self.widget.price_max.text())
         brand = self.widget.brand_edit.text()
         component_type = self.widget.type_comboBox.currentData()
 
+        valueMin = int(valueMin_text) if valueMin_text else None
+        valueMax = int(valueMax_text) if valueMax_text else None
+        
         self.widget.inventory_table.setRowCount(0)
-        filtered_components = [
-            item for item in self.components
-            if valueMin <= item['price'] <= valueMax and item['brand'] == brand and item['category'] == component_type
-        ]
+        filtered_components = []
+        for item in self.components:
+            matches_category = item['category'] == component_type
+            matches_brand = not brand or item['brand'] == brand
+            matches_min_price = valueMin is None or item['price'] >= valueMin
+            matches_max_price = valueMax is None or item['price'] <= valueMax
+
+            if matches_category and matches_brand and matches_min_price and matches_max_price:
+                filtered_components.append(item)
+
         self.widget.inventory_table.setRowCount(len(filtered_components))
         for row, item in enumerate(filtered_components):
             self.widget.inventory_table.setItem(row, 0, QtWidgets.QTableWidgetItem(item['uuid']))
@@ -116,8 +126,6 @@ class View(BaseWidget):
             self.widget.inventory_table.setItem(row, 2, QtWidgets.QTableWidgetItem(item['category']))
             self.widget.inventory_table.setItem(row, 3, QtWidgets.QTableWidgetItem(item['brand']))
             self.widget.inventory_table.setItem(row, 4, QtWidgets.QTableWidgetItem(str(item['price'])))
-            self.widget.inventory_table.setItem(row, 5, QtWidgets.QTableWidgetItem("0"))
-            self.widget.inventory_table.setItem(row, 6, QtWidgets.QTableWidgetItem("Tienda"))
 
     def show_form_add_component(self):
         """Muestra el formulario para agregar un nuevo componente."""
@@ -176,8 +184,9 @@ class View(BaseWidget):
             if self.widget.item_sale_table.item(i, 0).text() == sel['uuid']:
                 current_quantity = int(self.widget.item_sale_table.item(i, 3).text())
                 self.widget.item_sale_table.setItem(i, 3, QtWidgets.QTableWidgetItem(str(current_quantity + quantity)))
-                subtotal = int(self.widget.item_sale_table.item(i, 2).text()) * (current_quantity + quantity)
-                self.widget.item_sale_table.setItem(i, 4, QtWidgets.QTableWidgetItem(str(subtotal)))
+                self.widget.item_sale_table.setItem(i, 4, QtWidgets.QTableWidgetItem(str(
+                    int(self.widget.item_sale_table.item(i, 2).text()) * (current_quantity + quantity)
+                )))
                 pase = False
 
         if self.widget.item_sale_table.rowCount() == 0 and pase == True:
@@ -186,8 +195,7 @@ class View(BaseWidget):
             self.widget.item_sale_table.setItem(0, 1, QtWidgets.QTableWidgetItem(sel['model']))
             self.widget.item_sale_table.setItem(0, 2, QtWidgets.QTableWidgetItem(str(sel['price'])))
             self.widget.item_sale_table.setItem(0, 3, QtWidgets.QTableWidgetItem(str(quantity)))
-            subtotal = sel['price'] * quantity
-            self.widget.item_sale_table.setItem(0, 4, QtWidgets.QTableWidgetItem(str(subtotal)))
+            self.widget.item_sale_table.setItem(0, 4, QtWidgets.QTableWidgetItem(str(sel['price'] * quantity)))
         elif self.widget.item_sale_table.rowCount() > 0 and pase == True:
             row = self.widget.item_sale_table.rowCount()
             self.widget.item_sale_table.setRowCount(row + 1)
@@ -195,8 +203,7 @@ class View(BaseWidget):
             self.widget.item_sale_table.setItem(row, 1, QtWidgets.QTableWidgetItem(sel['model']))
             self.widget.item_sale_table.setItem(row, 2, QtWidgets.QTableWidgetItem(str(sel['price'])))
             self.widget.item_sale_table.setItem(row, 3, QtWidgets.QTableWidgetItem(str(quantity)))
-            subtotal = sel['price'] * quantity
-            self.widget.item_sale_table.setItem(row, 4, QtWidgets.QTableWidgetItem(str(subtotal)))
+            self.widget.item_sale_table.setItem(row, 4, QtWidgets.QTableWidgetItem(str(sel['price'] * quantity)))
 
         for i in range(self.widget.item_sale_table.rowCount()):
             subtotal += int(self.widget.item_sale_table.item(i, 4).text())
@@ -306,8 +313,6 @@ class View(BaseWidget):
             self.widget.inventory_table.setItem(row, 2, QtWidgets.QTableWidgetItem(item['category']))
             self.widget.inventory_table.setItem(row, 3, QtWidgets.QTableWidgetItem(item['brand']))
             self.widget.inventory_table.setItem(row, 4, QtWidgets.QTableWidgetItem(str(item['price'])))
-            self.widget.inventory_table.setItem(row, 5, QtWidgets.QTableWidgetItem("0"))
-            self.widget.inventory_table.setItem(row, 6, QtWidgets.QTableWidgetItem("Tienda"))
     
     def update_table_sellers(self):
         self.widget.salesman_table.clearContents()
