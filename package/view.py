@@ -1,7 +1,6 @@
 # pylint: disable=I1101
 import os
 from PySide6 import QtUiTools, QtWidgets
-from tomlkit import value
 
 from package.model import Product, Worker
 
@@ -157,8 +156,6 @@ class View(BaseWidget):
             ctype = self.widget.inventory_table.item(row_sel, 2).text()
             brand = self.widget.inventory_table.item(row_sel, 3).text()
             price = self.widget.inventory_table.item(row_sel, 4).text()
-            stock = self.widget.inventory_table.item(row_sel, 5).text()
-            store = self.widget.inventory_table.item(row_sel, 6).text()
 
             data_component = {
                 'uuid': uuid,
