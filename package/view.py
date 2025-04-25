@@ -344,7 +344,7 @@ class View(BaseWidget):
 
 
 class AddComponentDialog(QtWidgets.QDialog):
-    def __init__(self, viewmodel: ViewModel, parent=None):
+    def __init__(self, viewmodel: ViewModel, parent):
         super().__init__(parent)
         self.viewmodel = viewmodel
         loader = QtUiTools.QUiLoader()
