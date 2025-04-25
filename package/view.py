@@ -105,7 +105,7 @@ class MainView(BaseWidget):
         self.widget.inventory_table.setRowCount(0)
         filtered_components = []
         for item in self.components:
-            matches_category = (component_type == all_components_value) or (item['category'] == component_type)
+            matches_category = component_type in [all_components_value, item["category"]]
             matches_brand = not brand_input or item['brand'].lower() == brand_input.lower()
             matches_min_price = value_min is None or item['price'] >= value_min
             matches_max_price = value_max is None or item['price'] <= value_max
