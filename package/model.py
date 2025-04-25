@@ -1,4 +1,4 @@
-# pylint: disable=E0401,R0903,W0511
+# pylint: disable=E0401,W0511
 
 """
 Provides a JSON-based model.
@@ -474,7 +474,23 @@ class Model:
     """
     def __init__(self):
         self._model = _InternalModel()
-        self.manager = ManagerModel(self._model)
-        self.store = StoreModel(self._model)
-        self.worker = WorkerModel(self._model)
-        self.product = ProductModel(self._model)
+        self._manager = ManagerModel(self._model)
+        self._store = StoreModel(self._model)
+        self._worker = WorkerModel(self._model)
+        self._product = ProductModel(self._model)
+
+    @property
+    def manager(self):
+        return self._manager
+
+    @property
+    def store(self):
+        return self._store
+
+    @property
+    def worker(self):
+        return self._worker
+
+    @property
+    def product(self):
+        return self._product
