@@ -32,15 +32,15 @@
      </property>
     </spacer>
    </item>
-   <item>
-    <widget class="QWidget" name="container">
-     <property name="maximumSize">
-      <size>
-       <width>300</width>
-       <height>200</height>
-      </size>
-     </property>
-     <layout class="QVBoxLayout" name="containerLayout">
+    <item alignment="Qt::AlignHCenter">
+     <widget class="QWidget" name="container">
+       <property name="maximumSize">
+        <size>
+         <width>300</width>
+         <height>200</height>
+        </size>
+       </property>
+    <layout class="QVBoxLayout" name="containerLayout">
       <property name="contentsMargins">
        <rect>
         <x>0</x>
@@ -52,7 +52,7 @@
       <item>
        <widget class="QLabel" name="labelTitulo">
         <property name="text">
-         <string>TecnoPC</string>
+         <string><![CDATA[Tecno<span style="color:#B03A3A;">PC</span>]]></string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>

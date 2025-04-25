@@ -16,6 +16,102 @@
   <property name="windowTitle">
    <string>TecnoPC - Sistema de Gestión</string>
   </property>
+  <property name="styleSheet">
+     <string>
+     QWidget {
+       background-color: #2D2D2D;
+       color: #E0E0E0;
+       font-family: "Segoe UI", Arial, sans-serif;
+     }
+
+     QGroupBox {
+       border: 1px solid #5A5A5A;
+       border-radius: 6px;
+       margin-top: 10px;
+       color: #B0B0B0;
+     }
+
+     QGroupBox::title {
+       subcontrol-origin: margin;
+       left: 10px;
+       padding: 0 3px;
+       color: #E0E0E0
+     }
+
+     QTabWidget::pane {
+       border: none;
+       background: #3D3D3D;
+     }
+
+     QTabBar::tab {
+       background: #4A4A4A;
+       color: #E0E0E0;
+       padding: 6px 12px;
+       border-bottom: 2px solid transparent;
+     }
+
+     QTabBar::tab:selected {
+       background: #3D3D3D;
+       border-bottom: 2px solid #B03A3A;
+     }
+
+     QPushButton {
+       background-color: #B03A3A;
+       color: #FFFFFF;
+       border: none;
+       border-radius: 4px;
+       padding: 6px 14px;
+     }
+
+     QPushButton:hover {
+       background-color: #902E2E;
+     }
+
+     QPushButton:disabled {
+       background-color: #5A5A5A;
+       color: #9E9E9E;
+     }
+
+     QComboBox, QLineEdit, QSpinBox {
+       background-color: #4A4A4A;
+       border: 1px solid #5A5A5A;
+       border-radius: 4px;
+       padding: 4px;
+       color: #E0E0E0;
+     }
+
+     QComboBox:hover, QLineEdit:hover, QSpinBox:hover {
+       border-color: #B03A3A;
+     }
+
+     QTableWidget {
+         background-color: #3D3D3D;
+         color: #E0E0E0;
+         gridline-color: #5A5A5A;
+     }
+
+     QHeaderView::section {
+         background-color: #4A4A4A;
+         color: #E0E0E0;
+         border: 1px solid #5A5A5A;
+         padding: 4px;
+     }
+
+     QScrollBar:vertical, QScrollBar:horizontal {
+         background: #3D3D3D;
+         width: 12px;
+     }
+
+     QScrollBar::handle {
+         background: #5A5A5A;
+         border-radius: 4px;
+     }
+
+     QScrollBar::add-line, QScrollBar::sub-line {
+         background: none;
+     }
+   </string>
+   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
     <layout class="QHBoxLayout" name="header_layout">
@@ -39,7 +135,7 @@
         </font>
        </property>
        <property name="text">
-        <string>TecnoPC</string>
+        <string><![CDATA[Tecno<span style="color:#B03A3A;">PC</span>]]></string>
        </property>
       </widget>
      </item>
