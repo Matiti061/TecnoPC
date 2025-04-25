@@ -40,7 +40,7 @@ class Ui_Form(object):
         sizePolicy.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
         self.label.setSizePolicy(sizePolicy)
         font = QFont()
-        font.setFamilies([u"Arial"])
+        font.setFamilies([u"Segoe UI"])
         font.setPointSize(20)
         font.setBold(True)
         font.setItalic(False)
@@ -281,7 +281,7 @@ class Ui_Form(object):
         self.price_label = QLabel(self.groupBox_2)
         self.price_label.setObjectName(u"price_label")
         font1 = QFont()
-        font1.setFamilies([u"Arial"])
+        font1.setFamilies([u"Segoe UI"])
         font1.setPointSize(14)
         font1.setBold(True)
         font1.setStrikeOut(False)
@@ -348,7 +348,7 @@ class Ui_Form(object):
         self.label_6 = QLabel(self.groupBox_5)
         self.label_6.setObjectName(u"label_6")
         font2 = QFont()
-        font2.setFamilies([u"Arial"])
+        font2.setFamilies([u"Segoe UI"])
         font2.setPointSize(9)
         self.label_6.setFont(font2)
 
@@ -372,7 +372,103 @@ class Ui_Form(object):
 
     def retranslateUi(self, Form):
         Form.setWindowTitle(QCoreApplication.translate("Form", u"TecnoPC - Sistema de Gesti\u00f3n", None))
-        self.label.setText(QCoreApplication.translate("Form", u"TecnoPC", None))
+        Form.setStyleSheet(QCoreApplication.translate("Form", u"\n"
+"     QWidget {\n"
+"       background-color: #2D2D2D;\n"
+"       color: #E0E0E0;\n"
+"       font-family: \"Segoe UI\", Arial, sans-serif;\n"
+"     }\n"
+"\n"
+"     QGroupBox {\n"
+"       border: 1px solid #5A5A5A;\n"
+"       border-radius: 6px;\n"
+"       margin-top: 10px;\n"
+"       color: #B0B0B0;\n"
+"     }\n"
+"\n"
+"     QGroupBox::title {\n"
+"       subcontrol-origin: margin;\n"
+"       left: 10px;\n"
+"       padding: 0 3px;\n"
+"       color: #E0E0E0\n"
+"     }\n"
+"\n"
+"     QTabWidget::pane {\n"
+"       border: none;\n"
+"       background: #3D3D3D;\n"
+"     }\n"
+"\n"
+"     QTabBar::tab {\n"
+"       background: #4A4A4A;\n"
+"       color: #E0E0E0;\n"
+"       padding: 6px 12px;\n"
+"       border-bottom: 2px solid transparent;\n"
+"     }\n"
+"\n"
+"     QTabBar::tab:selected {\n"
+"       background: #3D3D3D;\n"
+"       border-bottom: 2px solid #B03A3A;\n"
+"     }\n"
+"\n"
+"     QPushButton {\n"
+"       background-color: #B03A3A;\n"
+"       color: #FFFFFF;\n"
+"       border: none;\n"
+"       border-radius: 4px"
+                        ";\n"
+"       padding: 6px 14px;\n"
+"     }\n"
+"\n"
+"     QPushButton:hover {\n"
+"       background-color: #902E2E;\n"
+"     }\n"
+"\n"
+"     QPushButton:disabled {\n"
+"       background-color: #5A5A5A;\n"
+"       color: #9E9E9E;\n"
+"     }\n"
+"\n"
+"     QComboBox, QLineEdit, QSpinBox {\n"
+"       background-color: #4A4A4A;\n"
+"       border: 1px solid #5A5A5A;\n"
+"       border-radius: 4px;\n"
+"       padding: 4px;\n"
+"       color: #E0E0E0;\n"
+"     }\n"
+"\n"
+"     QComboBox:hover, QLineEdit:hover, QSpinBox:hover {\n"
+"       border-color: #B03A3A;\n"
+"     }\n"
+"\n"
+"     QTableWidget {\n"
+"         background-color: #3D3D3D;\n"
+"         color: #E0E0E0;\n"
+"         gridline-color: #5A5A5A;\n"
+"     }\n"
+"\n"
+"     QHeaderView::section {\n"
+"         background-color: #4A4A4A;\n"
+"         color: #E0E0E0;\n"
+"         border: 1px solid #5A5A5A;\n"
+"         padding: 4px;\n"
+"     }\n"
+"\n"
+"     QScrollBar:vertical, QScrollBar:horizontal {\n"
+"         background: #3D3D3D;\n"
+"         width: 12px;\n"
+"     "
+                        "}\n"
+"\n"
+"     QScrollBar::handle {\n"
+"         background: #5A5A5A;\n"
+"         border-radius: 4px;\n"
+"     }\n"
+"\n"
+"     QScrollBar::add-line, QScrollBar::sub-line {\n"
+"         background: none;\n"
+"     }\n"
+"   ", None))
+        self.label.setText(QCoreApplication.translate("Form", u"Tecno<span style=\"color:#B03A3A;\">PC</span>", None))
         self.label_2.setText(QCoreApplication.translate("Form", u"Tienda:", None))
         self.filtro_group.setTitle(QCoreApplication.translate("Form", u"Filtros de b\u00fasqueda", None))
         self.tipo_label.setText(QCoreApplication.translate("Form", u"Tipo:", None))
@@ -380,8 +476,8 @@ class Ui_Form(object):
         self.precio_min_label.setText(QCoreApplication.translate("Form", u"Precio m\u00edn:", None))
         self.precio_max_label.setText(QCoreApplication.translate("Form", u"Precio max:", None))
         self.search_btn.setText(QCoreApplication.translate("Form", u"Buscar", None))
-        self.add_component_btn.setText(QCoreApplication.translate("Form", u"Agregar Componente", None))
-        self.edit_component_btn.setText(QCoreApplication.translate("Form", u"Editar Componente", None))
+        self.add_component_btn.setText(QCoreApplication.translate("Form", u"Agregar Producto", None))
+        self.edit_component_btn.setText(QCoreApplication.translate("Form", u"Editar Producto", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QCoreApplication.translate("Form", u"Inventario", None))
         self.groupBox.setTitle(QCoreApplication.translate("Form", u"Nueva Venta", None))
         self.label_3.setText(QCoreApplication.translate("Form", u"Vendedor:", None))
@@ -389,7 +485,7 @@ class Ui_Form(object):
         self.label_5.setText("")
         self.groupBox_2.setTitle(QCoreApplication.translate("Form", u"Venta Actual", None))
         self.status_label.setText(QCoreApplication.translate("Form", u"No hay venta en curso", None))
-        self.label_7.setText(QCoreApplication.translate("Form", u"Componente:", None))
+        self.label_7.setText(QCoreApplication.translate("Form", u"Producto :", None))
         self.label_8.setText(QCoreApplication.translate("Form", u"Cantidad:", None))
         self.add_item_btn.setText(QCoreApplication.translate("Form", u"Agregar Item", None))
         self.price_label.setText(QCoreApplication.translate("Form", u"Total: 0 CLP", None))
