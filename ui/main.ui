@@ -17,11 +17,11 @@
    <string>TecnoPC - Sistema de Gestión</string>
   </property>
   <property name="styleSheet">
-     <string>
+   <string>
      QWidget {
        background-color: #2D2D2D;
        color: #E0E0E0;
-       font-family: "Segoe UI", Arial, sans-serif;
+       font-family: &quot;Segoe UI&quot;, Arial, sans-serif;
      }
 
      QGroupBox {
@@ -111,7 +111,7 @@
          background: none;
      }
    </string>
-   </property>
+  </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
     <layout class="QHBoxLayout" name="header_layout">
@@ -128,14 +128,14 @@
        </property>
        <property name="font">
         <font>
-         <family>Arial</family>
+         <family>Segoe UI</family>
          <pointsize>20</pointsize>
          <italic>false</italic>
          <bold>true</bold>
         </font>
        </property>
        <property name="text">
-        <string><![CDATA[Tecno<span style="color:#B03A3A;">PC</span>]]></string>
+        <string>Tecno&lt;span style=&quot;color:#B03A3A;&quot;&gt;PC&lt;/span&gt;</string>
        </property>
       </widget>
      </item>
@@ -287,14 +287,14 @@
          <item>
           <widget class="QPushButton" name="add_component_btn">
            <property name="text">
-            <string>Agregar Componente</string>
+            <string>Agregar Producto</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QPushButton" name="edit_component_btn">
            <property name="text">
-            <string>Editar Componente</string>
+            <string>Editar Producto</string>
            </property>
           </widget>
          </item>
@@ -394,7 +394,7 @@
                </sizepolicy>
               </property>
               <property name="text">
-               <string>Componente:</string>
+               <string>Producto :</string>
               </property>
              </widget>
             </item>
@@ -452,7 +452,7 @@
              <widget class="QLabel" name="price_label">
               <property name="font">
                <font>
-                <family>Arial</family>
+                <family>Segoe UI</family>
                 <pointsize>14</pointsize>
                 <bold>true</bold>
                 <strikeout>false</strikeout>
@@ -538,7 +538,7 @@
            <widget class="QLabel" name="label_6">
             <property name="font">
              <font>
-              <family>Arial</family>
+              <family>Segoe UI</family>
               <pointsize>9</pointsize>
              </font>
             </property>
