@@ -9,8 +9,10 @@ if pathlib.Path("data.json").exists():
 model = Model()
 
 # Managers
-model.manager.create_manager("12345678", Manager("Matías", "Barrientos", "+56912345678",
-                                                 "matias.barrientos@administracion.tecnopc.cl", "contraseña123"))
+model.manager.create_manager(
+    "12345678",
+    Manager("Matías", "Barrientos", "+56912345678", "matias.barrientos@administracion.tecnopc.cl", "contraseña123")
+)
 
 # Stores
 stores = [
