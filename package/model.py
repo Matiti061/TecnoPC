@@ -481,16 +481,32 @@ class Model:
 
     @property
     def manager(self):
+        """
+        Gets the manager variable.
+        :return: Manager variable
+        """
         return self._manager
 
     @property
     def store(self):
+        """
+        Gets the store variable.
+        :return: Store variable
+        """
         return self._store
 
     @property
     def worker(self):
+        """
+        Gets the worker variable.
+        :return: Worker variable
+        """
         return self._worker
 
     @property
     def product(self):
+        """
+        Gets the product variable.
+        :return: Product variable
+        """
         return self._product
