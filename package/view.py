@@ -102,6 +102,7 @@ class View(BaseWidget):
             self.widget.salesman_table.setHorizontalHeaderLabels([
                 "ID",
                 "Nombre",
+                "Apellido",
                 "Email",
                 "Teléfono",
                 "Tienda"
@@ -276,11 +277,13 @@ class View(BaseWidget):
         if row_sel >= 0:
             uuid = self.widget.salesman_table.item(row_sel, 0).text()
             name = self.widget.salesman_table.item(row_sel, 1).text()
-            email = self.widget.salesman_table.item(row_sel, 2).text()
-            phone = self.widget.salesman_table.item(row_sel, 3).text()
+            lastname = self.widget.salesman_table.item(row_sel, 2).text()
+            email = self.widget.salesman_table.item(row_sel, 3).text()
+            phone = self.widget.salesman_table.item(row_sel, 4).text()
 
             data_seller = {
                 'uuid': uuid,
+                'lastname': lastname,
                 'name': name,
                 'email': email,
                 'phone': phone
@@ -290,6 +293,7 @@ class View(BaseWidget):
 
             dialog_edit.setWindowTitle("Editar Vendedor")
             dialog_edit.widget.name_edit.setText(data_seller['name'])
+            dialog_edit.widget.lastname_edit.setText(data_seller['lastname'])
             dialog_edit.widget.mail_edit.setText(data_seller['email'])
             dialog_edit.widget.phone_edit.setText(data_seller['phone'])
 
@@ -325,13 +329,15 @@ class View(BaseWidget):
     
     def update_table_sellers(self):
         self.widget.salesman_table.clearContents()
+        self.widget.salesman_table.setColumnCount(6)
         self.widget.salesman_table.setRowCount(len(self.salesmans))
         for row, item in enumerate(self.salesmans):
             self.widget.salesman_table.setItem(row, 0, QtWidgets.QTableWidgetItem(item['uuid']))
             self.widget.salesman_table.setItem(row, 1, QtWidgets.QTableWidgetItem(item['name']))
-            self.widget.salesman_table.setItem(row, 2, QtWidgets.QTableWidgetItem(item['mail']))
-            self.widget.salesman_table.setItem(row, 3, QtWidgets.QTableWidgetItem(item['phone']))
-            self.widget.salesman_table.setItem(row, 4, QtWidgets.QTableWidgetItem("Tienda"))
+            self.widget.salesman_table.setItem(row, 2, QtWidgets.QTableWidgetItem(item['lastName']))
+            self.widget.salesman_table.setItem(row, 3, QtWidgets.QTableWidgetItem(item['mail']))
+            self.widget.salesman_table.setItem(row, 4, QtWidgets.QTableWidgetItem(item['phone']))
+            self.widget.salesman_table.setItem(row, 5, QtWidgets.QTableWidgetItem("Tienda"))
 
 class AddComponentDialog(QtWidgets.QDialog):
     def __init__(self, viewmodel, parent=None):
