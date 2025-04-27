@@ -1,4 +1,6 @@
-# pylint: disable=C0114
+"""
+Generates an initial data.json containing sample data.
+"""
 
 import pathlib
 from package.model import Model, Manager, Store, Worker, Product

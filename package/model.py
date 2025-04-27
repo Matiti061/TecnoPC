@@ -1,4 +1,4 @@
-# pylint: disable=E0401,W0511
+# pylint: disable=E0401
 
 """
 Provides a JSON-based model.
