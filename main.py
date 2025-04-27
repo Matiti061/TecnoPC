@@ -1,4 +1,8 @@
-# pylint: disable=C0114,I1101
+# pylint: disable=I1101
+
+"""
+This script executes the project.
+"""
 
 import sys
 from package import Model, View, ViewModel
