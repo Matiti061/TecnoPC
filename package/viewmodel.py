@@ -9,7 +9,7 @@ class ViewModel:
         self._model = model
         self._manager = self._model.manager
         self._store = self._model.store
-        self._worker = self._model.worker
+        self._employee = self._model.employee
         self._product = self._model.product
 
     @property
@@ -21,8 +21,8 @@ class ViewModel:
         return self._store
 
     @property
-    def worker(self):
-        return self._worker
+    def employee(self):
+        return self._employee
 
     @property
     def product(self):

@@ -3,7 +3,7 @@ Generates an initial data.json containing sample data.
 """
 
 import pathlib
-from package.model import Model, Manager, Store, Worker, Product
+from package.model import Model, Manager, Store, Employee, Product
 
 if pathlib.Path("data.json").exists():
     raise FileExistsError("Data file already exists")
@@ -28,17 +28,17 @@ store_uuids = []
 for store in stores:
     store_uuids.append(model.store.create_store(store))
 
-# Workers
-workers = [
-    Worker("Juan", "Pérez", "987654321", "juan.perez@tecnopc.cl"),
-    Worker("María", "Gomez", "987654322", "maria.gomez@tecnopc.cl"),
-    Worker("Carlos", "López", "987654323", "carlos.lopez@tecnopc.cl"),
-    Worker("Esteban", "Martínez", "987654324", "esteban.martinez@tecnopc.cl"),
-    Worker("Jesús", "Minnitti", "945612783", "jesus.minnitti@tecnopc.cl")
+# Employees
+employees = [
+    Employee("Juan", "Pérez", "987654321", "juan.perez@tecnopc.cl"),
+    Employee("María", "Gomez", "987654322", "maria.gomez@tecnopc.cl"),
+    Employee("Carlos", "López", "987654323", "carlos.lopez@tecnopc.cl"),
+    Employee("Esteban", "Martínez", "987654324", "esteban.martinez@tecnopc.cl"),
+    Employee("Jesús", "Minnitti", "945612783", "jesus.minnitti@tecnopc.cl")
 ]
-worker_uuids = []
-for worker in workers:
-    worker_uuids.append(model.worker.create_worker(worker))
+employee_uuids = []
+for employee in employees:
+    employee_uuids.append(model.employee.create_employee(employee))
 
 # Products
 products = [
@@ -64,4 +64,4 @@ for product in products:
 
 # Store operations
 model.product.create_product_in_store(store_uuids[0], product_uuids[2])
-model.worker.create_worker_in_store(store_uuids[0], worker_uuids[1])
+model.employee.create_employee_in_store(store_uuids[0], employee_uuids[1])
