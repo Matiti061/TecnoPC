@@ -28,9 +28,6 @@
      </item>
     </layout>
    </item>
-   <item row="1" column="0">
-    <widget class="QTableView" name="table_view"/>
-   </item>
    <item row="2" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
@@ -55,6 +52,9 @@
       </widget>
      </item>
     </layout>
+   </item>
+   <item row="1" column="0">
+    <widget class="QTableWidget" name="table_widget"/>
    </item>
   </layout>
  </widget>

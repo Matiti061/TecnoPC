@@ -17,7 +17,7 @@
    <item row="0" column="0">
     <widget class="QTabWidget" name="tab_widget">
      <property name="currentIndex">
-      <number>2</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="summary_tab">
       <attribute name="title">
@@ -29,41 +29,31 @@
        <string>Tiendas</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
-       <item row="0" column="0" colspan="3">
-        <widget class="QTableView" name="table_view"/>
-       </item>
        <item row="1" column="0">
-        <widget class="QPushButton" name="create_button">
+        <widget class="QPushButton" name="store_create_button">
          <property name="text">
           <string>Agregar</string>
          </property>
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="QPushButton" name="update_button">
+        <widget class="QPushButton" name="store_update_button">
          <property name="text">
           <string>Editar</string>
          </property>
         </widget>
        </item>
        <item row="1" column="2">
-        <widget class="QPushButton" name="delete_button">
+        <widget class="QPushButton" name="store_delete_button">
          <property name="text">
           <string>Borrar</string>
          </property>
         </widget>
        </item>
+       <item row="0" column="0" colspan="3">
+        <widget class="QTableWidget" name="store_table_widget"/>
+       </item>
       </layout>
-     </widget>
-     <widget class="QWidget" name="employees_tab">
-      <attribute name="title">
-       <string>Empleados</string>
-      </attribute>
-     </widget>
-     <widget class="QWidget" name="products_tab">
-      <attribute name="title">
-       <string>Productos</string>
-      </attribute>
      </widget>
     </widget>
    </item>

@@ -35,6 +35,7 @@ class Employee:
     last_name: str
     phone: str
     mail: str
+    password: str
 
 
 @dataclasses.dataclass
@@ -43,7 +44,6 @@ class Manager(Employee):
     Defines a dataclass used for managers.
     Inherits most of its properties from the Employee dataclass.
     """
-    password: str
 
 
 @dataclasses.dataclass
@@ -257,7 +257,7 @@ class EmployeeModel:
     def __init__(self, model: _InternalModel):
         self._model = model
 
-    def create_employee(self, employee: Employee):
+    def create_employee(self, identification: str, employee: Employee):
         """
         Adds an employee to the deserialized JSON file.
         :param employee: Instance of Employee dataclass.
@@ -266,10 +266,12 @@ class EmployeeModel:
         employee_uuid = str(uuid.uuid4())
         self._model.data["employees"].append({
             "uuid": employee_uuid,
+            "identification": identification,
             "name": employee.name,
             "lastName": employee.last_name,
             "phone": employee.phone,
             "mail": employee.mail,
+            "password": employee.password,
             "createdAt": f"{int(time.time())}",
             "updatedAt": None
         })
@@ -321,6 +323,7 @@ class EmployeeModel:
             "lastName": employee.last_name,
             "phone": employee.phone,
             "mail": employee.mail,
+            "password": employee.password,
             "updatedAt": f"{int(time.time())}"
         })
 
