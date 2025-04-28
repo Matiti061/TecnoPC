@@ -11,10 +11,8 @@ if pathlib.Path("data.json").exists():
 model = Model()
 
 # Managers
-model.manager.create_manager(
-    "12345678",
-    Manager("Matías", "Barrientos", "+56912345678", "matias.barrientos@administracion.tecnopc.cl", "contraseña123")
-)
+model.manager.create_manager("12345678", Manager("Matías", "Barrientos", "+56912345678",
+                                                 "matias.barrientos@administracion.tecnopc.cl", "contraseña123"))
 
 # Stores
 stores = [
@@ -30,15 +28,22 @@ for store in stores:
 
 # Employees
 employees = [
-    Employee("Juan", "Pérez", "987654321", "juan.perez@tecnopc.cl"),
-    Employee("María", "Gomez", "987654322", "maria.gomez@tecnopc.cl"),
-    Employee("Carlos", "López", "987654323", "carlos.lopez@tecnopc.cl"),
-    Employee("Esteban", "Martínez", "987654324", "esteban.martinez@tecnopc.cl"),
-    Employee("Jesús", "Minnitti", "945612783", "jesus.minnitti@tecnopc.cl")
+    Employee("Juan", "Pérez", "987654321", "juan.perez@tecnopc.cl", "juanperez123"),
+    Employee("María", "Gomez", "987654322", "maria.gomez@tecnopc.cl", "mariagomez123"),
+    Employee("Carlos", "López", "987654323", "carlos.lopez@tecnopc.cl", "carloslopez123"),
+    Employee("Esteban", "Martínez", "987654324", "esteban.martinez@tecnopc.cl", "estebanmartinez123"),
+    Employee("Jesús", "Minnitti", "945612783", "jesus.minnitti@tecnopc.cl", "jesusminnitti123")
+]
+ruts = [
+    "22000000", # 1
+    "23000000", # K
+    "24000000", # 8
+    "25000000", # 6
+    "27000000"  # 2
 ]
 employee_uuids = []
-for employee in employees:
-    employee_uuids.append(model.employee.create_employee(employee))
+for i in range(len(employees)):
+    employee_uuids.append(model.employee.create_employee(ruts[i], employees[i]))
 
 # Products
 products = [

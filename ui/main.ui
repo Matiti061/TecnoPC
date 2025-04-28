@@ -14,20 +14,10 @@
    <string>TecnoPC</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="0">
-    <widget class="QLabel" name="label_2">
-     <property name="text">
-      <string>Los mejores componentes para tu PC.</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignmentFlag::AlignCenter</set>
-     </property>
-    </widget>
-   </item>
    <item row="2" column="0">
-    <widget class="QPushButton" name="login_button">
+    <widget class="QPushButton" name="employee_button">
      <property name="text">
-      <string>Inicio de sesión</string>
+      <string>Empleados</string>
      </property>
     </widget>
    </item>
@@ -41,6 +31,23 @@
      </property>
      <property name="alignment">
       <set>Qt::AlignmentFlag::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Los mejores componentes para tu PC.</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QPushButton" name="manager_button">
+     <property name="text">
+      <string>Gerentes</string>
      </property>
     </widget>
    </item>
