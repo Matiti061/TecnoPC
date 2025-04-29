@@ -1,7 +1,7 @@
 import os
 
 from PySide6 import QtGui, QtUiTools, QtWidgets
-from .identification import Identification
+from .rut import RUT
 from .model import Store, Employee, Product
 from .viewmodel import ViewModel
 
@@ -32,8 +32,8 @@ class LoginWidget(BaseWidget):
     def _handle_ok_button(self):
         password: str = self.ui_widget.password_input.text()
         try:
-            identification = Identification(self.ui_widget.rut_input.text())
-            info = self._viewmodel.try_login(identification.identification, password)
+            identification = RUT(self.ui_widget.rut_input.text())
+            info = self._viewmodel.try_login(identification.rut, password)
             if info[1] != self._user_type:
                 raise ValueError
         except ValueError:
