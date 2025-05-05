@@ -1,95 +1,107 @@
 # TecnoPC
 
-![Imagen de TecnoPC](assets/TecnoPCj.jpg)
+![Imagen de TecnoPC](assets/TecnoPC.png)
 
-**Los mejores componentes para tu PC**
+Los mejores componentes para tu PC.
 
-Este programa es funcional (de momento) en Python 3.13.2  **No probado en otras versiones**
+Este programa es funcional en Python 3.13. **No probado en otras versiones.**
 
 ## Requisitos
 
-En caso de querer desarrollar, instalar las dependencias necesarias usando:
+- Instala las dependencias necesarias.
 
-> pip install -r requirements.dev.txt -r requirements.txt
+```shell
+pip install -r requirements.txt
+```
 
-En caso de querer solo ejecutar el programa, instalar las dependencias necesarias usando:
+- En caso de querer desarrollar, instala las dependencias adicionales.
 
-> pip install -r requirements.txt
+```shell
+pip install -r requirements.dev.txt
+```
 
-## Ejecutacion del programa
+- Ejecuta ```data.py``` para generar los datos iniciales del modelo.
 
-- Mover archivo *model_unit_test.py* a la carpeta raiz (Mismo nivel quie el archivo main), para que se ejecuten los datos
+```shell
+python data.py
+```
 
-- Luego de eso si ejecutar el archivo main.py escribiendo en la terminal:
+## Ejecución del programa
 
-> python main.py
+- Ejecuta el archivo main.py.
 
+```shell
+python main.py
+```
 
-## Estructura de los archivos momentanea
+## Estructura del proyecto
 
-### Package
+### assets
 
-Modelos del programa para la ejecucion de la interfaz
+- Contiene recursos tales como la imagen de TecnoPC.
 
-### Scripts
+### package
 
-Se encuentra el archivo de model_unit_test.py para poder generar todo lo que son datos 
+- Contiene la implementación del patrón de arquitectura [Modelo–vista–modelo de vista](https://es.wikipedia.org/wiki/Modelo%E2%80%93vista%E2%80%93modelo_de_vista).
 
-#### Temp
+### ui
 
-Subcarpeta dentro de Scripts la cual contiene todos los controladores del programa
+- Contiene las interfaces de usuario las cuales son usadas por la vista.
 
-### UI
+### Carpeta raíz
 
-Archivos UI los cuales mantienen las interfaces (Deja agrupado los archivos de interfaces)
-
-#### De manera suelta se encuentra el archivo main en la carpeta raiz
+- data.py: Script para generar el archivo JSON inicial usado por el modelo.
+- main.py: Script para ejecutar TecnoPC.
 
 ## Software necesario
 
-### Desarrollo
-
-* [Git](https://git-scm.com/)
-
 ### Uso
 
-* [Python](https://www.python.org/)
+- [Python](https://www.python.org/)
 
-## Software recomendado
+### Desarrollo
 
-* [PyCharm](https://www.jetbrains.com/pycharm/): IDE para programar en Python
-(Gracias Esteban por tanto)
+- [Git](https://git-scm.com/)
+- [PyCharm](https://www.jetbrains.com/pycharm/) o algún programa similar
 
 ## Licencia
 
-* El repositorio esta licenciado bajo la licencia MIT, la puedes ver por [aquí](https://github.com/Matiti061/TecnoPC/blob/main/LICENSE)
+- El repositorio está licenciado bajo la licencia MIT. Más información [aquí](https://github.com/JustLobo1121/TecnoPC/blob/main/LICENSE).
 
-## PARA HACER
+## Buenas prácticas
 
-Solo para uso interno de programadores en este repositorio
+Lo siguiente solo aplica para desarrollo.
 
-### Necesario
+### Linting de archivos .py
 
-* [X] OK: Agregar funcion de inicio de sesion (Funcion lista implementada en la rama main)
-* [x] OK: Agregar funciones de Busqueda de productos, Agregar item,
-Finalizar Venta, agregar estadisticas (Archivo: interfaz_tienda.py)
-* [X] OK: Agregar la funcion de poder cancelar una venta de manera rapida
-* [X] OK: Agregar tabla de ID de productos, Nombre, tipo, etc.
-* [X] OK: Colocar un filtro de busqueda de los productos
-* [X] OK: Poder cambiar entre tiendas al igual que entre vendedores en el
-apartado de Ventas
-* [X] OK: Agregar algun tipo de limite al lugar de agregar items en la pestaña
-de Ventas
-* [X] OK: Poder calcular las comisiones de cada vendedor (Plus para que el profe
-nos quiera mucho, aunque falta mejorarlo)
-* [x] OK: Cambiar la moneda de dolares a pesos chilenos (USD to CLP)
+- Escanear código por posibles problemas.
 
-### No tan necesario but to do igual
+```shell
+pylint <file>
+```
 
-* [X] OK: Mejorar el diseño de la pagina con Qt Designer o algun otro editor
-* [X] OK: Cambiar las ciudades de las tiendas (Hay ciudades aleatorias
-las cuales tienen nombres de PM pero se ubican en las ciudades que mas venden de
-cada sector de Chile) (Si quieren poner alguna tienda, adelante)
-* [X] OK: Poner limite al lugar de "Precio Max" en el apartado de Inventario
+- \<file> debe ser algún archivo .py, como por ejemplo **main.py**.
 
+### Linting de archivos .md
 
+- Escanear documentación por posibles problemas.
+
+```shell
+pymarkdownlnt scan <file>
+```
+
+- **Intentar** corregir posibles problemas de forma automática.
+
+```shell
+pymarkdownlnt fix <file>
+```
+
+- \<file> debe ser algún archivo .md, como por ejemplo **README.md**.
+
+### Commits
+
+- Usar [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)
+para los mensajes de commits.
+
+- [Sumario rápido](https://www.conventionalcommits.org/en/v1.0.0/#summary) de
+Conventional Commits
