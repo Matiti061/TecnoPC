@@ -2,19 +2,16 @@
 <ui version="4.0">
  <class>Form</class>
  <widget class="QWidget" name="Form">
-  <property name="windowModality">
-   <enum>Qt::WindowModality::NonModal</enum>
-  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>736</width>
-    <height>560</height>
+    <width>412</width>
+    <height>476</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>TecnoPC - Sistema de Gestión</string>
+   <string>TecnoPC</string>
   </property>
   <property name="styleSheet">
    <string>
@@ -113,11 +110,12 @@
    </string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
-    <layout class="QHBoxLayout" name="header_layout">
-     <property name="sizeConstraint">
-      <enum>QLayout::SizeConstraint::SetMaximumSize</enum>
+   <item row="2" column="0">
+    <widget class="QPushButton" name="employee_button">
+     <property name="text">
+      <string>Empleados</string>
      </property>
+<<<<<<< HEAD
      <item>
       <widget class="QLabel" name="label">
        <property name="sizePolicy">
@@ -170,12 +168,39 @@
       </layout>
      </item>
     </layout>
+=======
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap>assets/TecnoPC.400x400.png</pixmap>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignCenter</set>
+     </property>
+    </widget>
+>>>>>>> remotes/esteuwu/main
    </item>
    <item row="1" column="0">
-    <widget class="QTabWidget" name="tabWidget">
-     <property name="currentIndex">
-      <number>0</number>
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Los mejores componentes para tu PC.</string>
      </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QPushButton" name="manager_button">
+     <property name="text">
+      <string>Gerentes</string>
+     </property>
+<<<<<<< HEAD
      <widget class="QWidget" name="tab">
       <attribute name="title">
        <string>Inventario</string>
@@ -562,6 +587,8 @@ donde realizamos una revisión eficaz y oportuna para darle solución a sus prob
        </item>
       </layout>
      </widget>
+=======
+>>>>>>> remotes/esteuwu/main
     </widget>
    </item>
   </layout>
