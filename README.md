@@ -1,71 +1,107 @@
 # TecnoPC
 
-**Los mejores componentes para tu PC**
+![Imagen de TecnoPC](assets/TecnoPC.png)
 
-Este programa es funcional (de momento) en Python 3.13.2  **No probado en otras versiones**
+Los mejores componentes para tu PC.
 
-## Ejecutacion del programa
+Este programa es funcional en Python 3.13. **No probado en otras versiones.**
 
-Solo con que ejecutes el archivo main esta bien, por ejemplo:
+## Requisitos
 
-> $ python main.py
+- Instala las dependencias necesarias.
 
-## Estructura de los archivos momentanea
+```shell
+pip install -r requirements.txt
+```
 
-### Controllers
+- En caso de querer desarrollar, instala las dependencias adicionales.
 
-Todos los archivos controladores tales como el inventario y la venta de productos
+```shell
+pip install -r requirements.dev.txt
+```
 
-### Models
+- Ejecuta ```data.py``` para generar los datos iniciales del modelo.
 
-Carpeta que da cada modelo de venta, de inventario, componente, etc.
+```shell
+python data.py
+```
 
-### Views
+## Ejecución del programa
 
-En este archivo es la interfaz, esta todo hecho con PyQt6 listo para ejecutar
+- Ejecuta el archivo main.py.
 
-**De manera suelta se encuentra el archivo main, no esta dentro de una carpeta especifica**
+```shell
+python main.py
+```
+
+## Estructura del proyecto
+
+### assets
+
+- Contiene recursos tales como la imagen de TecnoPC.
+
+### package
+
+- Contiene la implementación del patrón de arquitectura [Modelo–vista–modelo de vista](https://es.wikipedia.org/wiki/Modelo%E2%80%93vista%E2%80%93modelo_de_vista).
+
+### ui
+
+- Contiene las interfaces de usuario las cuales son usadas por la vista.
+
+### Carpeta raíz
+
+- data.py: Script para generar el archivo JSON inicial usado por el modelo.
+- main.py: Script para ejecutar TecnoPC.
 
 ## Software necesario
 
-### Desarrollo
-
-* [Git](https://git-scm.com/)
-
 ### Uso
 
-* [Python](https://www.python.org/)
+- [Python](https://www.python.org/)
 
-## Software recomendado
+### Desarrollo
 
-* [PyCharm](https://www.jetbrains.com/pycharm/): IDE para programar en Python (Gracias Esteban por tanto)
+- [Git](https://git-scm.com/)
+- [PyCharm](https://www.jetbrains.com/pycharm/) o algún programa similar
 
 ## Licencia
 
-* El repositorio esta licenciado bajo la licencia MIT, la puedes ver por [aquí](https://github.com/Matiti061/TecnoPC/blob/main/LICENSE)
+- El repositorio está licenciado bajo la licencia MIT. Más información [aquí](https://github.com/JustLobo1121/TecnoPC/blob/main/LICENSE).
 
-## PARA HACER
+## Buenas prácticas
 
-Solo para uso interno de programadores en este repositorio
+Lo siguiente solo aplica para desarrollo.
 
-### Necesario
+### Linting de archivos .py
 
-* [ ] Pendiente: Agregar funciones de Busqueda de productos, Agregar item, Finalizar Venta, agregar estadisticas (Archivo: interfaz_tienda.py)
-* [X] OK: Agregar la funcion de poder cancelar una venta de manera rapida
-* [X] OK: Agregar tabla de ID de productos, Nombre, tipo, etc.
-* [X] OK: Colocar un filtro de busqueda de los productos
-* [X] OK: Poder cambiar entre tiendas al igual que entre vendedores en el apartado de Ventas
-* [X] OK: Agregar algun tipo de limite al lugar de agregar items en la pestaña de Ventas
-* [X] OK: Poder calcular las comisiones de cada vendedor (Plus para que el profe nos quiera mucho, aunque falta mejorarlo)
+- Escanear código por posibles problemas.
 
-### No tan necesario pero bonito
+```shell
+pylint <file>
+```
 
-* [ ] Pendiente: Mejorar el diseño de la pagina con Qt Designer o algun otro editor
-* [ ] Pendiente: Cambiar las ciudades de las tiendas (Hay ciudades aleatorias las cuales tienen nombres de PM pero se ubican en las ciudades que mas venden de cada sector de Chile) (Si quieren poner alguna tienda, adelante)
-* [X] OK: Poner limite al lugar de "Precio Max" en el apartado de Inventario
-* [ ] Pendiente: Agregar algo de gerente como en AeroChinquihue (No lo dijo el profe pero si alguien lo quiere hacer adelante, no me quiero calentar la cabeza en eso los quiero mucho) 
+- \<file> debe ser algún archivo .py, como por ejemplo **main.py**.
 
+### Linting de archivos .md
 
+- Escanear documentación por posibles problemas.
 
+```shell
+pymarkdownlnt scan <file>
+```
 
+- **Intentar** corregir posibles problemas de forma automática.
 
+```shell
+pymarkdownlnt fix <file>
+```
+
+- \<file> debe ser algún archivo .md, como por ejemplo **README.md**.
+
+### Commits
+
+- Usar [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)
+para los mensajes de commits.
+
+- [Sumario rápido](https://www.conventionalcommits.org/en/v1.0.0/#summary) de
+Conventional Commits
