@@ -1,6 +1,6 @@
 # TecnoPC
 
-![Imagen de TecnoPC](assets/TecnoPC.jpg)
+![Imagen de TecnoPC](assets/TecnoPC.png)
 
 Los mejores componentes para tu PC.
 
