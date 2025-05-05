@@ -8,10 +8,6 @@ import dataclasses
 import json
 import time
 import uuid
-import typing_extensions
-
-if typing_extensions.TYPE_CHECKING:
-    import _typeshed
 
 
 @dataclasses.dataclass
@@ -123,7 +119,7 @@ class _InternalModel:
         """
         Serializes the deserialized JSON and saves it to disk.
         """
-        with open("data.json", "w", encoding="utf-8") as file:  # type: _typeshed.SupportsWrite[str]
+        with open("data.json", "w", encoding="utf-8") as file:
             # TODO: Remove indent for prod
             json.dump(self.data, file, indent=4)
 
