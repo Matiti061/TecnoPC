@@ -164,6 +164,33 @@ class ManagementWidget(BaseWidget):
         # update in both combo boxes, stores array and storenames.. jeez might want to optimize that
         QtWidgets.QMessageBox.information(self._aux_widget.ui_widget, "Información", "Tienda actualizada con éxito.")
 
+class EmployeeWidget(BaseWidget):
+    def __init__(self, viewmodel: ViewModel):
+        super().__init__(os.path.join("ui","employee.ui"))
+        self._viewmodel = viewmodel
+        self._products = self._viewmodel.product.read_products()
+        self._total = 0
+        # sell tab
+        self.ui_widget.sell_add_product.clicked.connect(self._handle_add_product)
+        self.ui_widget.sell_delete_product.clicked.connect(self._handle_delete_product)
+        self.ui_widget.sell_cancel_button.clicked.connect(self._handle_cancel_sell)
+        self.ui_widget.sell_total_label.setText(f"Total: {self._total} CLP")
+
+        self._products_to_sell = []
+        columns = ["nombre", "categoria", "marca", "descripcion", "precio", "id"]
+        values = ["name", "category", "brand", "description", "price", "uuid"]
+        self.ui_widget.sell_table_widget.setColumnCount(len(columns))
+        self.ui_widget.sell_table_widget.setHorizontalHeaderLabels(columns)
+        
+        # warranty tab
+    def _handle_add_product(self): # note: just for the sale
+        pass
+    def _handle_delete_product(self): # note: just for the sale
+        pass
+    def _handle_cancel_sell(self):
+        pass
+    def _handle_update(self):
+        pass
 
 class View(BaseWidget):
     def __init__(self, viewmodel: ViewModel):
@@ -178,7 +205,8 @@ class View(BaseWidget):
     def _callback(self, user_type: str):
         del self._widget
         if user_type == "employee":
-            pass
+            self._widget = EmployeeWidget(self._viewmodel)
+            self._widget.show()
         elif user_type == "manager":
             self._widget = ManagementWidget(self._viewmodel)
             self._widget.show()
