@@ -1,6 +1,7 @@
 import os
 
-from PySide6 import QtGui, QtUiTools, QtWidgets
+from PySide6 import QtCore, QtGui, QtUiTools, QtWidgets
+from PySide6.QtWidgets import QAbstractItemView
 from .rut import RUT
 from .model import Store, Employee, Product
 from .viewmodel import ViewModel
@@ -190,40 +191,90 @@ class EmployeeWidget(BaseWidget):
         self.ui_widget.sell_cancel_button.clicked.connect(self._handle_cancel_sell)
 
         self._products_to_sell = []
-        columns = ["nombre", "categoria", "marca", "descripcion", "precio", "id"]
-        values = ["name", "category", "brand", "description", "price", "uuid"]
-        self.ui_widget.sell_table_widget.setColumnCount(len(columns))
-        self.ui_widget.sell_table_widget.setHorizontalHeaderLabels(columns)
-        
+        column_mapping = {
+            "nombre": "model",
+            "categoria": "category",
+            "marca": "brand",
+            "cantidad": "quantity",
+            "precio": "price",
+            "id": "uuid"
+        }
+        self.ui_widget.sell_table_widget.setColumnCount(len(column_mapping))
+        self.ui_widget.sell_table_widget.setHorizontalHeaderLabels(list(column_mapping.keys()))
+        self.ui_widget.sell_table_widget.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
         self._stores = self._viewmodel.store.read_stores()
 
-        self._stor = None
+        self._store = None
         for store in self._stores:
             employees = self._viewmodel.employee.read_employees_in_store(store["uuid"])
             for employee in employees:
                 if employee.get("uuid") == self._employee_uuid:
                     self._store = store
                     break
-        
         self._handle_update()
 
     def _handle_add_product(self): # note: just for the sale
-        # make a form to add one product with x quantity 
-        self._widget = Add_form_product(self._viewmodel, self._store)
-        self._widget.show()
-        self._handle_update()
-        pass
-    def _handle_delete_product(self): # note: just for the sale
-        # make a form to delete one product with x quantity
-        self._handle_update()
-        pass
-    def _handle_cancel_sell(self):
-        # clear all items in the table and make the total to 0
-        self._handle_update()
-        pass
-    def _handle_update(self):
-        self.ui_widget.sell_total_label.setText(f"Total: {self._total} CLP")
+        self._aux_widget = form_add_product(self._viewmodel, self._store)
+        self._aux_widget.product_selected.connect(self._handle_add_product_selected)
+        self._aux_widget.show()
 
+    @QtCore.Slot(list)
+    def _handle_add_product_selected(self, selected_products):
+        if selected_products:
+            
+            for product in selected_products:
+                for existing_product in self._products_to_sell:
+                    if existing_product[5] == product[5]:
+                        existing_product[3] = str(int(existing_product[3]) + product["quantity"])
+                        self._total += product["quantity"] * int(product["price"])
+                        break
+                else:
+                    self._products_to_sell.append([
+                        product["model"],
+                        product["category"],
+                        product["brand"],
+                        str(product["quantity"]),
+                        str(product["price"]),
+                        product["uuid"]
+                    ])
+                    self._total += product["quantity"] * int(product["price"])
+        self._handle_update()
+        
+    def _handle_delete_product(self): # note: just for the sale
+        current_row = self.ui_widget.sell_table_widget.currentRow()
+
+        if current_row == -1:
+            QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe seleccionar alguna fila.")
+            return
+        del self._products_to_sell[current_row]
+        self._handle_update()
+
+    def _handle_cancel_sell(self): # note: clear the table
+        self._products_to_sell = []
+        self._total = 0
+        
+        self._handle_update()
+        
+    def _handle_update(self):
+        self.ui_widget.sell_table_widget.clearContents()
+        self.ui_widget.sell_table_widget.setRowCount(len(self._products_to_sell))
+
+        if len(self._products_to_sell) != 0:
+            self.ui_widget.groupBox.setTitle("Venta en proceso")
+            self._total = sum(int(product[3]) * int(product[4]) for product in self._products_to_sell) 
+
+            for i, product in enumerate(self._products_to_sell):
+                for j in range(len(product)):
+                    self.ui_widget.sell_table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(product[j]))
+        else:
+            self.ui_widget.groupBox.setTitle("No hay productos para vender")
+
+            self.ui_widget.sell_table_widget.setRowCount(0)
+
+        self._total = sum(int(product[3]) * int(product[4]) for product in self._products_to_sell)
+        
+        self.ui_widget.sell_total_label.setText(f"Total: {self._total:,} CLP")
+        
 class View(BaseWidget):
     def __init__(self, viewmodel: ViewModel):
         super().__init__(os.path.join("ui", "main.ui"))
@@ -253,27 +304,71 @@ class View(BaseWidget):
         self._widget.ui_widget.employee_forgot_password_label.hide()
         self._widget.show()
 
-class Add_form_product(BaseWidget):
+class form_add_product(BaseWidget):
+    product_selected = QtCore.Signal(list)
     def __init__(self, viewmodel: ViewModel, store):
         super().__init__(os.path.join("ui", "form_add_product.ui"))
         self._viewmodel = viewmodel
         self._store = store
+        self._products_uuid = self._store["products"]
+        self._products = []
 
-        columns = ["nombre", "categoria", "marca", "descripcion", "precio", "id"]
-        values = ["model", "category", "brand", "description", "price", "uuid"]
+        column_mapping = {
+            "Nombre": "model",
+            "Categoría": "category",
+            "Marca": "brand",
+            "Descripción": "description",
+            "Precio": "price",
+            "ID": "uuid"
+        }
 
-        self.ui_widget.products_table.setColumnCount(len(columns))
-        self.ui_widget.products_table.setHorizontalHeaderLabels(columns)
+        for product in self._products_uuid:
+            for item in self._viewmodel.product.read_products():
+                if product["uuid"] == item["uuid"]:
+                    self._products.append(item)
 
-        self._uuid_product = [p["uuid"] for p in self._store.get("products", [])]
+        self.ui_widget.products_table.setColumnCount(len(column_mapping))
+        self.ui_widget.products_table.setHorizontalHeaderLabels(list(column_mapping.keys()))
+        self.ui_widget.products_table.setRowCount(len(self._products))
+        self.ui_widget.products_table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
 
-        products = [
-            product for product in self._viewmodel.product.read_products()
-            if product.get("uuid") in self._uuid_product
-        ]
-        self.ui_widget.products_table.setRowCount(len(products))
+        column_keys = list(column_mapping.keys())
+        for i, product in enumerate(self._products):
+            for j, key in enumerate(column_keys):
+                self.ui_widget.products_table.setItem(i, j, QtWidgets.QTableWidgetItem(str(product[column_mapping[key]])))
 
-        for i, product in enumerate(products):
-            for j, key in enumerate(values):
-                item = QtWidgets.QTableWidgetItem(str(product.get(key, "")))
-                self.ui_widget.products_table.setItem(i, j, item)
+        self.ui_widget.add_product.clicked.connect(self._handle_add_product)
+        self._selected_products = []
+        self._result = None
+
+    def _handle_add_product(self):
+        current_row = self.ui_widget.products_table.currentRow()
+        quantity = self.ui_widget.quantity_spinbox.value()
+
+        if current_row == -1:
+            QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe seleccionar alguna fila.")
+            return
+        if quantity == 0:
+            QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Ingrese una cantidad válida.")
+            return
+
+        selected_product = self._products[current_row]
+        product_uuid = selected_product["uuid"]
+
+        for prod in self._selected_products:
+            if prod["uuid"] == product_uuid:
+                prod["quantity"] += quantity
+                QtWidgets.QMessageBox.information(self.ui_widget, "Información", f"Cantidad actualizada a {prod['quantity']}.")
+                break
+        else:
+            product_copy = selected_product.copy()
+            product_copy["quantity"] = quantity
+            self._selected_products.append(product_copy)
+            QtWidgets.QMessageBox.information(self.ui_widget, "Información", f"Producto agregado con cantidad {quantity}.")
+
+        self._result = self._selected_products
+        self.product_selected.emit(self._selected_products)
+        self._ui_widget.close()
+
+    def get_selected_products(self):
+        return self._result
