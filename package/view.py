@@ -189,6 +189,7 @@ class EmployeeWidget(BaseWidget):
         self.ui_widget.sell_add_product.clicked.connect(self._handle_add_product)
         self.ui_widget.sell_delete_product.clicked.connect(self._handle_delete_product)
         self.ui_widget.sell_cancel_button.clicked.connect(self._handle_cancel_sell)
+        self.ui_widget.sell_finale_button.clicked.connect(self._handle_end_sell)
 
         self._products_to_sell = []
         column_mapping = {
@@ -250,18 +251,49 @@ class EmployeeWidget(BaseWidget):
         self._handle_update()
 
     def _handle_cancel_sell(self): # note: clear the table
+        if len(self._products_to_sell) == 0:
+            QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe haber algún item.")
+            return
+
         self._products_to_sell = []
         self._total = 0
         
         self._handle_update()
-        
+    
+    def _handle_end_sell(self):
+        seller = None
+        for item in self._viewmodel.employee.read_employees():
+            if self._employee_uuid == item["uuid"]:
+                seller = item
+                break
+
+        if len(self._products_to_sell) == 0:
+            QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe haber algún item.")
+            return
+
+        recivo = f"Recibo de venta\nTienda: {self._store['name']}\nVendedor: {seller['name']}\nItems:\n"
+        total = 0
+        for product in self._products_to_sell:
+            model = product[0]
+            quantity = int(product[3])
+            price = int(product[4])
+            subtotal = quantity * price
+            recivo += f"{model} - {quantity} x {price} = {subtotal}\n"
+            total += subtotal
+        recivo += f"Total: {total:,} CLP\nGracias por su compra!"
+
+        QtWidgets.QMessageBox.information(self.ui_widget, "Recibo de Venta", recivo)
+
+        self._products_to_sell = []
+        self._total = 0
+        self._handle_update()
+
     def _handle_update(self):
         self.ui_widget.sell_table_widget.clearContents()
         self.ui_widget.sell_table_widget.setRowCount(len(self._products_to_sell))
 
         if len(self._products_to_sell) != 0:
             self.ui_widget.groupBox.setTitle("Venta en proceso")
-            self._total = sum(int(product[3]) * int(product[4]) for product in self._products_to_sell) 
 
             for i, product in enumerate(self._products_to_sell):
                 for j in range(len(product)):
@@ -272,7 +304,7 @@ class EmployeeWidget(BaseWidget):
             self.ui_widget.sell_table_widget.setRowCount(0)
 
         self._total = sum(int(product[3]) * int(product[4]) for product in self._products_to_sell)
-        
+
         self.ui_widget.sell_total_label.setText(f"Total: {self._total:,} CLP")
         
 class View(BaseWidget):
