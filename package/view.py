@@ -2,7 +2,7 @@ import os
 
 from PySide6 import QtGui, QtUiTools, QtWidgets
 from .rut import RUT
-from .model import Store, Employee, Product
+from .model import Store
 from .viewmodel import ViewModel
 
 class BaseWidget(QtUiTools.QUiLoader):
@@ -95,7 +95,59 @@ class ManagementWidget(BaseWidget):
         # product CRUD
     def _handle_store_create(self):
         self._aux_widget = BaseWidget(os.path.join("ui", "modify_store.ui"))
+        self._aux_widget.ui_widget.ok_button.clicked.connect(self._handle_create_ok_button)
         self._aux_widget.show()
+
+    def _handle_create_ok_button(self):
+        if not self._aux_widget.ui_widget.name_input.text():
+            QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "Ingrese un nombre.")
+            return
+        if not self._aux_widget.ui_widget.address_input.text():
+            QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "Ingrese una dirección.")
+            return
+        if not self._aux_widget.ui_widget.city_input.text():
+            QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "Ingrese una ciudad.")
+            return
+        if not self._aux_widget.ui_widget.phone_input.text():
+            QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "Ingrese un teléfono.")
+            return
+        phone_number = self._aux_widget.ui_widget.phone_input.text()
+        if not (phone_number[0] == "+" and phone_number[1:].isnumeric()):
+            QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "Ingrese un teléfono válido. (anteponga el +)")
+            return
+        if not self._aux_widget.ui_widget.mail_input.text():
+            QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "Ingrese un correo.")
+            return
+        # Add the new store
+        new_store = Store(
+            self._aux_widget.ui_widget.name_input.text(),
+            self._aux_widget.ui_widget.address_input.text(),
+            self._aux_widget.ui_widget.city_input.text(),
+            self._aux_widget.ui_widget.phone_input.text(),
+            self._aux_widget.ui_widget.mail_input.text()
+        )
+        uuid = self._viewmodel.store.create_store(new_store)
+        # Update UI
+        self._stores.append({
+            "uuid": uuid,
+            "name": new_store.name,
+            "address": new_store.address,
+            "city": new_store.city,
+            "phone": new_store.phone,
+            "mail": new_store.mail
+        })
+        self._store_names.append(new_store.name)
+        row = self.ui_widget.store_table_widget.rowCount()
+        self.ui_widget.store_table_widget.insertRow(row)
+        self.ui_widget.store_table_widget.setItem(row, 0, QtWidgets.QTableWidgetItem(new_store.name))
+        self.ui_widget.store_table_widget.setItem(row, 1, QtWidgets.QTableWidgetItem(new_store.address))
+        self.ui_widget.store_table_widget.setItem(row, 2, QtWidgets.QTableWidgetItem(new_store.city))
+        self.ui_widget.store_table_widget.setItem(row, 3, QtWidgets.QTableWidgetItem(new_store.phone))
+        self.ui_widget.store_table_widget.setItem(row, 4, QtWidgets.QTableWidgetItem(new_store.mail))
+        self._employees_tab.ui_widget.stores_list.addItem(new_store.name)
+        self._products_tab.ui_widget.stores_list.addItem(new_store.name)
+        QtWidgets.QMessageBox.information(self._aux_widget.ui_widget, "Información", "Tienda agregada con éxito.")
+        self._aux_widget.ui_widget.close()
     def _handle_store_update(self):
         current_row = self.ui_widget.store_table_widget.currentRow()
         if current_row == -1:
@@ -112,20 +164,20 @@ class ManagementWidget(BaseWidget):
         # logic end
         self._aux_widget.show()
     def _handle_store_delete(self):
-        # TODO: implement proper store selection i guess
         current_row = self.ui_widget.store_table_widget.currentRow()
         if current_row == -1:
             QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe seleccionar alguna fila.")
             return
-        result = QtWidgets.QMessageBox.question(self.ui_widget, "Pregunta", f"Desea borrar la tienda {self._stores[current_row]["name"]}?")
-        # 16384: yes button
-        if result == 16384:
+        result = QtWidgets.QMessageBox.question(self.ui_widget, "Pregunta", f"Desea borrar la tienda {self._stores[current_row]['name']}?")
+        if result == QtWidgets.QMessageBox.Yes:
             self._viewmodel.store.delete_store(self._stores[current_row]["uuid"])
             del self._stores[current_row]
-            self.ui_widget.store_table_widget.removeRow(current_row)
             self._store_names.pop(current_row)
-            self._employees_tab.ui_widget.stores_list.removeItem(current_row)
-            self._products_tab.ui_widget.stores_list.removeItem(current_row)
+            self.ui_widget.store_table_widget.removeRow(current_row)
+            self._employees_tab.ui_widget.stores_list.clear()
+            self._products_tab.ui_widget.stores_list.clear()
+            self._employees_tab.ui_widget.stores_list.addItems(self._store_names)
+            self._products_tab.ui_widget.stores_list.addItems(self._store_names)
             self.ui_widget.store_table_widget.setCurrentCell(-1, -1)
             QtWidgets.QMessageBox.information(self.ui_widget, "Información", "Tienda borrada con éxito.")
 
@@ -150,19 +202,40 @@ class ManagementWidget(BaseWidget):
         if not self._aux_widget.ui_widget.mail_input.text():
             QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "Ingrese un correo.")
             return
-        # actually update if everything is right!!
+
+        # Update the store in the data source
+        updated_store = Store(
+            self._aux_widget.ui_widget.name_input.text(),
+            self._aux_widget.ui_widget.address_input.text(),
+            self._aux_widget.ui_widget.city_input.text(),
+            self._aux_widget.ui_widget.phone_input.text(),
+            self._aux_widget.ui_widget.mail_input.text()
+        )
         self._viewmodel.store.update_store(
             self._stores[current_row]["uuid"],
-            Store(
-                self._aux_widget.ui_widget.name_input.text(),
-                self._aux_widget.ui_widget.address_input.text(),
-                self._aux_widget.ui_widget.city_input.text(),
-                self._aux_widget.ui_widget.phone_input.text(),
-                self._aux_widget.ui_widget.mail_input.text()
-            )
+            updated_store
         )
-        # update in both combo boxes, stores array and storenames.. jeez might want to optimize that
+
+        # Update local data structures and UI
+        self._stores[current_row]["name"] = updated_store.name
+        self._stores[current_row]["address"] = updated_store.address
+        self._stores[current_row]["city"] = updated_store.city
+        self._stores[current_row]["phone"] = updated_store.phone
+        self._stores[current_row]["mail"] = updated_store.mail
+
+        self.ui_widget.store_table_widget.setItem(current_row, 0, QtWidgets.QTableWidgetItem(updated_store.name))
+        self.ui_widget.store_table_widget.setItem(current_row, 1, QtWidgets.QTableWidgetItem(updated_store.address))
+        self.ui_widget.store_table_widget.setItem(current_row, 2, QtWidgets.QTableWidgetItem(updated_store.city))
+        self.ui_widget.store_table_widget.setItem(current_row, 3, QtWidgets.QTableWidgetItem(updated_store.phone))
+        self.ui_widget.store_table_widget.setItem(current_row, 4, QtWidgets.QTableWidgetItem(updated_store.mail))
+
+        # Update store names in combo boxes
+        self._store_names[current_row] = updated_store.name
+        self._employees_tab.ui_widget.stores_list.setItemText(current_row, updated_store.name)
+        self._products_tab.ui_widget.stores_list.setItemText(current_row, updated_store.name)
+
         QtWidgets.QMessageBox.information(self._aux_widget.ui_widget, "Información", "Tienda actualizada con éxito.")
+        self._aux_widget.ui_widget.close()
 
 
 class View(BaseWidget):

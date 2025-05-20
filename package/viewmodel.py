@@ -15,10 +15,10 @@ class ViewModel:
     def try_login(self, identification: int, password: str):
         for employee in self._model.employee.read_employees():
             if employee["identification"] == str(identification) and employee["password"] == password:
-                return f"{employee["name"]} {employee["lastName"]}", "employee"
+                return f"{employee['name']} {employee['lastName']}", "employee"
         for manager in self._model.manager.read_managers():
             if manager["identification"] == str(identification) and manager["password"] == password:
-                return f"{manager["name"]} {manager["lastName"]}", "manager"
+                return f"{manager['name']} {manager['lastName']}", "manager"
         raise ValueError("Credentials are invalid")
 
     @property
