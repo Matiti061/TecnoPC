@@ -17,15 +17,15 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QGridLayout, QGroupBox, QHeaderView,
     QLabel, QPushButton, QSizePolicy, QTabWidget,
-    QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget)
+    QTableWidget, QTableWidgetItem, QWidget)
 
 class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
         Form.resize(469, 314)
-        self.verticalLayout = QVBoxLayout(Form)
-        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.gridLayout_3 = QGridLayout(Form)
+        self.gridLayout_3.setObjectName(u"gridLayout_3")
         self.tab_widget = QTabWidget(Form)
         self.tab_widget.setObjectName(u"tab_widget")
         self.summary_tab = QWidget()
@@ -74,8 +74,35 @@ class Ui_Form(object):
         self.gridLayout.addWidget(self.groupBox, 0, 0, 1, 3)
 
         self.tab_widget.addTab(self.sells_tab, "")
+        self.warranty_tab = QWidget()
+        self.warranty_tab.setObjectName(u"warranty_tab")
+        self.gridLayout_5 = QGridLayout(self.warranty_tab)
+        self.gridLayout_5.setObjectName(u"gridLayout_5")
+        self.groupBox_2 = QGroupBox(self.warranty_tab)
+        self.groupBox_2.setObjectName(u"groupBox_2")
+        self.gridLayout_4 = QGridLayout(self.groupBox_2)
+        self.gridLayout_4.setObjectName(u"gridLayout_4")
+        self.warranty_table = QTableWidget(self.groupBox_2)
+        self.warranty_table.setObjectName(u"warranty_table")
 
-        self.verticalLayout.addWidget(self.tab_widget)
+        self.gridLayout_4.addWidget(self.warranty_table, 1, 0, 1, 1)
+
+        self.label = QLabel(self.groupBox_2)
+        self.label.setObjectName(u"label")
+
+        self.gridLayout_4.addWidget(self.label, 0, 0, 1, 1)
+
+        self.warranty_add_button = QPushButton(self.groupBox_2)
+        self.warranty_add_button.setObjectName(u"warranty_add_button")
+
+        self.gridLayout_4.addWidget(self.warranty_add_button, 2, 0, 1, 1)
+
+
+        self.gridLayout_5.addWidget(self.groupBox_2, 0, 0, 1, 1)
+
+        self.tab_widget.addTab(self.warranty_tab, "")
+
+        self.gridLayout_3.addWidget(self.tab_widget, 0, 0, 1, 1)
 
 
         self.retranslateUi(Form)
@@ -96,5 +123,9 @@ class Ui_Form(object):
         self.sell_delete_product.setText(QCoreApplication.translate("Form", u"Eliminar producto", None))
         self.sell_finale_button.setText(QCoreApplication.translate("Form", u"Terminar venta", None))
         self.tab_widget.setTabText(self.tab_widget.indexOf(self.sells_tab), QCoreApplication.translate("Form", u"Venta", None))
+        self.groupBox_2.setTitle(QCoreApplication.translate("Form", u"A\u00f1adir garantia", None))
+        self.label.setText(QCoreApplication.translate("Form", u"Aviso: los productos que siguen en la venta se mostraran", None))
+        self.warranty_add_button.setText(QCoreApplication.translate("Form", u"Dar garantia", None))
+        self.tab_widget.setTabText(self.tab_widget.indexOf(self.warranty_tab), QCoreApplication.translate("Form", u"Garantias", None))
     # retranslateUi
 
