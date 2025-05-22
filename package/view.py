@@ -2,7 +2,7 @@ import os
 
 from PySide6 import QtGui, QtUiTools, QtWidgets
 from .rut import RUT
-from .model import Store
+from .model import Store, Product
 from .viewmodel import ViewModel
 
 class BaseWidget(QtUiTools.QUiLoader):
@@ -92,7 +92,126 @@ class ManagementWidget(BaseWidget):
         self.ui_widget.store_update_button.clicked.connect(self._handle_store_update)
         self.ui_widget.store_delete_button.clicked.connect(self._handle_store_delete)
         # employee CRUD
+        
+        
         # product CRUD
+        self._products = self._viewmodel.product.read_products()
+        product_columns = ["Marca", "Modelo", "Categoría", "Descripción", "Precio"]
+        product_values = ["brand", "model", "category", "description", "price"]
+        self._products_tab.ui_widget.table_widget.setColumnCount(len(product_columns))
+        self._products_tab.ui_widget.table_widget.setHorizontalHeaderLabels(product_columns)
+        self._products_tab.ui_widget.table_widget.setRowCount(len(self._products))
+        for i, value in enumerate(self._products):
+            for j in range(len(product_values)):
+                self._products_tab.ui_widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(str(value[product_values[j]])))
+        self._products_tab.ui_widget.create_button.clicked.connect(self._handle_product_create)
+        self._products_tab.ui_widget.update_button.clicked.connect(self._handle_product_update)
+        self._products_tab.ui_widget.delete_button.clicked.connect(self._handle_product_delete)
+
+    # ...existing store handlers...
+
+    def _handle_product_create(self):
+        self._aux_widget = ModifyProductWidget()
+        self._aux_widget.ui_widget.ok_button.clicked.connect(self._handle_product_create_ok)
+        self._aux_widget.show()
+
+    def _handle_product_create_ok(self):
+        brand = self._aux_widget.ui_widget.brand_input.text()
+        model = self._aux_widget.ui_widget.model_input.text()
+        category = self._aux_widget.ui_widget.category_input.text()
+        description = self._aux_widget.ui_widget.description_input.text()
+        price_text = self._aux_widget.ui_widget.price_input.text()
+        if not brand or not model or not category or not description or not price_text:
+            QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "Complete todos los campos.")
+            return
+        try:
+            price = int(price_text)
+        except ValueError:
+            QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "El precio debe ser un número.")
+            return
+        # Crear producto
+        new_product = Product(
+            self._aux_widget.ui_widget.brand_input.text(),
+            self._aux_widget.ui_widget.model_input.text(),
+            self._aux_widget.ui_widget.category_input.text(),
+            self._aux_widget.ui_widget.description_input.text(),
+            self._aux_widget.ui_widget.price_input.text(),
+        )
+        uuid = self._viewmodel.product.create_product(new_product)
+        # Actualizar UI y datos locales
+        new_product["uuid"] = uuid
+        self._products.append(new_product)
+        row = self._products_tab.ui_widget.table_widget.rowCount()
+        self._products_tab.ui_widget.table_widget.insertRow(row)
+        self._products_tab.ui_widget.table_widget.setItem(row, 0, QtWidgets.QTableWidgetItem(brand))
+        self._products_tab.ui_widget.table_widget.setItem(row, 1, QtWidgets.QTableWidgetItem(model))
+        self._products_tab.ui_widget.table_widget.setItem(row, 2, QtWidgets.QTableWidgetItem(category))
+        self._products_tab.ui_widget.table_widget.setItem(row, 3, QtWidgets.QTableWidgetItem(description))
+        self._products_tab.ui_widget.table_widget.setItem(row, 4, QtWidgets.QTableWidgetItem(str(price)))
+        QtWidgets.QMessageBox.information(self._aux_widget.ui_widget, "Información", "Producto agregado con éxito.")
+        self._aux_widget.ui_widget.close()
+
+    def _handle_product_update(self):
+        current_row = self._products_tab.ui_widget.table_widget.currentRow()
+        if current_row == -1:
+            QtWidgets.QMessageBox.warning(self._products_tab.ui_widget, "Advertencia", "Debe seleccionar alguna fila.")
+            return
+        product = self._products[current_row]
+        self._aux_widget = ModifyProductWidget()
+        self._aux_widget.ui_widget.brand_input.setText(product["brand"])
+        self._aux_widget.ui_widget.model_input.setText(product["model"])
+        self._aux_widget.ui_widget.category_input.setText(product["category"])
+        self._aux_widget.ui_widget.description_input.setText(product["description"])
+        self._aux_widget.ui_widget.price_input.setText(str(product["price"]))
+        self._aux_widget.ui_widget.ok_button.clicked.connect(lambda: self._handle_product_update_ok(current_row))
+        self._aux_widget.show()
+
+    def _handle_product_update_ok(self, row):
+        brand = self._aux_widget.ui_widget.brand_input.text()
+        model = self._aux_widget.ui_widget.model_input.text()
+        category = self._aux_widget.ui_widget.category_input.text()
+        description = self._aux_widget.ui_widget.description_input.text()
+        price_text = self._aux_widget.ui_widget.price_input.text()
+        if not brand or not model or not category or not description or not price_text:
+            QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "Complete todos los campos.")
+            return
+        try:
+            price = int(price_text)
+        except ValueError:
+            QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "El precio debe ser un número.")
+            return
+        # Actualizar producto
+        updated_product = {
+            "brand": brand,
+            "model": model,
+            "category": category,
+            "description": description,
+            "price": price
+        }
+        self._viewmodel.product.update_product(self._products[row]["uuid"], updated_product)
+        # Actualizar UI y datos locales
+        self._products[row].update(updated_product)
+        self._products_tab.ui_widget.table_widget.setItem(row, 0, QtWidgets.QTableWidgetItem(brand))
+        self._products_tab.ui_widget.table_widget.setItem(row, 1, QtWidgets.QTableWidgetItem(model))
+        self._products_tab.ui_widget.table_widget.setItem(row, 2, QtWidgets.QTableWidgetItem(category))
+        self._products_tab.ui_widget.table_widget.setItem(row, 3, QtWidgets.QTableWidgetItem(description))
+        self._products_tab.ui_widget.table_widget.setItem(row, 4, QtWidgets.QTableWidgetItem(str(price)))
+        QtWidgets.QMessageBox.information(self._aux_widget.ui_widget, "Información", "Producto actualizado con éxito.")
+        self._aux_widget.ui_widget.close()
+
+    def _handle_product_delete(self):
+        current_row = self._products_tab.ui_widget.table_widget.currentRow()
+        if current_row == -1:
+            QtWidgets.QMessageBox.warning(self._products_tab.ui_widget, "Advertencia", "Debe seleccionar alguna fila.")
+            return
+        result = QtWidgets.QMessageBox.question(self._products_tab.ui_widget, "Pregunta", f"Desea borrar el producto {self._products[current_row]['model']}?")
+        if result == QtWidgets.QMessageBox.Yes:
+            self._viewmodel.product.delete_product(self._products[current_row]["uuid"])
+            del self._products[current_row]
+            self._products_tab.ui_widget.table_widget.removeRow(current_row)
+            QtWidgets.QMessageBox.information(self._products_tab.ui_widget, "Información", "Producto borrado con éxito.")
+
+        
     def _handle_store_create(self):
         self._aux_widget = BaseWidget(os.path.join("ui", "modify_store.ui"))
         self._aux_widget.ui_widget.ok_button.clicked.connect(self._handle_create_ok_button)
@@ -236,6 +355,14 @@ class ManagementWidget(BaseWidget):
 
         QtWidgets.QMessageBox.information(self._aux_widget.ui_widget, "Información", "Tienda actualizada con éxito.")
         self._aux_widget.ui_widget.close()
+
+class ModifyEmployeeWidget(BaseWidget):
+    def __init__(self):
+        super().__init__(os.path.join("ui", "modify_employee.ui"))
+
+class ModifyProductWidget(BaseWidget):
+    def __init__(self):
+        super().__init__(os.path.join("ui", "modify_product.ui"))
 
 
 class View(BaseWidget):
