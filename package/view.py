@@ -1,7 +1,13 @@
 import os
 
 from PySide6 import QtCore, QtGui, QtUiTools, QtWidgets
-from PySide6.QtWidgets import QAbstractItemView
+from PySide6.QtGui import QIcon
+from PySide6.QtCore import Qt, QSize
+from PySide6.QtWidgets import (
+    QDialog, QVBoxLayout, QHBoxLayout,
+    QCheckBox, QSpinBox, QPushButton, QDialogButtonBox, QLabel,
+    QAbstractItemView, QButtonGroup
+)
 from .rut import RUT
 from .model import Store, Employee, Product
 from .viewmodel import ViewModel
@@ -184,26 +190,18 @@ class EmployeeWidget(BaseWidget):
         self._viewmodel = viewmodel
         self._employee_uuid = employee_uuid
         self._total = 0
-        
-        # sell tab
-        self.ui_widget.sell_add_product.clicked.connect(self._handle_add_product)
-        self.ui_widget.sell_delete_product.clicked.connect(self._handle_delete_product)
-        self.ui_widget.sell_cancel_button.clicked.connect(self._handle_cancel_sell)
-        self.ui_widget.sell_finale_button.clicked.connect(self._handle_end_sell)
-
+        self._stores = self._viewmodel.store.read_stores()
         self._products_to_sell = []
-        column_mapping = {
+
+        self.column_mapping = {
             "nombre": "model",
             "categoria": "category",
             "marca": "brand",
             "cantidad": "quantity",
             "precio": "price",
-            "id": "uuid"
+            "id": "uuid",
+            "garantia": "warranty", # añadir nuevo filtro: garantia?
         }
-        self.ui_widget.sell_table_widget.setColumnCount(len(column_mapping))
-        self.ui_widget.sell_table_widget.setHorizontalHeaderLabels(list(column_mapping.keys()))
-        self.ui_widget.sell_table_widget.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-        self._stores = self._viewmodel.store.read_stores()
 
         self._store = None
         for store in self._stores:
@@ -212,7 +210,31 @@ class EmployeeWidget(BaseWidget):
                 if employee.get("uuid") == self._employee_uuid:
                     self._store = store
                     break
-        self._handle_update()
+
+        self.ui_widget.tab_widget.currentChanged.connect(self._handle_tabs)
+
+        # sale tab
+        self.ui_widget.sell_table_widget.setColumnCount(len(self.column_mapping))
+        self.ui_widget.sell_table_widget.setHorizontalHeaderLabels(list(self.column_mapping.keys()))
+        self.ui_widget.sell_table_widget.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.ui_widget.sell_add_product.clicked.connect(self._handle_add_product)
+        self.ui_widget.sell_delete_product.clicked.connect(self._handle_delete_product)
+        self.ui_widget.sell_cancel_button.clicked.connect(self._handle_cancel_sell)
+        self.ui_widget.sell_finale_button.clicked.connect(self._handle_end_sell)
+
+        # warranty tab
+        self.ui_widget.warranty_table.setColumnCount(len(self.column_mapping))
+        self.ui_widget.warranty_table.setHorizontalHeaderLabels(list(self.column_mapping.keys()))
+        self.ui_widget.warranty_table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.ui_widget.warranty_add_button.clicked.connect(self._handle_add_warranty)
+        
+
+    def _handle_tabs(self, index: int):
+        if index == 1: # sale tab
+            self._handle_update(self.ui_widget.sell_table_widget, self.ui_widget.groupBox, self.ui_widget.sell_total_label)
+
+        elif index == 2: # warranty tab
+            self._handle_update(self.ui_widget.warranty_table, None, None)
 
     def _handle_add_product(self): # note: just for the sale
         self._aux_widget = form_add_product(self._viewmodel, self._store)
@@ -220,12 +242,12 @@ class EmployeeWidget(BaseWidget):
         self._aux_widget.show()
 
     @QtCore.Slot(list)
-    def _handle_add_product_selected(self, selected_products):
+    def _handle_add_product_selected(self, selected_products): # note: for the sale
         if selected_products:
             
             for product in selected_products:
                 for existing_product in self._products_to_sell:
-                    if existing_product[5] == product[5]:
+                    if existing_product[5] == product["uuid"]:
                         existing_product[3] = str(int(existing_product[3]) + product["quantity"])
                         self._total += product["quantity"] * int(product["price"])
                         break
@@ -239,7 +261,8 @@ class EmployeeWidget(BaseWidget):
                         product["uuid"]
                     ])
                     self._total += product["quantity"] * int(product["price"])
-        self._handle_update()
+
+        self._handle_update(self.ui_widget.sell_table_widget, self.ui_widget.groupBox, self.ui_widget.sell_total_label)
         
     def _handle_delete_product(self): # note: just for the sale
         current_row = self.ui_widget.sell_table_widget.currentRow()
@@ -248,7 +271,7 @@ class EmployeeWidget(BaseWidget):
             QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe seleccionar alguna fila.")
             return
         del self._products_to_sell[current_row]
-        self._handle_update()
+        self._handle_update(self.ui_widget.sell_table_widget, self.ui_widget.groupBox, self.ui_widget.sell_total_label)
 
     def _handle_cancel_sell(self): # note: clear the table
         if len(self._products_to_sell) == 0:
@@ -258,7 +281,7 @@ class EmployeeWidget(BaseWidget):
         self._products_to_sell = []
         self._total = 0
         
-        self._handle_update()
+        self._handle_update(self.ui_widget.sell_table_widget, self.ui_widget.groupBox, self.ui_widget.sell_total_label)
     
     def _handle_end_sell(self):
         seller = None
@@ -278,7 +301,8 @@ class EmployeeWidget(BaseWidget):
             quantity = int(product[3])
             price = int(product[4])
             subtotal = quantity * price
-            recivo += f"{model} - {quantity} x {price} = {subtotal}\n"
+            warranty = product[6]
+            recivo += f"{model} ({warranty}) - {quantity} x {price} = {subtotal}\n"
             total += subtotal
         recivo += f"Total: {total:,} CLP\nGracias por su compra!"
 
@@ -286,26 +310,58 @@ class EmployeeWidget(BaseWidget):
 
         self._products_to_sell = []
         self._total = 0
-        self._handle_update()
+        self._handle_update(self.ui_widget.sell_table_widget, self.ui_widget.groupBox, self.ui_widget.sell_total_label)
 
-    def _handle_update(self):
-        self.ui_widget.sell_table_widget.clearContents()
-        self.ui_widget.sell_table_widget.setRowCount(len(self._products_to_sell))
+    def _handle_add_warranty(self):
+        current_row = self.ui_widget.warranty_table.currentRow()
+
+        if current_row == -1:
+            QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe seleccionar alguna fila.")
+            return
+        dialog = CustomDialog()
+        if dialog.exec() == QDialog.Accepted:
+            selected_option = dialog.get_selected_option()
+            spinbox_value = dialog.get_spinbox_value()
+
+            if selected_option:
+                if len(self._products_to_sell[current_row]) > 6:
+                    self._products_to_sell[current_row][6] = f"garantia de {spinbox_value} meses"
+                else:
+                    self._products_to_sell[current_row].append(f"garantia de {spinbox_value} meses")
+            else:
+                if len(self._products_to_sell[current_row]) > 6:
+                    self._products_to_sell[current_row][6] = "sin garantia"
+                else:
+                    self._products_to_sell[current_row].append("sin garantia")
+        else:
+            print("Diálogo cancelado")
+        self._handle_update(self.ui_widget.warranty_table, None, None)
+
+    def _handle_update(self, table_widget: QtWidgets.QTableWidget, group_box: QtWidgets.QGroupBox, total_label: QtWidgets.QLabel):
+        table_widget.clearContents()
+        table_widget.setRowCount(len(self._products_to_sell))
+
+        if group_box != None:
+            if len(self._products_to_sell) != 0:
+                group_box.setTitle("Venta en proceso") 
+            else:
+                group_box.setTitle("No hay productos para vender")
 
         if len(self._products_to_sell) != 0:
-            self.ui_widget.groupBox.setTitle("Venta en proceso")
-
+            column_keys = list(self.column_mapping.keys())
             for i, product in enumerate(self._products_to_sell):
-                for j in range(len(product)):
-                    self.ui_widget.sell_table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(product[j]))
+                for j, key in enumerate(column_keys):
+                    value = product[j] if j < len(product) and product[j] is not None else "no tiene"
+                    if value is None or value == "" or (isinstance(value, str) and value.lower() == "none"):
+                        value = "no tiene"
+                    table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(str(value)))
         else:
-            self.ui_widget.groupBox.setTitle("No hay productos para vender")
-
-            self.ui_widget.sell_table_widget.setRowCount(0)
+            table_widget.setRowCount(0)
 
         self._total = sum(int(product[3]) * int(product[4]) for product in self._products_to_sell)
 
-        self.ui_widget.sell_total_label.setText(f"Total: {self._total:,} CLP")
+        if total_label != None:
+            total_label.setText(f"Total: {self._total:,} CLP")
         
 class View(BaseWidget):
     def __init__(self, viewmodel: ViewModel):
@@ -404,3 +460,73 @@ class form_add_product(BaseWidget):
 
     def get_selected_products(self):
         return self._result
+    
+class CustomDialog(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Ventana de garantia")
+        self.setFixedSize(300, 200)
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+
+        self.init_ui()
+
+    def init_ui(self):
+        main_layout = QVBoxLayout(self)
+
+        checkbox_layout = QHBoxLayout()
+        self.add_checkbox = QCheckBox("Añadir garantia")
+        self.discard_checkbox = QCheckBox("Descartar garantia")
+
+        self.checkbox_group = QButtonGroup(self)
+        self.checkbox_group.setExclusive(True)
+        self.checkbox_group.addButton(self.add_checkbox)
+        self.checkbox_group.addButton(self.discard_checkbox)
+
+        self.add_checkbox.setChecked(True)
+
+        checkbox_layout.addWidget(self.add_checkbox)
+        checkbox_layout.addWidget(self.discard_checkbox)
+        checkbox_layout.addStretch()
+
+        main_layout.addLayout(checkbox_layout)
+
+        spinbox_layout = QHBoxLayout()
+        spinbox_label = QLabel("Meses:")
+        self.spinbox = QSpinBox()
+        self.spinbox.setMinimum(1)
+        self.spinbox.setMaximum(24)
+        self.spinbox.setValue(6)
+
+        spinbox_layout.addWidget(spinbox_label)
+        spinbox_layout.addWidget(self.spinbox)
+        spinbox_layout.addStretch()
+
+        main_layout.addLayout(spinbox_layout)
+
+        self.add_checkbox.toggled.connect(self.toggle_spinbox_enable)
+        self.discard_checkbox.toggled.connect(self.toggle_spinbox_enable)
+
+        button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        button_box.accepted.connect(self.accept)
+        button_box.rejected.connect(self.reject)
+
+        main_layout.addWidget(button_box)
+
+    def toggle_spinbox_enable(self):
+        if self.add_checkbox.isChecked():
+            self.spinbox.setEnabled(True)
+        elif self.discard_checkbox.isChecked():
+            self.spinbox.setEnabled(False)
+
+    def get_selected_option(self):
+        if self.add_checkbox.isChecked():
+            return True
+        elif self.discard_checkbox.isChecked():
+            return False
+        return None
+
+    def get_spinbox_value(self):
+        if not self.spinbox.isEnabled():
+            return None
+        return self.spinbox.value()
+
