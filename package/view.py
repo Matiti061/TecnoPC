@@ -194,6 +194,7 @@ class ManagementWidget(BaseWidget):
             del self._stores[current_row]
             self._store_names.pop(current_row)
             self.ui_widget.store_table_widget.removeRow(current_row)
+            self.ui_widget.store_table_widget.setRowCount(len(self._stores))
             self._employees_tab.ui_widget.stores_list.clear()
             self._products_tab.ui_widget.stores_list.clear()
             self._employees_tab.ui_widget.stores_list.addItems(self._store_names)
@@ -447,6 +448,7 @@ class View(BaseWidget):
         self.ui_widget.manager_button.clicked.connect(self._handle_manager_login)
 
     def _callback(self, user_type: str, employee_uuid: str = None):
+        self._ui_widget.close()
         del self._widget
         if user_type == "employee":
             self._widget = EmployeeWidget(self._viewmodel, employee_uuid)
