@@ -268,13 +268,13 @@ class EmployeeWidget(BaseWidget):
         self._products_to_sell = []
 
         self.column_mapping = {
-            "nombre": "model",
-            "categoria": "category",
-            "marca": "brand",
-            "cantidad": "quantity",
-            "precio": "price",
-            "id": "uuid",
-            "garantia": "warranty", # añadir nuevo filtro: garantia?
+            "Nombre": "model",
+            "Categoria": "category",
+            "Marca": "brand",
+            "Cantidad": "quantity",
+            "Precio": "price",
+            "Id": "uuid",
+            "Garantia": "warranty"
         }
 
         self._store = None
@@ -332,7 +332,8 @@ class EmployeeWidget(BaseWidget):
                         product["brand"],
                         str(product["quantity"]),
                         str(product["price"]),
-                        product["uuid"]
+                        product["uuid"],
+                        None
                     ])
                     self._total += product["quantity"] * int(product["price"])
 
@@ -375,7 +376,10 @@ class EmployeeWidget(BaseWidget):
             quantity = int(product[3])
             price = int(product[4])
             subtotal = quantity * price
-            warranty = product[6]
+            if product != None:
+                warranty = product[6]
+            else:
+                warranty = "no tiene"
             recivo += f"{model} ({warranty}) - {quantity} x {price} = {subtotal}\n"
             total += subtotal
         recivo += f"Total: {total:,} CLP\nGracias por su compra!"
@@ -398,15 +402,9 @@ class EmployeeWidget(BaseWidget):
             spinbox_value = dialog.get_spinbox_value()
 
             if selected_option:
-                if len(self._products_to_sell[current_row]) > 6:
-                    self._products_to_sell[current_row][6] = f"garantia de {spinbox_value} meses"
-                else:
-                    self._products_to_sell[current_row].append(f"garantia de {spinbox_value} meses")
-            else:
-                if len(self._products_to_sell[current_row]) > 6:
-                    self._products_to_sell[current_row][6] = "sin garantia"
-                else:
-                    self._products_to_sell[current_row].append("sin garantia")
+                self._products_to_sell[current_row][6] = f"garantia de {spinbox_value} meses"
+            else:    
+                self._products_to_sell[current_row][6] = "sin garantia"
         else:
             print("Diálogo cancelado")
         self._handle_update(self.ui_widget.warranty_table, None, None)
