@@ -328,15 +328,9 @@ class EmployeeWidget(BaseWidget):
             spinbox_value = dialog.get_spinbox_value()
 
             if selected_option:
-                if len(self._products_to_sell[current_row]) > 6:
-                    self._products_to_sell[current_row][6] = f"garantia de {spinbox_value} meses"
-                else:
-                    self._products_to_sell[current_row].append(f"garantia de {spinbox_value} meses")
+                self._products_to_sell[current_row][6] = f"garantia de {spinbox_value} meses"
             else:
-                if len(self._products_to_sell[current_row]) > 6:
-                    self._products_to_sell[current_row][6] = "sin garantia"
-                else:
-                    self._products_to_sell[current_row].append("sin garantia")
+                self._products_to_sell[current_row][6] = "sin garantia"
         else:
             print("Diálogo cancelado")
         self._handle_update(self.ui_widget.warranty_table, None, None)
@@ -356,7 +350,7 @@ class EmployeeWidget(BaseWidget):
             for i, product in enumerate(self._products_to_sell):
                 for j, key in enumerate(column_keys):
                     value = product[j] if j < len(product) and product[j] is not None else "no tiene"
-                    if value is None or value == "" or (isinstance(value, str) and value.lower() == "none"):
+                    if value is None:
                         value = "no tiene"
                     table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(str(value)))
         else:
