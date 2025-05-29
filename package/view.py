@@ -194,13 +194,13 @@ class EmployeeWidget(BaseWidget):
         self._products_to_sell = []
 
         self.column_mapping = {
-            "nombre": "model",
-            "categoria": "category",
-            "marca": "brand",
-            "cantidad": "quantity",
-            "precio": "price",
-            "id": "uuid",
-            "garantia": "warranty", # añadir nuevo filtro: garantia?
+            "Nombre": "model",
+            "Categoria": "category",
+            "Marca": "brand",
+            "Cantidad": "quantity",
+            "Precio": "price",
+            "Id": "uuid",
+            "Garantia": "warranty"
         }
 
         self._store = None
@@ -258,7 +258,8 @@ class EmployeeWidget(BaseWidget):
                         product["brand"],
                         str(product["quantity"]),
                         str(product["price"]),
-                        product["uuid"]
+                        product["uuid"],
+                        None
                     ])
                     self._total += product["quantity"] * int(product["price"])
 
@@ -289,7 +290,7 @@ class EmployeeWidget(BaseWidget):
             if self._employee_uuid == item["uuid"]:
                 seller = item
                 break
-
+        
         if len(self._products_to_sell) == 0:
             QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe haber algún item.")
             return
@@ -301,7 +302,10 @@ class EmployeeWidget(BaseWidget):
             quantity = int(product[3])
             price = int(product[4])
             subtotal = quantity * price
-            warranty = product[6]
+            if product[6] != None:
+                warranty = product[6]
+            else:
+                warranty = "sin garantia"
             recivo += f"{model} ({warranty}) - {quantity} x {price} = {subtotal}\n"
             total += subtotal
         recivo += f"Total: {total:,} CLP\nGracias por su compra!"
