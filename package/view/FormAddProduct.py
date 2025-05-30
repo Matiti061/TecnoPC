@@ -1,4 +1,4 @@
-from BaseWidget import BaseWidget
+from .BaseWidget import BaseWidget
 import os
 import PySide6
 from package import ViewModel

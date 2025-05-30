@@ -1,6 +1,6 @@
-import PySide6
+from PySide6 import QtUiTools
 
-class BaseWidget(PySide6.QtUiTools.QUiLoader):
+class BaseWidget(QtUiTools.QUiLoader):
     def __init__(self, ui_path: str):
         super().__init__()
         self._ui_widget = self.load(ui_path)

@@ -1,6 +1,6 @@
-from BaseWidget import BaseWidget
-from CustomDialog import CustomDialog
-from FormAddProduct import FormAddProduct
+from .BaseWidget import BaseWidget
+from .CustomDialog import CustomDialog
+from .FormAddProduct import FormAddProduct
 import os
 import PySide6
 from package import ViewModel
