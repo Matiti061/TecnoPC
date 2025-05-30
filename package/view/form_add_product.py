@@ -56,7 +56,7 @@ class FormAddProduct(BaseWidget):
             QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Ingrese una cantidad válida.")
             return
 
-        selected_product = self._products[current_row]
+        selected_product: dict = self._products[current_row]
         product_uuid = selected_product["uuid"]
 
         for prod in self._selected_products:
