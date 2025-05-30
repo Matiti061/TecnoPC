@@ -37,7 +37,7 @@ class LoginWidget(BaseWidget):
 
     def _handle_ok_button(self):
         password: str = self.ui_widget.password_input.text()
-        if self.ui_widget.store_combo_box.currentText() == '' and self._user_type != "manager":
+        if not self.ui_widget.store_combo_box.currentText() and self._user_type != "manager":
             QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "No ha seleccionado una tienda.")
             return
         try:

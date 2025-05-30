@@ -19,12 +19,11 @@ class ManagementWidget(BaseWidget):
         self._aux_widget: BaseWidget
         self._employees_tab = BaseWidget(os.path.join("ui", "management_widget.ui"))
         self._products_tab = BaseWidget(os.path.join("ui", "management_widget.ui"))
+        self._stores = self._viewmodel.store.read_stores()
         self.ui_widget.tab_widget.addTab(self._employees_tab.ui_widget, "Empleados")
         self.ui_widget.tab_widget.addTab(self._products_tab.ui_widget, "Componentes")
         # store table view
-        self._stores = self._viewmodel.store.read_stores()
         columns = ["Nombre", "Dirección", "Ciudad", "Teléfono", "Correo electrónico"]
-        self._store_names = []
         values = ["name", "address", "city", "phone", "mail"]
         self.ui_widget.store_table_widget.setColumnCount(len(columns))
         self.ui_widget.store_table_widget.setHorizontalHeaderLabels(columns)
@@ -34,11 +33,9 @@ class ManagementWidget(BaseWidget):
                 self.ui_widget.store_table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(value[values[j]]))
                 if j == len(values) - 1:
                     break
-                if values[j] == "name":
-                    self._store_names.append(value[values[j]])
         # add employees tab stores
-        self._employees_tab.ui_widget.stores_list.addItems([""] + self._store_names)
-        self._products_tab.ui_widget.stores_list.addItems([""] + self._store_names)
+        self._employees_tab.ui_widget.stores_list.addItems([""] + [store["name"] for store in self._stores])
+        self._products_tab.ui_widget.stores_list.addItems([""] + [store["name"] for store in self._stores])
         # store CRUD
         self.ui_widget.store_table_widget.setCurrentCell(-1, -1)
         self.ui_widget.store_create_button.clicked.connect(self._handle_store_create)
@@ -69,7 +66,7 @@ class ManagementWidget(BaseWidget):
         product_values = ["brand", "model", "category", "description", "price"]
         self._products_tab.ui_widget.table_widget.setColumnCount(len(product_columns))
         self._products_tab.ui_widget.table_widget.setHorizontalHeaderLabels(product_columns)
-        if index == 0:
+        if not index:
             self._products_tab.ui_widget.table_widget.setRowCount(0)
             return
         self._products = self._viewmodel.product.read_products(self._stores[index - 1]["uuid"])
@@ -80,7 +77,7 @@ class ManagementWidget(BaseWidget):
                     str(key[value])))
 
     def _handle_product_create(self):
-        if self._products_tab.ui_widget.stores_list.currentText() == "":
+        if not self._products_tab.ui_widget.stores_list.currentText():
             QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe seleccionar una tienda.")
             return
         self._aux_widget = ModifyProductWidget()
@@ -124,7 +121,7 @@ class ManagementWidget(BaseWidget):
         self._aux_widget.ui_widget.close()
 
     def _handle_product_update(self):
-        if self._products_tab.ui_widget.stores_list.currentText() == "":
+        if not self._products_tab.ui_widget.stores_list.currentText():
             QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe seleccionar una tienda.")
             return
         current_row = self._products_tab.ui_widget.table_widget.currentRow()
@@ -176,7 +173,7 @@ class ManagementWidget(BaseWidget):
         self._aux_widget.ui_widget.close()
 
     def _handle_product_delete(self):
-        if self._products_tab.ui_widget.stores_list.currentText() == "":
+        if not self._products_tab.ui_widget.stores_list.currentText():
             QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe seleccionar una tienda.")
             return
         current_row = self._products_tab.ui_widget.table_widget.currentRow()
@@ -239,7 +236,6 @@ class ManagementWidget(BaseWidget):
         )
         # Update UI
         self._stores = self._viewmodel.store.read_stores()
-        self._store_names.append(new_store.name)
         row = self.ui_widget.store_table_widget.rowCount()
         self.ui_widget.store_table_widget.insertRow(row)
         self.ui_widget.store_table_widget.setItem(row, 0, QtWidgets.QTableWidgetItem(new_store.name))
@@ -276,13 +272,12 @@ class ManagementWidget(BaseWidget):
         )
         if result == QtWidgets.QMessageBox.StandardButton.Yes:
             self._viewmodel.store.delete_store(self._stores[current_row]["uuid"])
-            self._store_names.pop(current_row)
             self.ui_widget.store_table_widget.removeRow(current_row)
             self.ui_widget.store_table_widget.setRowCount(len(self._stores))
             self._employees_tab.ui_widget.stores_list.clear()
             self._products_tab.ui_widget.stores_list.clear()
-            self._employees_tab.ui_widget.stores_list.addItems([""] + self._store_names)
-            self._products_tab.ui_widget.stores_list.addItems([""] + self._store_names)
+            self._employees_tab.ui_widget.stores_list.addItems([""] + [store["name"] for store in self._stores])
+            self._products_tab.ui_widget.stores_list.addItems([""] + [store["name"] for store in self._stores])
             self.ui_widget.store_table_widget.setCurrentCell(-1, -1)
             QtWidgets.QMessageBox.information(self.ui_widget, "Información", "Tienda borrada con éxito.")
 
@@ -339,7 +334,6 @@ class ManagementWidget(BaseWidget):
         self.ui_widget.store_table_widget.setItem(current_row, 4, QtWidgets.QTableWidgetItem(updated_store.mail))
 
         # Update store names in combo boxes
-        self._store_names[current_row] = updated_store.name
         self._employees_tab.ui_widget.stores_list.setItemText(current_row + 1, updated_store.name)
         self._products_tab.ui_widget.stores_list.setItemText(current_row + 1, updated_store.name)
 
@@ -352,7 +346,7 @@ class ManagementWidget(BaseWidget):
         employee_values = ["identification", "name", "lastName", "phone", "mail"]
         self._employees_tab.ui_widget.table_widget.setColumnCount(len(employee_columns))
         self._employees_tab.ui_widget.table_widget.setHorizontalHeaderLabels(employee_columns)
-        if index == 0:
+        if not index:
             self._employees_tab.ui_widget.table_widget.setRowCount(0)
             return
         self._employees = self._viewmodel.employee.read_employees(self._stores[index - 1]["uuid"])
@@ -361,13 +355,13 @@ class ManagementWidget(BaseWidget):
             for j, value in enumerate(employee_values):
                 if value == "identification":
                     self._employees_tab.ui_widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(
-                        RUT.get_pretty_rut(int(key["identification"]))))
+                        RUT.get_pretty_rut_static(int(key["identification"]))))
                 else:
                     self._employees_tab.ui_widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(
                     str(key[value])))
 
     def _handle_employee_create(self):
-        if self._employees_tab.ui_widget.stores_list.currentText() == "":
+        if not self._employees_tab.ui_widget.stores_list.currentText():
             QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe seleccionar una tienda.")
             return
         self._aux_widget = ModifyEmployeeWidget()
@@ -407,7 +401,7 @@ class ManagementWidget(BaseWidget):
         self._employees_tab.ui_widget.table_widget.setItem(
             row,
             0,
-            QtWidgets.QTableWidgetItem(identification._get_pretty_rut())
+            QtWidgets.QTableWidgetItem(identification.get_pretty_rut())
         )
         self._employees_tab.ui_widget.table_widget.setItem(row, 1, QtWidgets.QTableWidgetItem(name))
         self._employees_tab.ui_widget.table_widget.setItem(row, 2, QtWidgets.QTableWidgetItem(last_name))
@@ -417,7 +411,7 @@ class ManagementWidget(BaseWidget):
         self._aux_widget.ui_widget.close()
 
     def _handle_employee_update(self):
-        if self._employees_tab.ui_widget.stores_list.currentText() == "":
+        if not self._employees_tab.ui_widget.stores_list.currentText():
             QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe seleccionar una tienda.")
             return
         current_row = self._employees_tab.ui_widget.table_widget.currentRow()
@@ -426,7 +420,7 @@ class ManagementWidget(BaseWidget):
             return
         employee = self._employees[current_row]
         self._aux_widget = ModifyEmployeeWidget()
-        self._aux_widget.ui_widget.rut_input.setText(RUT.get_pretty_rut(int(employee["identification"])))
+        self._aux_widget.ui_widget.rut_input.setText(RUT.get_pretty_rut_static(int(employee["identification"])))
         self._aux_widget.ui_widget.rut_input.setEnabled(False)
         self._aux_widget.ui_widget.name_input.setText(employee["name"])
         self._aux_widget.ui_widget.last_name_input.setText(employee["lastName"])
@@ -468,7 +462,7 @@ class ManagementWidget(BaseWidget):
         self._aux_widget.ui_widget.close()
 
     def _handle_employee_delete(self):
-        if self._employees_tab.ui_widget.stores_list.currentText() == "":
+        if not self._employees_tab.ui_widget.stores_list.currentText():
             QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe seleccionar una tienda.")
             return
         current_row = self._employees_tab.ui_widget.table_widget.currentRow()

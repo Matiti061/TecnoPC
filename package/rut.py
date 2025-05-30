@@ -7,17 +7,17 @@ class RUT:
 
     def _get_all_ruts(self):
         ruts = [
-            self._get_pretty_rut(),
+            self.get_pretty_rut(),
             f"{self.rut}-{self._verification_digit}",
             f"{self.rut}{self._verification_digit}"
         ]
         return ruts
 
-    def _get_pretty_rut(self):
+    def get_pretty_rut(self):
         return f"{self.rut:,}-{self._verification_digit}".replace(',', '.')
 
     @staticmethod
-    def get_pretty_rut(rut: int):
+    def get_pretty_rut_static(rut: int):
         return f"{rut:,}-{RUT.get_verification_digit(rut)}".replace(',', '.')
 
     @staticmethod
