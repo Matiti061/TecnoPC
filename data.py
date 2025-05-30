@@ -4,11 +4,7 @@ Generates an initial data.json containing sample data.
 
 import pathlib
 import random
-from package.model.Model import Model
-from package.model.Manager import Manager
-from package.model.Store import Store
-from package.model.Employee import Employee
-from package.model.Product import Product
+from package.model import Model, Manager, Store, Employee, Product
 
 if pathlib.Path("data.json").exists():
     raise FileExistsError("Data file already exists")
