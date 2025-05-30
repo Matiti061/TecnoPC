@@ -6,7 +6,7 @@ This script executes the project.
 
 import sys
 from package.model.Model import Model
-from package import ViewModel
+from package.viewmodel import ViewModel
 from package.view.View import View
 
 if __name__ == "__main__":
