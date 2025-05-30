@@ -12,11 +12,11 @@ class ViewModel:
         self._employee = self._model.employee
         self._product = self._model.product
 
-    def try_login(self, identification: int, password: str):
+    def try_login(self, identification: int, password: str, store_uuid: str = None):
         for manager in self._model.manager.read_managers():
             if manager["identification"] == str(identification) and manager["password"] == password:
                 return f"{manager['name']} {manager['lastName']}", "manager"
-        for employee in self._model.employee.read_employees():
+        for employee in self._model.employee.read_employees(store_uuid):
             if employee["identification"] == str(identification) and employee["password"] == password:
                 return f"{employee['name']} {employee['lastName']}", "employee"
         raise ValueError("Credentials are invalid")

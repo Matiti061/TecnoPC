@@ -23,8 +23,8 @@ class BaseWidget(QtUiTools.QUiLoader):
     def ui_widget(self):
         return self._ui_widget
 
-def get_employee_uuid(viewmodel: ViewModel, identification, password):
-    for employee in viewmodel.employee.read_employees():
+def get_employee_uuid(viewmodel: ViewModel, identification, password: str, store_uuid: str):
+    for employee in viewmodel.employee.read_employees(store_uuid):
         if employee["identification"] == str(identification) and employee["password"] == password:
             return employee["uuid"]
 
@@ -41,17 +41,31 @@ class LoginWidget(BaseWidget):
         self.ui_widget.show_password_button.clicked.connect(self._handle_show_password_button)
         # OK button
         self.ui_widget.ok_button.clicked.connect(self._handle_ok_button)
+        # custom logic
+        self._store_names = []
+        self._store_uuids = []
+        if user_type == "manager":
+            self._ui_widget.store_label.hide()
+            self._ui_widget.store_combo_box.hide()
+        for store in self._viewmodel.store.read_stores():
+            self._store_names.append(store["name"])
+            self._store_uuids.append(store["uuid"])
+        self.ui_widget.store_combo_box.addItems([""] + self._store_names)
 
     def _handle_ok_button(self):
         password: str = self.ui_widget.password_input.text()
+        if self.ui_widget.store_combo_box.currentText() == '' and self._user_type != "manager":
+            QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "No ha seleccionado una tienda.")
+            return
         try:
             identification = RUT(self.ui_widget.rut_input.text())
-            info = self._viewmodel.try_login(identification.rut, password)
+            store_uuid = self._store_uuids[self.ui_widget.store_combo_box.currentIndex() - 1] if self._user_type == "employee" else None
+            info = self._viewmodel.try_login(identification.rut, password, store_uuid)
             if info[1] != self._user_type:
                 raise ValueError
             employee_uuid = None
             if self._user_type == "employee":
-                employee_uuid = get_employee_uuid(self._viewmodel, identification.rut, password)
+                employee_uuid = get_employee_uuid(self._viewmodel, identification.rut, password, store_uuid)
         except ValueError:
             QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "RUT o contraseña inválidos.")
             return
@@ -61,7 +75,7 @@ class LoginWidget(BaseWidget):
             f"Bienvenido, {info[0]}."
         )
         if self._user_type == "employee":
-            self._callback(self._user_type, employee_uuid)
+            self._callback(self._user_type, employee_uuid, info[0])
         else:
             self._callback(self._user_type)
 
@@ -86,7 +100,7 @@ class ManagementWidget(BaseWidget):
         self._employees_tab = BaseWidget(os.path.join("ui", "management_widget.ui"))
         self._products_tab = BaseWidget(os.path.join("ui", "management_widget.ui"))
         self.ui_widget.tab_widget.addTab(self._employees_tab.ui_widget, "Empleados")
-        self.ui_widget.tab_widget.addTab(self._products_tab.ui_widget, "Productos")
+        self.ui_widget.tab_widget.addTab(self._products_tab.ui_widget, "Componentes")
         # store table view
         self._stores = self._viewmodel.store.read_stores()
         columns = ["Nombre", "Dirección", "Ciudad", "Teléfono", "Correo electrónico"]
@@ -186,7 +200,7 @@ class ManagementWidget(BaseWidget):
         self._products_tab.ui_widget.table_widget.setItem(row, 2, QtWidgets.QTableWidgetItem(category))
         self._products_tab.ui_widget.table_widget.setItem(row, 3, QtWidgets.QTableWidgetItem(description))
         self._products_tab.ui_widget.table_widget.setItem(row, 4, QtWidgets.QTableWidgetItem(str(price)))
-        QtWidgets.QMessageBox.information(self._aux_widget.ui_widget, "Información", "Producto agregado con éxito.")
+        QtWidgets.QMessageBox.information(self._aux_widget.ui_widget, "Información", "Componente agregado con éxito.")
         self._aux_widget.ui_widget.close()
 
     def _handle_product_update(self):
@@ -238,7 +252,7 @@ class ManagementWidget(BaseWidget):
         self._products_tab.ui_widget.table_widget.setItem(row, 2, QtWidgets.QTableWidgetItem(category))
         self._products_tab.ui_widget.table_widget.setItem(row, 3, QtWidgets.QTableWidgetItem(description))
         self._products_tab.ui_widget.table_widget.setItem(row, 4, QtWidgets.QTableWidgetItem(str(price)))
-        QtWidgets.QMessageBox.information(self._aux_widget.ui_widget, "Información", "Producto actualizado con éxito.")
+        QtWidgets.QMessageBox.information(self._aux_widget.ui_widget, "Información", "Componente actualizado con éxito.")
         self._aux_widget.ui_widget.close()
 
     def _handle_product_delete(self):
@@ -249,12 +263,12 @@ class ManagementWidget(BaseWidget):
         if current_row == -1:
             QtWidgets.QMessageBox.warning(self._products_tab.ui_widget, "Advertencia", "Debe seleccionar alguna fila.")
             return
-        result = QtWidgets.QMessageBox.question(self._products_tab.ui_widget, "Pregunta", f"Desea borrar el producto {self._products[current_row]['model']}?")
+        result = QtWidgets.QMessageBox.question(self._products_tab.ui_widget, "Pregunta", f"Desea borrar el componente {self._products[current_row]['model']}?")
         if result == QtWidgets.QMessageBox.StandardButton.Yes:
             index = self._products_tab.ui_widget.stores_list.currentIndex()
             self._viewmodel.product.delete_product(self._stores[index - 1]["uuid"], self._products[current_row]["uuid"])
             self._products_tab.ui_widget.table_widget.removeRow(current_row)
-            QtWidgets.QMessageBox.information(self._products_tab.ui_widget, "Información", "Producto borrado con éxito.")
+            QtWidgets.QMessageBox.information(self._products_tab.ui_widget, "Información", "Componente borrado con éxito.")
             self.ui_widget.store_table_widget.setCurrentCell(-1, -1)
 
 
@@ -529,13 +543,15 @@ class ModifyProductWidget(BaseWidget):
         super().__init__(os.path.join("ui", "modify_product.ui"))
 
 class EmployeeWidget(BaseWidget):
-    def __init__(self, viewmodel: ViewModel, employee_uuid: str):
+    def __init__(self, viewmodel: ViewModel, employee_uuid: str, employee_name: str):
         super().__init__(os.path.join("ui","employee.ui"))
         self._viewmodel = viewmodel
         self._employee_uuid = employee_uuid
         self._total = 0
         self._stores = self._viewmodel.store.read_stores()
         self._products_to_sell = []
+        self._ui_widget.name_label.setText(employee_name)
+        self._ui_widget.tab_widget.removeTab(1)
 
         self.column_mapping = {
             "Nombre": "model",
@@ -549,7 +565,7 @@ class EmployeeWidget(BaseWidget):
 
         self._store = None
         for store in self._stores:
-            employees = self._viewmodel.employee.read_employees_in_store(store["uuid"])
+            employees = self._viewmodel.employee.read_employees(store["uuid"])
             for employee in employees:
                 if employee.get("uuid") == self._employee_uuid:
                     self._store = store
@@ -630,7 +646,7 @@ class EmployeeWidget(BaseWidget):
 
     def _handle_end_sell(self):
         seller = None
-        for item in self._viewmodel.employee.read_employees():
+        for item in self._viewmodel.employee.read_employees(self._store["uuid"]):
             if self._employee_uuid == item["uuid"]:
                 seller = item
                 break
@@ -652,7 +668,8 @@ class EmployeeWidget(BaseWidget):
                 warranty = "sin garantía"
             receipt += f"{model} ({warranty}) - {quantity} x {price} = {subtotal}\n"
             total += subtotal
-        receipt += f"Total: {total:,} CLP\nGracias por su compra!"
+        total = f"{total:,}".replace(',','.')
+        receipt += f"Total: ${total}\nGracias por su compra!"
 
         QtWidgets.QMessageBox.information(self.ui_widget, "Recibo de Venta", receipt)
 
@@ -687,7 +704,7 @@ class EmployeeWidget(BaseWidget):
             if len(self._products_to_sell) != 0:
                 group_box.setTitle("Venta en proceso")
             else:
-                group_box.setTitle("No hay productos para vender")
+                group_box.setTitle("No hay componentes para vender")
 
         if len(self._products_to_sell) != 0:
             column_keys = list(self.column_mapping.keys())
@@ -696,14 +713,19 @@ class EmployeeWidget(BaseWidget):
                     value = product[j] if j < len(product) and product[j] is not None else "no tiene"
                     if value is None:
                         value = "no tiene"
-                    table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(str(value)))
+                    if key == "Precio":
+                        price = f"${int(value):,}".replace(',','.')
+                        table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(str(price)))
+                    else:
+                        table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(str(value)))
         else:
             table_widget.setRowCount(0)
 
         self._total = sum(int(product[3]) * int(product[4]) for product in self._products_to_sell)
 
         if total_label is not None:
-            total_label.setText(f"Total: {self._total:,} CLP")
+            total = f"{self._total:,}".replace(',', '.')
+            total_label.setText(f"Total: ${total}")
 
 class View(BaseWidget):
     def __init__(self, viewmodel: ViewModel):
@@ -715,11 +737,11 @@ class View(BaseWidget):
         # Manager button
         self.ui_widget.manager_button.clicked.connect(self._handle_manager_login)
 
-    def _callback(self, user_type: str, employee_uuid: str = None):
+    def _callback(self, user_type: str, employee_uuid: str = None, employee_name: str = None):
         self._ui_widget.close()
         del self._widget
         if user_type == "employee":
-            self._widget = EmployeeWidget(self._viewmodel, employee_uuid)
+            self._widget = EmployeeWidget(self._viewmodel, employee_uuid, employee_name)
             self._widget.show()
         elif user_type == "manager":
             self._widget = ManagementWidget(self._viewmodel)
@@ -754,7 +776,7 @@ class FormAddProduct(BaseWidget):
         }
 
         for product in self._products_uuid:
-            for item in self._viewmodel.product.read_products():
+            for item in self._viewmodel.product.read_products(store["uuid"]):
                 if product["uuid"] == item["uuid"]:
                     self._products.append(item)
 
@@ -795,7 +817,7 @@ class FormAddProduct(BaseWidget):
             product_copy = selected_product.copy()
             product_copy["quantity"] = quantity
             self._selected_products.append(product_copy)
-            QtWidgets.QMessageBox.information(self.ui_widget, "Información", f"Producto agregado con cantidad {quantity}.")
+            QtWidgets.QMessageBox.information(self.ui_widget, "Información", f"Componente agregado con cantidad {quantity}.")
 
         self._result = self._selected_products
         self.product_selected.emit(self._selected_products)
