@@ -1,4 +1,4 @@
-from BaseWidget import BaseWidget
+from .BaseWidget import BaseWidget
 import os
 
 class ModifyEmployeeWidget(BaseWidget):

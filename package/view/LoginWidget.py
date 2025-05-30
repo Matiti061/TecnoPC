@@ -1,9 +1,9 @@
-from BaseWidget import BaseWidget
+from .BaseWidget import BaseWidget
 import os
-import PySide6
-from ManagementWidget import ManagementWidget
-from package import ViewModel
-from package.rut import RUT
+from PySide6 import QtGui, QtWidgets
+from .ManagementWidget import ManagementWidget
+from ..viewmodel import ViewModel
+from ..rut import RUT
 
 
 class LoginWidget(BaseWidget):
@@ -39,7 +39,7 @@ class LoginWidget(BaseWidget):
     def _handle_ok_button(self):
         password: str = self.ui_widget.password_input.text()
         if self.ui_widget.store_combo_box.currentText() == '' and self._user_type != "manager":
-            PySide6.QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "No ha seleccionado una tienda.")
+            QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "No ha seleccionado una tienda.")
             return
         try:
             identification = RUT(self.ui_widget.rut_input.text())
@@ -51,9 +51,9 @@ class LoginWidget(BaseWidget):
             if self._user_type == "employee":
                 employee_uuid = LoginWidget.get_employee_uuid(self._viewmodel, identification.rut, password, store_uuid)
         except ValueError:
-            PySide6.QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "RUT o contraseña inválidos.")
+            QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "RUT o contraseña inválidos.")
             return
-        PySide6.QtWidgets.QMessageBox.information(
+        QtWidgets.QMessageBox.information(
             self.ui_widget,
             "Información",
             f"Bienvenido, {info[0]}."
@@ -65,13 +65,13 @@ class LoginWidget(BaseWidget):
 
     def _handle_show_password_button(self):
         echo_mode = self.ui_widget.password_input.echoMode()
-        if echo_mode == PySide6.QtWidgets.QLineEdit.EchoMode.Password:
-            self.ui_widget.password_input.setEchoMode(PySide6.QtWidgets.QLineEdit.EchoMode.Normal)
+        if echo_mode == QtWidgets.QLineEdit.EchoMode.Password:
+            self.ui_widget.password_input.setEchoMode(QtWidgets.QLineEdit.EchoMode.Normal)
             self.ui_widget.show_password_button.setIcon(
-                PySide6.QtGui.QIcon(os.path.join("assets", "basicons", "eye-password-off.svg"))
+                QtGui.QIcon(os.path.join("assets", "basicons", "eye-password-off.svg"))
             )
-        elif echo_mode == PySide6.QtWidgets.QLineEdit.EchoMode.Normal:
-            self.ui_widget.password_input.setEchoMode(PySide6.QtWidgets.QLineEdit.EchoMode.Password)
+        elif echo_mode == QtWidgets.QLineEdit.EchoMode.Normal:
+            self.ui_widget.password_input.setEchoMode(QtWidgets.QLineEdit.EchoMode.Password)
             self.ui_widget.show_password_button.setIcon(
-                PySide6.QtGui.QIcon(os.path.join("assets", "basicons", "eye-password.svg"))
+                QtGui.QIcon(os.path.join("assets", "basicons", "eye-password.svg"))
             )
