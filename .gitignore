@@ -2,3 +2,4 @@ data.json
 .idea
 __pycache__
 .vscode
+/ui/*.py

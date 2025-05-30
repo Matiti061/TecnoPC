@@ -11,6 +11,7 @@ class ViewModel:
         self._store = self._model.store
         self._employee = self._model.employee
         self._product = self._model.product
+        self._sale = self._model.sale
 
     def try_login(self, identification: int, password: str, store_uuid: str = None):
         for manager in self._model.manager.read_managers():
@@ -36,3 +37,7 @@ class ViewModel:
     @property
     def product(self):
         return self._product
+
+    @property
+    def sale(self):
+        return self._sale

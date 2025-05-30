@@ -53,6 +53,15 @@ class Product:
     description: str
     price: int
 
+@dataclasses.dataclass
+class Sale:
+    """
+    Defines a dataclass used for sales
+    """
+    store_uuid: str
+    employee_uuid: str
+    client_rut: str
+    products: list
 
 class _InternalModel:
     def __init__(self):
@@ -60,7 +69,7 @@ class _InternalModel:
             with open("data.json", encoding="utf-8") as file:
                 self.data: dict = json.load(file)
         except FileNotFoundError:
-            self.data = json.loads('{"managers": [], "stores": []}')
+            self.data = json.loads('{"managers": [], "stores": [], "sales": []}')
             self.save()
         except json.decoder.JSONDecodeError as e:
             raise RuntimeError(f"JSON decoding error, manual intervention needed: {e}") from e
@@ -93,7 +102,7 @@ class _InternalModel:
         :param entity_uuid: Entity of UUID to locate.
         :return: Index of given entity.
         """
-        if key not in ["managers", "stores", "employees", "products"]:
+        if key not in ["managers", "stores", "employees", "products", "sales"]:
             raise ValueError("Invalid key")
         for index, value in enumerate(self.data[key]):  # type: int, dict
             if value["uuid"] == entity_uuid:
@@ -417,6 +426,35 @@ class ProductModel:
         del self._model.data["stores"][i]["products"][j]
         self._model.save()
 
+# dudas si dejarlo de esta forma
+class SaleModel:
+    def __init__(self, model: _InternalModel):
+        self._model = model
+    def create_sale(self, sale: Sale):
+        """
+        Adds a sale to the deserialized JSON file.
+        :param sale: Sale list
+        :param employee_uuid: uuid of the employee who make the sale
+        :return: Newly-created sale UUID.
+        """
+        sale_uuid = str(uuid.uuid4())
+        self._model.data["sales"].append({
+            "uuid": sale_uuid,
+            "store_uuid": sale.store_uuid,
+            "employee_uuid": sale.employee_uuid,
+            "client_rut": sale.client_rut,
+            "products": sale.products,
+            "createdAt": f"{int(time.time())}",
+            "updatedAt": None
+        })
+        self._model.save()
+        return sale_uuid
+    def read_sales(self) -> list:
+        """
+        Gets all sales present in the deserialized JSON file.
+        :return: List of sales, either empty or with contents.
+        """
+        return self._model.data["sales"]
 
 class Model:
     """
@@ -428,6 +466,7 @@ class Model:
         self._store = StoreModel(self._model)
         self._employee = EmployeeModel(self._model)
         self._product = ProductModel(self._model)
+        self._sale = SaleModel(self._model)
 
     @property
     def manager(self):
@@ -460,3 +499,11 @@ class Model:
         :return: Product variable
         """
         return self._product
+    
+    @property
+    def sale(self):
+        """
+        Gets the sale variable.
+        :return: Sale variable
+        """
+        return self._sale

@@ -39,3 +39,34 @@ class RUT:
     @property
     def rut(self):
         return self._rut
+
+    def verify_rut(rut_complete: str) -> bool:
+        rut = rut_complete.replace(".", "").replace("-", "").lower()
+
+        if len(rut) < 2:
+            return False
+
+        number_rut = rut[:-1]
+        dv = rut[-1]
+
+        if not number_rut.isdigit():
+            return False
+        
+        number_base = int(number_rut)
+        sum = 0
+        mult = 2
+        for digit in reversed(str(number_base)):
+            sum += int(digit) * mult
+            mult += 1
+            if mult > 7:
+                mult = 2
+        rest = sum % 11
+        dv_calculate = 11 - rest
+        if dv_calculate == 11:
+            dv_calculate = 0
+        elif dv_calculate == 10:
+            dv_calculate = 'k'
+        else:
+            dv_calculate = str(dv_calculate)
+
+        return dv_calculate == dv
