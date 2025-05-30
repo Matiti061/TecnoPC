@@ -17,13 +17,8 @@
    <item row="0" column="0">
     <widget class="QTabWidget" name="tab_widget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
-     <widget class="QWidget" name="summary_tab">
-      <attribute name="title">
-       <string>Sumario</string>
-      </attribute>
-     </widget>
      <widget class="QWidget" name="stores_tab">
       <attribute name="title">
        <string>Tiendas</string>
