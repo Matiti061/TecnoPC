@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>469</width>
+    <width>551</width>
     <height>314</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Vista empleado</string>
+   <string>Empleados</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
    <item row="0" column="0">
@@ -19,17 +19,12 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="summary_tab">
-      <attribute name="title">
-       <string>Sumario</string>
-      </attribute>
-     </widget>
      <widget class="QWidget" name="sells_tab">
       <attribute name="title">
        <string>Venta</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="0" column="0" colspan="3">
+       <item row="1" column="0" colspan="3">
         <widget class="QGroupBox" name="groupBox">
          <property name="title">
           <string>Venta en proceso</string>
@@ -45,21 +40,21 @@
           <item row="1" column="1">
            <widget class="QLabel" name="sell_total_label">
             <property name="text">
-             <string>Total: blank</string>
+             <string>Total: $0</string>
             </property>
            </widget>
           </item>
           <item row="3" column="1">
            <widget class="QPushButton" name="sell_add_product">
             <property name="text">
-             <string>Agregar producto</string>
+             <string>Agregar componente</string>
             </property>
            </widget>
           </item>
           <item row="3" column="2">
            <widget class="QPushButton" name="sell_delete_product">
             <property name="text">
-             <string>Eliminar producto</string>
+             <string>Eliminar componente</string>
             </property>
            </widget>
           </item>
@@ -80,17 +75,31 @@
          </layout>
         </widget>
        </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>Nombre:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLabel" name="name_label">
+         <property name="text">
+          <string>empty</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="warranty_tab">
       <attribute name="title">
-       <string>Garantias</string>
+       <string>Garantía</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_5">
        <item row="0" column="0">
         <widget class="QGroupBox" name="groupBox_2">
          <property name="title">
-          <string>Añadir garantia</string>
+          <string>Añadir garantía</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_4">
           <item row="1" column="0">
@@ -99,14 +108,14 @@
           <item row="0" column="0">
            <widget class="QLabel" name="label">
             <property name="text">
-             <string>Aviso: los productos que siguen en la venta se mostraran</string>
+             <string>Los productos que siguen en la venta se mostrarán.</string>
             </property>
            </widget>
           </item>
           <item row="2" column="0">
            <widget class="QPushButton" name="warranty_add_button">
             <property name="text">
-             <string>Dar garantia</string>
+             <string>Dar garantía</string>
             </property>
            </widget>
           </item>
