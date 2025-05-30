@@ -21,16 +21,6 @@ stores = [
     Store("Tienda Mirasol", "Calle Mirasol 456", "Santiago", "+56222987654", "mirasol@tecnopc.cl"),
     Store("Tienda Valle Volcanes", "Avenida Valle Volcanes 789", "Temuco", "+56452654321", "vallevolcanes@tecnopc.cl"),
     Store("Tienda La Serena", "Calle La Serena 321", "La Serena", "+56512345678", "laserena@tecnopc.cl"),
-    Store("Tienda Antofagasta", "Avenida Antofagasta 654", "Antofagasta", "+56552345678", "antofagasta@tecnopc.cl"),
-    Store("Tienda Bosquemar", "Avenida Bosquemar 123", "Viña del Mar", "+56322123456", "bosquemar@tecnopc.cl"),
-    Store("Tienda Mirasol", "Calle Mirasol 456", "Santiago", "+56222987654", "mirasol@tecnopc.cl"),
-    Store("Tienda Valle Volcanes", "Avenida Valle Volcanes 789", "Temuco", "+56452654321", "vallevolcanes@tecnopc.cl"),
-    Store("Tienda La Serena", "Calle La Serena 321", "La Serena", "+56512345678", "laserena@tecnopc.cl"),
-    Store("Tienda Antofagasta", "Avenida Antofagasta 654", "Antofagasta", "+56552345678", "antofagasta@tecnopc.cl"),
-    Store("Tienda Bosquemar", "Avenida Bosquemar 123", "Viña del Mar", "+56322123456", "bosquemar@tecnopc.cl"),
-    Store("Tienda Mirasol", "Calle Mirasol 456", "Santiago", "+56222987654", "mirasol@tecnopc.cl"),
-    Store("Tienda Valle Volcanes", "Avenida Valle Volcanes 789", "Temuco", "+56452654321", "vallevolcanes@tecnopc.cl"),
-    Store("Tienda La Serena", "Calle La Serena 321", "La Serena", "+56512345678", "laserena@tecnopc.cl"),
     Store("Tienda Antofagasta", "Avenida Antofagasta 654", "Antofagasta", "+56552345678", "antofagasta@tecnopc.cl")
 ]
 store_uuids = []
