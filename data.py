@@ -3,6 +3,7 @@ Generates an initial data.json containing sample data.
 """
 
 import pathlib
+import random
 from package.model import Model, Manager, Store, Employee, Product
 
 if pathlib.Path("data.json").exists():
@@ -28,22 +29,15 @@ for store in stores:
 
 # Employees
 employees = [
-    Employee("Juan", "Pérez", "987654321", "juan.perez@tecnopc.cl", "juanperez123"),
-    Employee("María", "Gomez", "987654322", "maria.gomez@tecnopc.cl", "mariagomez123"),
-    Employee("Carlos", "López", "987654323", "carlos.lopez@tecnopc.cl", "carloslopez123"),
-    Employee("Esteban", "Martínez", "987654324", "esteban.martinez@tecnopc.cl", "estebanmartinez123"),
-    Employee("Jesús", "Minnitti", "945612783", "jesus.minnitti@tecnopc.cl", "jesusminnitti123")
-]
-ruts = [
-    "22000000", # 1
-    "23000000", # K
-    "24000000", # 8
-    "25000000", # 6
-    "27000000"  # 2
+    ["22000000", Employee("Juan", "Pérez", "987654321", "juan.perez@tecnopc.cl", "juanperez123")], # digito verificador es 1
+    ["23000000", Employee("María", "Gomez", "987654322", "maria.gomez@tecnopc.cl", "mariagomez123")], # dv K
+    ["24000000", Employee("Carlos", "López", "987654323", "carlos.lopez@tecnopc.cl", "carloslopez123")], # 8
+    ["25000000", Employee("Esteban", "Martínez", "987654324", "esteban.martinez@tecnopc.cl", "estebanmartinez123")], # 6
+    ["27000000", Employee("Jesús", "Minnitti", "945612783", "jesus.minnitti@tecnopc.cl", "jesusminnitti123")] # 2
 ]
 employee_uuids = []
-for i in range(len(employees)):
-    employee_uuids.append(model.employee.create_employee(ruts[i], employees[i]))
+for employee in employees:
+    employee_uuids.append(model.employee.create_employee(store_uuids[random.randint(0, len(store_uuids) - 1)], employee[0], employee[1]))
 
 # Products
 products = [
@@ -65,8 +59,4 @@ products = [
 ]
 product_uuids = []
 for product in products:
-    product_uuids.append(model.product.create_product(product))
-
-# Store operations
-model.product.create_product_in_store(store_uuids[0], product_uuids[2])
-model.employee.create_employee_in_store(store_uuids[0], employee_uuids[1])
+    product_uuids.append(model.product.create_product(store_uuids[random.randint(0, len(store_uuids) - 1)], product))

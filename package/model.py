@@ -60,7 +60,7 @@ class _InternalModel:
             with open("data.json", encoding="utf-8") as file:
                 self.data: dict = json.load(file)
         except FileNotFoundError:
-            self.data = json.loads('{"managers": [], "stores": [], "employees": [], "products": []}')
+            self.data = json.loads('{"managers": [], "stores": []}')
             self.save()
         except json.decoder.JSONDecodeError as e:
             raise RuntimeError(f"JSON decoding error, manual intervention needed: {e}") from e
@@ -110,7 +110,7 @@ class _InternalModel:
         if keys[1] not in ["employees", "products"]:
             raise ValueError("Invalid nested key")
         i = self.locate_entity(keys[0], entity_uuids[0])
-        for j, value in enumerate(self.data[keys[1]]):  # type: int, dict
+        for j, value in enumerate(self.data[keys[0]][i][keys[1]]):  # type: int, dict
             if value["uuid"] == entity_uuids[1]:
                 return i, j
         raise ValueError("Nested entity not found")
@@ -253,14 +253,17 @@ class EmployeeModel:
     def __init__(self, model: _InternalModel):
         self._model = model
 
-    def create_employee(self, identification: str, employee: Employee):
+    def create_employee(self, store_uuid: str, identification: str, employee: Employee):
         """
         Adds an employee to the deserialized JSON file.
+        :param store_uuid: Store UUID
+        :param identification: RUT without verification digit
         :param employee: Instance of Employee dataclass.
         :return: Newly-created employee UUID.
         """
         employee_uuid = str(uuid.uuid4())
-        self._model.data["employees"].append({
+        index = self._model.locate_entity("stores", store_uuid)
+        self._model.data["stores"][index]["employees"].append({
             "uuid": employee_uuid,
             "identification": identification,
             "name": employee.name,
@@ -274,47 +277,25 @@ class EmployeeModel:
         self._model.save()
         return employee_uuid
 
-    def create_employee_in_store(self, store_uuid: str, employee_uuid: str):
-        """
-        Adds an already-existing employee to an already-existing store.
-        :param store_uuid: UUID of store to add the employee to.
-        :param employee_uuid: UUID of employee to add.
-        """
-        index = self._model.locate_entity("stores", store_uuid)
-        hired_at = int(time.time())
-        self._model.data["stores"][index]["employees"].append({
-            "uuid": employee_uuid,
-            "hiredAt": hired_at - hired_at % 86400,
-            "saleCount": 0,
-            "createdAt": f"{int(time.time())}",
-            "updatedAt": None
-        })
-        self._model.save()
-
-    def read_employees(self) -> list:
+    def read_employees(self, store_uuid: str) -> list:
         """
         Gets all employees present in the deserialized JSON file.
-        :return: List of employees, either empty or with contents.
-        """
-        return self._model.data["employees"]
-
-    def read_employees_in_store(self, store_uuid: str) -> list:
-        """
-        Gets all employees present in a store.
-        :param store_uuid: UUID of store to query.
+        :param store_uuid: Store UUID
         :return: List of employees, either empty or with contents.
         """
         index = self._model.locate_entity("stores", store_uuid)
         return self._model.data["stores"][index]["employees"]
 
-    def update_employee(self, employee_uuid: str, employee: Employee):
+    def update_employee(self, store_uuid: str, employee_uuid: str, employee: Employee):
         """
         Edits an already-existing employee in the deserialized JSON file.
         If the employee UUID is invalid ValueError is raised.
+        :param store_uuid: Store UUID
         :param employee_uuid: UUID of employee to edit.
         :param employee: Instance of Employee dataclass. Should include new values.
         """
-        self._model.edit_entity("employees", employee_uuid, {
+        i, j = self._model.locate_nested_entity(["stores", "employees"], [store_uuid, employee_uuid])
+        self._model.data["stores"][i]["employees"][j].update({
             "name": employee.name,
             "lastName": employee.last_name,
             "phone": employee.phone,
@@ -322,7 +303,10 @@ class EmployeeModel:
             "password": employee.password,
             "updatedAt": f"{int(time.time())}"
         })
+        self._model.save()
 
+    # TODO maybe its a sale history and not a counter? if so every time a sale is made then log it somewhere
+    # for now i wont modify this function
     def update_employee_sales(self, store_uuid: str, employee_uuid: str, sales: int):
         """
         Edits the sales of an already-existing employee in an already-existing store.
@@ -338,19 +322,11 @@ class EmployeeModel:
         })
         self._model.save()
 
-    def delete_employee(self, employee_uuid: str):
+    def delete_employee(self, store_uuid: str, employee_uuid: str):
         """
         Deletes an employee present in the deserialized JSON file.
         If the employee UUID is invalid ValueError is raised.
-        :param employee_uuid: UUID of employee to delete.
-        """
-        self._model.delete_entity("employees", employee_uuid)
-
-    def delete_employee_in_store(self, store_uuid: str, employee_uuid: str):
-        """
-        Deletes an already-existing employee in an already-existing store.
-        If any of the UUIDs are invalid ValueError is raised.
-        :param store_uuid: UUID of store to operate on.
+        :param store_uuid: Store UUID
         :param employee_uuid: UUID of employee to delete.
         """
         i, j = self._model.locate_nested_entity(["stores", "employees"], [store_uuid, employee_uuid])
@@ -365,14 +341,16 @@ class ProductModel:
     def __init__(self, model: _InternalModel):
         self._model = model
 
-    def create_product(self, product: Product):
+    def create_product(self, store_uuid: str, product: Product):
         """
         Adds a product to the deserialized JSON file.
+        :param store_uuid: Store UUID
         :param product: Instance of Product dataclass.
         :return: Newly-created product UUID.
         """
         product_uuid = str(uuid.uuid4())
-        self._model.data["products"].append({
+        index = self._model.locate_entity("stores", store_uuid)
+        self._model.data["stores"][index]["products"].append({
             "uuid": product_uuid,
             "brand": product.brand,
             "model": product.model,
@@ -385,45 +363,25 @@ class ProductModel:
         self._model.save()
         return product_uuid
 
-    def create_product_in_store(self, store_uuid: str, product_uuid: str):
-        """
-        Adds an already-existing product to an already-existing store.
-        :param store_uuid: UUID of store to add the product to.
-        :param product_uuid: UUID of product to add.
-        """
-        index = self._model.locate_entity("stores", store_uuid)
-        self._model.data["stores"][index]["products"].append({
-            "uuid": product_uuid,
-            "inStock": None,
-            "createdAt": f"{int(time.time())}",
-            "updatedAt": None
-        })
-        self._model.save()
-
-    def read_products(self) -> list:
+    def read_products(self, store_uuid: str) -> list:
         """
         Gets all products present in the deserialized JSON file.
-        :return: List of products, either empty or with contents.
-        """
-        return self._model.data["products"]
-
-    def read_products_in_store(self, store_uuid: str) -> list:
-        """
-        Gets all products present in a store.
-        :param store_uuid: UUID of store to query.
+        :param store_uuid: Store UUID
         :return: List of products, either empty or with contents.
         """
         index = self._model.locate_entity("stores", store_uuid)
         return self._model.data["stores"][index]["products"]
 
-    def update_product(self, product_uuid: str, product: Product):
+    def update_product(self, store_uuid: str, product_uuid: str, product: Product):
         """
         Edits an already-existing product in the deserialized JSON file.
         If the product UUID is invalid ValueError is raised.
+        :param store_uuid: Store UUID
         :param product_uuid: UUID of product to edit.
         :param product: Instance of Product dataclass. Should include new values.
         """
-        self._model.edit_entity("products", product_uuid, {
+        i, j = self._model.locate_nested_entity(["stores", "products"], [store_uuid, product_uuid])
+        self._model.data["stores"][i]["products"][j].update({
             "brand": product.brand,
             "model": product.model,
             "category": product.category,
@@ -431,6 +389,7 @@ class ProductModel:
             "price": product.price,
             "updatedAt": f"{int(time.time())}"
         })
+        self._model.save()
 
     def update_product_stock(self, store_uuid: str, product_uuid: str, stock: int):
         """
@@ -447,20 +406,12 @@ class ProductModel:
         })
         self._model.save()
 
-    def delete_product(self, product_uuid: str):
+    def delete_product(self, store_uuid: str, product_uuid: str):
         """
         Deletes a product present in the deserialized JSON file.
         If the product UUID is invalid ValueError is raised.
+        :param store_uuid: Store UUID
         :param product_uuid: UUID of product to edit.
-        """
-        self._model.delete_entity("products", product_uuid)
-
-    def delete_product_in_store(self, store_uuid: str, product_uuid: str):
-        """
-        Deletes an already-existing product in an already-existing store.
-        If any of the UUIDs are invalid ValueError is raised.
-        :param store_uuid: UUID of store to operate on.
-        :param product_uuid: UUID of product to delete.
         """
         i, j = self._model.locate_nested_entity(["stores", "products"], [store_uuid, product_uuid])
         del self._model.data["stores"][i]["products"][j]
