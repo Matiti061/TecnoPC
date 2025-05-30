@@ -503,10 +503,10 @@ class EmployeeWidget(BaseWidget):
             quantity = int(product[3])
             price = int(product[4])
             subtotal = quantity * price
-            if product != None:
+            if product[6] != None:
                 warranty = product[6]
             else:
-                warranty = "no tiene"
+                warranty = "sin garantia"
             recivo += f"{model} ({warranty}) - {quantity} x {price} = {subtotal}\n"
             total += subtotal
         recivo += f"Total: {total:,} CLP\nGracias por su compra!"
@@ -551,7 +551,7 @@ class EmployeeWidget(BaseWidget):
             for i, product in enumerate(self._products_to_sell):
                 for j, key in enumerate(column_keys):
                     value = product[j] if j < len(product) and product[j] is not None else "no tiene"
-                    if value is None or value == "" or (isinstance(value, str) and value.lower() == "none"):
+                    if value is None:
                         value = "no tiene"
                     table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(str(value)))
         else:
