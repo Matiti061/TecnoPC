@@ -3,7 +3,7 @@ from .EmployeeWidget import EmployeeWidget
 from .LoginWidget import LoginWidget
 from .ManagementWidget import ManagementWidget
 import os
-from package import ViewModel
+from ..viewmodel import ViewModel
 
 
 class View(BaseWidget):

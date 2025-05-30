@@ -1,11 +1,11 @@
 from .BaseWidget import BaseWidget
 import os
-import PySide6
-from package import ViewModel
+from PySide6 import QtCore, QtWidgets
+from ..viewmodel import ViewModel
 
 
 class FormAddProduct(BaseWidget):
-    product_selected = PySide6.QtCore.Signal(list)
+    product_selected = QtCore.Signal(list)
     def __init__(self, viewmodel: ViewModel, store):
         super().__init__(os.path.join("ui", "form_add_product.ui"))
         self._viewmodel = viewmodel
@@ -30,12 +30,12 @@ class FormAddProduct(BaseWidget):
         self.ui_widget.products_table.setColumnCount(len(column_mapping))
         self.ui_widget.products_table.setHorizontalHeaderLabels(list(column_mapping.keys()))
         self.ui_widget.products_table.setRowCount(len(self._products))
-        self.ui_widget.products_table.setEditTriggers(PySide6.QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.ui_widget.products_table.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
 
         column_keys = list(column_mapping.keys())
         for i, product in enumerate(self._products):
             for j, key in enumerate(column_keys):
-                self.ui_widget.products_table.setItem(i, j, PySide6.QtWidgets.QTableWidgetItem(str(product[column_mapping[key]])))
+                self.ui_widget.products_table.setItem(i, j, QtWidgets.QTableWidgetItem(str(product[column_mapping[key]])))
 
         self.ui_widget.add_product.clicked.connect(self._handle_add_product)
         self._selected_products = []
@@ -46,10 +46,10 @@ class FormAddProduct(BaseWidget):
         quantity = self.ui_widget.quantity_spinbox.value()
 
         if current_row == -1:
-            PySide6.QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe seleccionar alguna fila.")
+            QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe seleccionar alguna fila.")
             return
         if quantity == 0:
-            PySide6.QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Ingrese una cantidad válida.")
+            QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Ingrese una cantidad válida.")
             return
 
         selected_product = self._products[current_row]
@@ -58,13 +58,13 @@ class FormAddProduct(BaseWidget):
         for prod in self._selected_products:
             if prod["uuid"] == product_uuid:
                 prod["quantity"] += quantity
-                PySide6.QtWidgets.QMessageBox.information(self.ui_widget, "Información", f"Cantidad actualizada a {prod['quantity']}.")
+                QtWidgets.QMessageBox.information(self.ui_widget, "Información", f"Cantidad actualizada a {prod['quantity']}.")
                 break
         else:
             product_copy = selected_product.copy()
             product_copy["quantity"] = quantity
             self._selected_products.append(product_copy)
-            PySide6.QtWidgets.QMessageBox.information(self.ui_widget, "Información", f"Componente agregado con cantidad {quantity}.")
+            QtWidgets.QMessageBox.information(self.ui_widget, "Información", f"Componente agregado con cantidad {quantity}.")
 
         self._result = self._selected_products
         self.product_selected.emit(self._selected_products)

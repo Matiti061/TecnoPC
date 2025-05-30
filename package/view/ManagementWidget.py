@@ -1,13 +1,13 @@
-from BaseWidget import BaseWidget
-from ModifyEmployeeWidget import ModifyEmployeeWidget
-from ModifyProductWidget import ModifyProductWidget
+from .BaseWidget import BaseWidget
+from .ModifyEmployeeWidget import ModifyEmployeeWidget
+from .ModifyProductWidget import ModifyProductWidget
 import os
-import PySide6
-from package import ViewModel
-from package.model.Employee import Employee
-from package.model.Product import Product
-from package.model.Store import Store
-from package.rut import RUT
+from PySide6 import QtWidgets
+from ..viewmodel import ViewModel
+from ..model.Employee import Employee
+from ..model.Product import Product
+from ..model.Store import Store
+from ..rut import RUT
 
 
 class ManagementWidget(BaseWidget):
@@ -29,7 +29,7 @@ class ManagementWidget(BaseWidget):
         self.ui_widget.store_table_widget.setRowCount(len(self._stores))
         for i, value in enumerate(self._stores):
             for j in range(len(value)):
-                self.ui_widget.store_table_widget.setItem(i, j, PySide6.QtWidgets.QTableWidgetItem(value[values[j]]))
+                self.ui_widget.store_table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(value[values[j]]))
                 if j == len(values) - 1:
                     break
                 if values[j] == "name":
@@ -74,12 +74,12 @@ class ManagementWidget(BaseWidget):
         self._products_tab.ui_widget.table_widget.setRowCount(len(self._products))
         for i, value in enumerate(self._products):
             for j in range(len(product_values)):
-                self._products_tab.ui_widget.table_widget.setItem(i, j, PySide6.QtWidgets.QTableWidgetItem(
+                self._products_tab.ui_widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(
                     str(value[product_values[j]])))
 
     def _handle_product_create(self):
         if self._products_tab.ui_widget.stores_list.currentText() == "":
-            PySide6.QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe seleccionar una tienda.")
+            QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe seleccionar una tienda.")
             return
         self._aux_widget = ModifyProductWidget()
         self._aux_widget.ui_widget.ok_button.clicked.connect(self._handle_product_create_ok)
@@ -92,12 +92,12 @@ class ManagementWidget(BaseWidget):
         description = self._aux_widget.ui_widget.description_input.text()
         price_text = self._aux_widget.ui_widget.price_input.text()
         if not brand or not model or not category or not description or not price_text:
-            PySide6.QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "Complete todos los campos.")
+            QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "Complete todos los campos.")
             return
         try:
             price = int(price_text)
         except ValueError:
-            PySide6.QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "El precio debe ser un número.")
+            QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "El precio debe ser un número.")
             return
         # Crear producto
         new_product = Product(
@@ -113,21 +113,21 @@ class ManagementWidget(BaseWidget):
         self._products = self._viewmodel.product.read_products(self._stores[index - 1]["uuid"])
         row = self._products_tab.ui_widget.table_widget.rowCount()
         self._products_tab.ui_widget.table_widget.insertRow(row)
-        self._products_tab.ui_widget.table_widget.setItem(row, 0, PySide6.QtWidgets.QTableWidgetItem(brand))
-        self._products_tab.ui_widget.table_widget.setItem(row, 1, PySide6.QtWidgets.QTableWidgetItem(model))
-        self._products_tab.ui_widget.table_widget.setItem(row, 2, PySide6.QtWidgets.QTableWidgetItem(category))
-        self._products_tab.ui_widget.table_widget.setItem(row, 3, PySide6.QtWidgets.QTableWidgetItem(description))
-        self._products_tab.ui_widget.table_widget.setItem(row, 4, PySide6.QtWidgets.QTableWidgetItem(str(price)))
-        PySide6.QtWidgets.QMessageBox.information(self._aux_widget.ui_widget, "Información", "Componente agregado con éxito.")
+        self._products_tab.ui_widget.table_widget.setItem(row, 0, QtWidgets.QTableWidgetItem(brand))
+        self._products_tab.ui_widget.table_widget.setItem(row, 1, QtWidgets.QTableWidgetItem(model))
+        self._products_tab.ui_widget.table_widget.setItem(row, 2, QtWidgets.QTableWidgetItem(category))
+        self._products_tab.ui_widget.table_widget.setItem(row, 3, QtWidgets.QTableWidgetItem(description))
+        self._products_tab.ui_widget.table_widget.setItem(row, 4, QtWidgets.QTableWidgetItem(str(price)))
+        QtWidgets.QMessageBox.information(self._aux_widget.ui_widget, "Información", "Componente agregado con éxito.")
         self._aux_widget.ui_widget.close()
 
     def _handle_product_update(self):
         if self._products_tab.ui_widget.stores_list.currentText() == "":
-            PySide6.QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe seleccionar una tienda.")
+            QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe seleccionar una tienda.")
             return
         current_row = self._products_tab.ui_widget.table_widget.currentRow()
         if current_row == -1:
-            PySide6.QtWidgets.QMessageBox.warning(self._products_tab.ui_widget, "Advertencia", "Debe seleccionar alguna fila.")
+            QtWidgets.QMessageBox.warning(self._products_tab.ui_widget, "Advertencia", "Debe seleccionar alguna fila.")
             return
         product = self._products[current_row]
         self._aux_widget = ModifyProductWidget()
@@ -146,12 +146,12 @@ class ManagementWidget(BaseWidget):
         description = self._aux_widget.ui_widget.description_input.text()
         price_text = self._aux_widget.ui_widget.price_input.text()
         if not brand or not model or not category or not description or not price_text:
-            PySide6.QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "Complete todos los campos.")
+            QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "Complete todos los campos.")
             return
         try:
             price = int(price_text)
         except ValueError:
-            PySide6.QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "El precio debe ser un número.")
+            QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "El precio debe ser un número.")
             return
         # Actualizar producto
         updated_product = {
@@ -165,28 +165,28 @@ class ManagementWidget(BaseWidget):
         self._viewmodel.product.update_product(self._stores[index - 1]["uuid"], self._products[row]["uuid"], Product(brand, model, category, description, price))
         # Actualizar UI y datos locales
         # self._products[row].update(updated_product)
-        self._products_tab.ui_widget.table_widget.setItem(row, 0, PySide6.QtWidgets.QTableWidgetItem(brand))
-        self._products_tab.ui_widget.table_widget.setItem(row, 1, PySide6.QtWidgets.QTableWidgetItem(model))
-        self._products_tab.ui_widget.table_widget.setItem(row, 2, PySide6.QtWidgets.QTableWidgetItem(category))
-        self._products_tab.ui_widget.table_widget.setItem(row, 3, PySide6.QtWidgets.QTableWidgetItem(description))
-        self._products_tab.ui_widget.table_widget.setItem(row, 4, PySide6.QtWidgets.QTableWidgetItem(str(price)))
-        PySide6.QtWidgets.QMessageBox.information(self._aux_widget.ui_widget, "Información", "Componente actualizado con éxito.")
+        self._products_tab.ui_widget.table_widget.setItem(row, 0, QtWidgets.QTableWidgetItem(brand))
+        self._products_tab.ui_widget.table_widget.setItem(row, 1, QtWidgets.QTableWidgetItem(model))
+        self._products_tab.ui_widget.table_widget.setItem(row, 2, QtWidgets.QTableWidgetItem(category))
+        self._products_tab.ui_widget.table_widget.setItem(row, 3, QtWidgets.QTableWidgetItem(description))
+        self._products_tab.ui_widget.table_widget.setItem(row, 4, QtWidgets.QTableWidgetItem(str(price)))
+        QtWidgets.QMessageBox.information(self._aux_widget.ui_widget, "Información", "Componente actualizado con éxito.")
         self._aux_widget.ui_widget.close()
 
     def _handle_product_delete(self):
         if self._products_tab.ui_widget.stores_list.currentText() == "":
-            PySide6.QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe seleccionar una tienda.")
+            QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe seleccionar una tienda.")
             return
         current_row = self._products_tab.ui_widget.table_widget.currentRow()
         if current_row == -1:
-            PySide6.QtWidgets.QMessageBox.warning(self._products_tab.ui_widget, "Advertencia", "Debe seleccionar alguna fila.")
+            QtWidgets.QMessageBox.warning(self._products_tab.ui_widget, "Advertencia", "Debe seleccionar alguna fila.")
             return
-        result = PySide6.QtWidgets.QMessageBox.question(self._products_tab.ui_widget, "Pregunta", f"Desea borrar el componente {self._products[current_row]['model']}?")
-        if result == PySide6.QtWidgets.QMessageBox.StandardButton.Yes:
+        result = QtWidgets.QMessageBox.question(self._products_tab.ui_widget, "Pregunta", f"Desea borrar el componente {self._products[current_row]['model']}?")
+        if result == QtWidgets.QMessageBox.StandardButton.Yes:
             index = self._products_tab.ui_widget.stores_list.currentIndex()
             self._viewmodel.product.delete_product(self._stores[index - 1]["uuid"], self._products[current_row]["uuid"])
             self._products_tab.ui_widget.table_widget.removeRow(current_row)
-            PySide6.QtWidgets.QMessageBox.information(self._products_tab.ui_widget, "Información", "Componente borrado con éxito.")
+            QtWidgets.QMessageBox.information(self._products_tab.ui_widget, "Información", "Componente borrado con éxito.")
             self.ui_widget.store_table_widget.setCurrentCell(-1, -1)
 
 
@@ -197,23 +197,23 @@ class ManagementWidget(BaseWidget):
 
     def _handle_store_create_ok_button(self):
         if not self._aux_widget.ui_widget.name_input.text():
-            PySide6.QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "Ingrese un nombre.")
+            QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "Ingrese un nombre.")
             return
         if not self._aux_widget.ui_widget.address_input.text():
-            PySide6.QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "Ingrese una dirección.")
+            QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "Ingrese una dirección.")
             return
         if not self._aux_widget.ui_widget.city_input.text():
-            PySide6.QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "Ingrese una ciudad.")
+            QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "Ingrese una ciudad.")
             return
         if not self._aux_widget.ui_widget.phone_input.text():
-            PySide6.QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "Ingrese un teléfono.")
+            QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "Ingrese un teléfono.")
             return
         phone_number = self._aux_widget.ui_widget.phone_input.text()
         if not (phone_number[0] == "+" and phone_number[1:].isnumeric()):
-            PySide6.QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "Ingrese un teléfono válido. (anteponga el +)")
+            QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "Ingrese un teléfono válido. (anteponga el +)")
             return
         if not self._aux_widget.ui_widget.mail_input.text():
-            PySide6.QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "Ingrese un correo.")
+            QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "Ingrese un correo.")
             return
         # Add the new store
         new_store = Store(
@@ -228,19 +228,19 @@ class ManagementWidget(BaseWidget):
         self._store_names.append(new_store.name)
         row = self.ui_widget.store_table_widget.rowCount()
         self.ui_widget.store_table_widget.insertRow(row)
-        self.ui_widget.store_table_widget.setItem(row, 0, PySide6.QtWidgets.QTableWidgetItem(new_store.name))
-        self.ui_widget.store_table_widget.setItem(row, 1, PySide6.QtWidgets.QTableWidgetItem(new_store.address))
-        self.ui_widget.store_table_widget.setItem(row, 2, PySide6.QtWidgets.QTableWidgetItem(new_store.city))
-        self.ui_widget.store_table_widget.setItem(row, 3, PySide6.QtWidgets.QTableWidgetItem(new_store.phone))
-        self.ui_widget.store_table_widget.setItem(row, 4, PySide6.QtWidgets.QTableWidgetItem(new_store.mail))
+        self.ui_widget.store_table_widget.setItem(row, 0, QtWidgets.QTableWidgetItem(new_store.name))
+        self.ui_widget.store_table_widget.setItem(row, 1, QtWidgets.QTableWidgetItem(new_store.address))
+        self.ui_widget.store_table_widget.setItem(row, 2, QtWidgets.QTableWidgetItem(new_store.city))
+        self.ui_widget.store_table_widget.setItem(row, 3, QtWidgets.QTableWidgetItem(new_store.phone))
+        self.ui_widget.store_table_widget.setItem(row, 4, QtWidgets.QTableWidgetItem(new_store.mail))
         self._employees_tab.ui_widget.stores_list.addItem(new_store.name)
         self._products_tab.ui_widget.stores_list.addItem(new_store.name)
-        PySide6.QtWidgets.QMessageBox.information(self._aux_widget.ui_widget, "Información", "Tienda agregada con éxito.")
+        QtWidgets.QMessageBox.information(self._aux_widget.ui_widget, "Información", "Tienda agregada con éxito.")
         self._aux_widget.ui_widget.close()
     def _handle_store_update(self):
         current_row = self.ui_widget.store_table_widget.currentRow()
         if current_row == -1:
-            PySide6.QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe seleccionar alguna fila.")
+            QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe seleccionar alguna fila.")
             return
         self._aux_widget = BaseWidget(os.path.join("ui", "modify_store.ui"))
         # logic begin
@@ -255,10 +255,10 @@ class ManagementWidget(BaseWidget):
     def _handle_store_delete(self):
         current_row = self.ui_widget.store_table_widget.currentRow()
         if current_row == -1:
-            PySide6.QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe seleccionar alguna fila.")
+            QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe seleccionar alguna fila.")
             return
-        result = PySide6.QtWidgets.QMessageBox.question(self.ui_widget, "Pregunta", f"Desea borrar la tienda {self._stores[current_row]['name']}?")
-        if result == PySide6.QtWidgets.QMessageBox.StandardButton.Yes:
+        result = QtWidgets.QMessageBox.question(self.ui_widget, "Pregunta", f"Desea borrar la tienda {self._stores[current_row]['name']}?")
+        if result == QtWidgets.QMessageBox.StandardButton.Yes:
             self._viewmodel.store.delete_store(self._stores[current_row]["uuid"])
             self._store_names.pop(current_row)
             self.ui_widget.store_table_widget.removeRow(current_row)
@@ -268,28 +268,28 @@ class ManagementWidget(BaseWidget):
             self._employees_tab.ui_widget.stores_list.addItems([""] + self._store_names)
             self._products_tab.ui_widget.stores_list.addItems([""] + self._store_names)
             self.ui_widget.store_table_widget.setCurrentCell(-1, -1)
-            PySide6.QtWidgets.QMessageBox.information(self.ui_widget, "Información", "Tienda borrada con éxito.")
+            QtWidgets.QMessageBox.information(self.ui_widget, "Información", "Tienda borrada con éxito.")
 
     def _handle_store_update_ok_button(self):
         current_row = self.ui_widget.store_table_widget.currentRow()
         if not self._aux_widget.ui_widget.name_input.text():
-            PySide6.QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "Ingrese un nombre.")
+            QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "Ingrese un nombre.")
             return
         if not self._aux_widget.ui_widget.address_input.text():
-            PySide6.QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "Ingrese una dirección.")
+            QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "Ingrese una dirección.")
             return
         if not self._aux_widget.ui_widget.city_input.text():
-            PySide6.QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "Ingrese una ciudad.")
+            QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "Ingrese una ciudad.")
             return
         if not self._aux_widget.ui_widget.phone_input.text():
-            PySide6.QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "Ingrese un teléfono.")
+            QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "Ingrese un teléfono.")
             return
         phone_number = self._aux_widget.ui_widget.phone_input.text()
         if not (phone_number[0] == "+" and phone_number[1:].isnumeric()):
-            PySide6.QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "Ingrese un teléfono válido. (anteponga el +)")
+            QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "Ingrese un teléfono válido. (anteponga el +)")
             return
         if not self._aux_widget.ui_widget.mail_input.text():
-            PySide6.QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "Ingrese un correo.")
+            QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "Ingrese un correo.")
             return
 
         # Update the store in the data source
@@ -312,18 +312,18 @@ class ManagementWidget(BaseWidget):
         self._stores[current_row]["phone"] = updated_store.phone
         self._stores[current_row]["mail"] = updated_store.mail
 
-        self.ui_widget.store_table_widget.setItem(current_row, 0, PySide6.QtWidgets.QTableWidgetItem(updated_store.name))
-        self.ui_widget.store_table_widget.setItem(current_row, 1, PySide6.QtWidgets.QTableWidgetItem(updated_store.address))
-        self.ui_widget.store_table_widget.setItem(current_row, 2, PySide6.QtWidgets.QTableWidgetItem(updated_store.city))
-        self.ui_widget.store_table_widget.setItem(current_row, 3, PySide6.QtWidgets.QTableWidgetItem(updated_store.phone))
-        self.ui_widget.store_table_widget.setItem(current_row, 4, PySide6.QtWidgets.QTableWidgetItem(updated_store.mail))
+        self.ui_widget.store_table_widget.setItem(current_row, 0, QtWidgets.QTableWidgetItem(updated_store.name))
+        self.ui_widget.store_table_widget.setItem(current_row, 1, QtWidgets.QTableWidgetItem(updated_store.address))
+        self.ui_widget.store_table_widget.setItem(current_row, 2, QtWidgets.QTableWidgetItem(updated_store.city))
+        self.ui_widget.store_table_widget.setItem(current_row, 3, QtWidgets.QTableWidgetItem(updated_store.phone))
+        self.ui_widget.store_table_widget.setItem(current_row, 4, QtWidgets.QTableWidgetItem(updated_store.mail))
 
         # Update store names in combo boxes
         self._store_names[current_row] = updated_store.name
         self._employees_tab.ui_widget.stores_list.setItemText(current_row + 1, updated_store.name)
         self._products_tab.ui_widget.stores_list.setItemText(current_row + 1, updated_store.name)
 
-        PySide6.QtWidgets.QMessageBox.information(self._aux_widget.ui_widget, "Información", "Tienda actualizada con éxito.")
+        QtWidgets.QMessageBox.information(self._aux_widget.ui_widget, "Información", "Tienda actualizada con éxito.")
         self._aux_widget.ui_widget.close()
 
         # TODO employees
@@ -341,15 +341,15 @@ class ManagementWidget(BaseWidget):
         for i, value in enumerate(self._employees):
             for j in range(len(employee_values)):
                 if employee_values[j] == "identification":
-                    self._employees_tab.ui_widget.table_widget.setItem(i, j, PySide6.QtWidgets.QTableWidgetItem(
+                    self._employees_tab.ui_widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(
                         RUT.get_pretty_rut(int(value["identification"]))))
                 else:
-                    self._employees_tab.ui_widget.table_widget.setItem(i, j, PySide6.QtWidgets.QTableWidgetItem(
+                    self._employees_tab.ui_widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(
                     str(value[employee_values[j]])))
 
     def _handle_employee_create(self):
         if self._employees_tab.ui_widget.stores_list.currentText() == "":
-            PySide6.QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe seleccionar una tienda.")
+            QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe seleccionar una tienda.")
             return
         self._aux_widget = ModifyEmployeeWidget()
         self._aux_widget.ui_widget.ok_button.clicked.connect(self._handle_employee_create_ok)
@@ -360,7 +360,7 @@ class ManagementWidget(BaseWidget):
         try:
             identification = RUT(self._aux_widget.ui_widget.rut_input.text())
         except ValueError:
-            PySide6.QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "RUT inválido.")
+            QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "RUT inválido.")
             return
         name = self._aux_widget.ui_widget.name_input.text()
         last_name = self._aux_widget.ui_widget.last_name_input.text()
@@ -368,10 +368,10 @@ class ManagementWidget(BaseWidget):
         mail = self._aux_widget.ui_widget.mail_input.text()
         password = self._aux_widget.ui_widget.password_input.text()
         if not name or not last_name or not phone or not mail or not password:
-            PySide6.QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "Complete todos los campos.")
+            QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "Complete todos los campos.")
             return
         if len(password) < 8:
-            PySide6.QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "Por política su contraseña debe tener 8 o más caracteres.")
+            QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "Por política su contraseña debe tener 8 o más caracteres.")
             return
         # Crear empleado
         new_employee = Employee(name, last_name, phone, mail, password)
@@ -381,21 +381,21 @@ class ManagementWidget(BaseWidget):
         self._employees = self._viewmodel.employee.read_employees(self._stores[index - 1]["uuid"])
         row = self._employees_tab.ui_widget.table_widget.rowCount()
         self._employees_tab.ui_widget.table_widget.insertRow(row)
-        self._employees_tab.ui_widget.table_widget.setItem(row, 0, PySide6.QtWidgets.QTableWidgetItem(identification._get_pretty_rut()))
-        self._employees_tab.ui_widget.table_widget.setItem(row, 1, PySide6.QtWidgets.QTableWidgetItem(name))
-        self._employees_tab.ui_widget.table_widget.setItem(row, 2, PySide6.QtWidgets.QTableWidgetItem(last_name))
-        self._employees_tab.ui_widget.table_widget.setItem(row, 3, PySide6.QtWidgets.QTableWidgetItem(phone))
-        self._employees_tab.ui_widget.table_widget.setItem(row, 4, PySide6.QtWidgets.QTableWidgetItem(mail))
-        PySide6.QtWidgets.QMessageBox.information(self._aux_widget.ui_widget, "Información", "Empleado agregado con éxito.")
+        self._employees_tab.ui_widget.table_widget.setItem(row, 0, QtWidgets.QTableWidgetItem(identification._get_pretty_rut()))
+        self._employees_tab.ui_widget.table_widget.setItem(row, 1, QtWidgets.QTableWidgetItem(name))
+        self._employees_tab.ui_widget.table_widget.setItem(row, 2, QtWidgets.QTableWidgetItem(last_name))
+        self._employees_tab.ui_widget.table_widget.setItem(row, 3, QtWidgets.QTableWidgetItem(phone))
+        self._employees_tab.ui_widget.table_widget.setItem(row, 4, QtWidgets.QTableWidgetItem(mail))
+        QtWidgets.QMessageBox.information(self._aux_widget.ui_widget, "Información", "Empleado agregado con éxito.")
         self._aux_widget.ui_widget.close()
 
     def _handle_employee_update(self):
         if self._employees_tab.ui_widget.stores_list.currentText() == "":
-            PySide6.QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe seleccionar una tienda.")
+            QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe seleccionar una tienda.")
             return
         current_row = self._employees_tab.ui_widget.table_widget.currentRow()
         if current_row == -1:
-            PySide6.QtWidgets.QMessageBox.warning(self._employees_tab.ui_widget, "Advertencia", "Debe seleccionar alguna fila.")
+            QtWidgets.QMessageBox.warning(self._employees_tab.ui_widget, "Advertencia", "Debe seleccionar alguna fila.")
             return
         employee = self._employees[current_row]
         self._aux_widget = ModifyEmployeeWidget()
@@ -415,37 +415,37 @@ class ManagementWidget(BaseWidget):
         mail = self._aux_widget.ui_widget.mail_input.text()
         password = self._aux_widget.ui_widget.password_input.text()
         if not name or not last_name or not phone or not mail:
-            PySide6.QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "Complete todos los campos.")
+            QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "Complete todos los campos.")
             return
         if not password:
             password = self._employees[row]["password"]
         elif len(password) < 8:
-            PySide6.QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "Por política su contraseña debe tener 8 o más caracteres.")
+            QtWidgets.QMessageBox.warning(self._aux_widget.ui_widget, "Advertencia", "Por política su contraseña debe tener 8 o más caracteres.")
             return
         # Actualizar empleado
         index = self._employees_tab.ui_widget.stores_list.currentIndex()
         self._viewmodel.employee.update_employee(self._stores[index - 1]["uuid"], self._employees[row]["uuid"], Employee(name, last_name, phone, mail, password))
         # Actualizar UI y datos locales
-        self._employees_tab.ui_widget.table_widget.setItem(row, 1, PySide6.QtWidgets.QTableWidgetItem(name))
-        self._employees_tab.ui_widget.table_widget.setItem(row, 2, PySide6.QtWidgets.QTableWidgetItem(last_name))
-        self._employees_tab.ui_widget.table_widget.setItem(row, 3, PySide6.QtWidgets.QTableWidgetItem(phone))
-        self._employees_tab.ui_widget.table_widget.setItem(row, 4, PySide6.QtWidgets.QTableWidgetItem(mail))
-        PySide6.QtWidgets.QMessageBox.information(self._aux_widget.ui_widget, "Información", "Empleado actualizado con éxito.")
+        self._employees_tab.ui_widget.table_widget.setItem(row, 1, QtWidgets.QTableWidgetItem(name))
+        self._employees_tab.ui_widget.table_widget.setItem(row, 2, QtWidgets.QTableWidgetItem(last_name))
+        self._employees_tab.ui_widget.table_widget.setItem(row, 3, QtWidgets.QTableWidgetItem(phone))
+        self._employees_tab.ui_widget.table_widget.setItem(row, 4, QtWidgets.QTableWidgetItem(mail))
+        QtWidgets.QMessageBox.information(self._aux_widget.ui_widget, "Información", "Empleado actualizado con éxito.")
         self._aux_widget.ui_widget.close()
 
     def _handle_employee_delete(self):
         if self._employees_tab.ui_widget.stores_list.currentText() == "":
-            PySide6.QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe seleccionar una tienda.")
+            QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe seleccionar una tienda.")
             return
         current_row = self._employees_tab.ui_widget.table_widget.currentRow()
         if current_row == -1:
-            PySide6.QtWidgets.QMessageBox.warning(self._employees_tab.ui_widget, "Advertencia", "Debe seleccionar alguna fila.")
+            QtWidgets.QMessageBox.warning(self._employees_tab.ui_widget, "Advertencia", "Debe seleccionar alguna fila.")
             return
-        result = PySide6.QtWidgets.QMessageBox.question(self._employees_tab.ui_widget, "Pregunta", f"Desea borrar el empleado {self._employees[current_row]['name']} {self._employees[current_row]['lastName']}?")
-        if result == PySide6.QtWidgets.QMessageBox.StandardButton.Yes:
+        result = QtWidgets.QMessageBox.question(self._employees_tab.ui_widget, "Pregunta", f"Desea borrar el empleado {self._employees[current_row]['name']} {self._employees[current_row]['lastName']}?")
+        if result == QtWidgets.QMessageBox.StandardButton.Yes:
             index = self._employees_tab.ui_widget.stores_list.currentIndex()
             self._viewmodel.employee.delete_employee(self._stores[index - 1]["uuid"], self._employees[current_row]["uuid"])
             self._employees_tab.ui_widget.table_widget.removeRow(current_row)
-            PySide6.QtWidgets.QMessageBox.information(self._employees_tab.ui_widget, "Información", "Empleado borrado con éxito.")
+            QtWidgets.QMessageBox.information(self._employees_tab.ui_widget, "Información", "Empleado borrado con éxito.")
             self.ui_widget.store_table_widget.setCurrentCell(-1, -1)
 # Todo employee end.

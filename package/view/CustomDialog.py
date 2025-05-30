@@ -1,22 +1,22 @@
-import PySide6
+from PySide6 import Qt, QtWidgets
 
-class CustomDialog(PySide6.QtWidgets.QDialog):
+class CustomDialog(QtWidgets.QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("Ventana de garantía")
         self.setFixedSize(300, 200)
-        self.setWindowFlags(self.windowFlags() & ~PySide6.Qt.WindowType.WindowContextHelpButtonHint)
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowType.WindowContextHelpButtonHint)
 
         self.init_ui()
 
     def init_ui(self):
-        main_layout = PySide6.QtWidgets.QVBoxLayout(self)
+        main_layout = QtWidgets.QVBoxLayout(self)
 
-        checkbox_layout = PySide6.QtWidgets.QHBoxLayout()
-        self.add_checkbox = PySide6.QtWidgets.QCheckBox("Añadir garantía")
-        self.discard_checkbox = PySide6.QtWidgets.QCheckBox("Descartar garantía")
+        checkbox_layout = QtWidgets.QHBoxLayout()
+        self.add_checkbox = QtWidgets.QCheckBox("Añadir garantía")
+        self.discard_checkbox = QtWidgets.QCheckBox("Descartar garantía")
 
-        self.checkbox_group = PySide6.QtWidgets.QButtonGroup(self)
+        self.checkbox_group = QtWidgets.QButtonGroup(self)
         self.checkbox_group.setExclusive(True)
         self.checkbox_group.addButton(self.add_checkbox)
         self.checkbox_group.addButton(self.discard_checkbox)
@@ -29,9 +29,9 @@ class CustomDialog(PySide6.QtWidgets.QDialog):
 
         main_layout.addLayout(checkbox_layout)
 
-        spinbox_layout = PySide6.QtWidgets.QHBoxLayout()
-        spinbox_label = PySide6.QtWidgets.QLabel("Meses:")
-        self.spinbox = PySide6.QtWidgets.QSpinBox()
+        spinbox_layout = QtWidgets.QHBoxLayout()
+        spinbox_label = QtWidgets.QLabel("Meses:")
+        self.spinbox = QtWidgets.QSpinBox()
         self.spinbox.setMinimum(1)
         self.spinbox.setMaximum(24)
         self.spinbox.setValue(6)
@@ -45,7 +45,7 @@ class CustomDialog(PySide6.QtWidgets.QDialog):
         self.add_checkbox.toggled.connect(self.toggle_spinbox_enable)
         self.discard_checkbox.toggled.connect(self.toggle_spinbox_enable)
 
-        button_box = PySide6.QtWidgets.QDialogButtonBox(PySide6.QtWidgets.QDialogButtonBox.Ok | PySide6.QtWidgets.QDialogButtonBox.Cancel)
+        button_box = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel)
         button_box.accepted.connect(self.accept)
         button_box.rejected.connect(self.reject)
 
