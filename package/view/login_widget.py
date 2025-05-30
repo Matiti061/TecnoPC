@@ -17,7 +17,6 @@ class LoginWidget(BaseWidget):
         self.ui_widget.show_password_button.clicked.connect(self._handle_show_password_button)
         # OK button
         self.ui_widget.ok_button.clicked.connect(self._handle_ok_button)
-        # custom logic
         self._store_names = []
         self._store_uuids = []
         if user_type == "manager":
@@ -43,7 +42,10 @@ class LoginWidget(BaseWidget):
             return
         try:
             identification = RUT(self.ui_widget.rut_input.text())
-            store_uuid = self._store_uuids[self.ui_widget.store_combo_box.currentIndex() - 1] if self._user_type == "employee" else None
+            if self._user_type == "employee":
+                store_uuid = self._store_uuids[self.ui_widget.store_combo_box.currentIndex() - 1]
+            else:
+                store_uuid = None
             info = self._viewmodel.try_login(identification.rut, password, store_uuid)
             if info[1] != self._user_type:
                 raise ValueError

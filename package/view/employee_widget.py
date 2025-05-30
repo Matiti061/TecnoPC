@@ -9,6 +9,7 @@ from ..viewmodel import ViewModel
 class EmployeeWidget(BaseWidget):
     def __init__(self, viewmodel: ViewModel, employee_uuid: str, employee_name: str):
         super().__init__(os.path.join("ui","employee.ui"))
+        self._aux_widget: FormAddProduct
         self._viewmodel = viewmodel
         self._employee_uuid = employee_uuid
         self._total = 0
@@ -99,7 +100,7 @@ class EmployeeWidget(BaseWidget):
         if current_row == -1:
             QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe seleccionar alguna fila.")
             return
-        del self._products_to_sell[current_row]  # TODO check
+        del self._products_to_sell[current_row]
         self._handle_update(self.ui_widget.sell_table_widget, self.ui_widget.groupBox, self.ui_widget.sell_total_label)
 
     def _handle_cancel_sell(self): # note: clear the table

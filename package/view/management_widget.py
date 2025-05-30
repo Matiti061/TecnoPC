@@ -13,6 +13,8 @@ from ..rut import RUT
 class ManagementWidget(BaseWidget):
     def __init__(self, viewmodel: ViewModel):
         super().__init__(os.path.join("ui", "management.ui"))
+        self._products: list
+        self._employees: list
         self._viewmodel = viewmodel
         self._aux_widget: BaseWidget
         self._employees_tab = BaseWidget(os.path.join("ui", "management_widget.ui"))
@@ -72,10 +74,10 @@ class ManagementWidget(BaseWidget):
             return
         self._products = self._viewmodel.product.read_products(self._stores[index - 1]["uuid"])
         self._products_tab.ui_widget.table_widget.setRowCount(len(self._products))
-        for i, value in enumerate(self._products):
-            for j in range(len(product_values)):
+        for i, key in enumerate(self._products):
+            for j, value in enumerate(product_values):
                 self._products_tab.ui_widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(
-                    str(value[product_values[j]])))
+                    str(key[value])))
 
     def _handle_product_create(self):
         if self._products_tab.ui_widget.stores_list.currentText() == "":
@@ -161,7 +163,6 @@ class ManagementWidget(BaseWidget):
             Product(brand, model, category, description, price)
         )
         # Actualizar UI y datos locales
-        # self._products[row].update(updated_product)
         self._products_tab.ui_widget.table_widget.setItem(row, 0, QtWidgets.QTableWidgetItem(brand))
         self._products_tab.ui_widget.table_widget.setItem(row, 1, QtWidgets.QTableWidgetItem(model))
         self._products_tab.ui_widget.table_widget.setItem(row, 2, QtWidgets.QTableWidgetItem(category))
@@ -256,14 +257,12 @@ class ManagementWidget(BaseWidget):
             QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe seleccionar alguna fila.")
             return
         self._aux_widget = BaseWidget(os.path.join("ui", "modify_store.ui"))
-        # logic begin
         self._aux_widget.ui_widget.name_input.setText(self._stores[current_row]["name"])
         self._aux_widget.ui_widget.address_input.setText(self._stores[current_row]["address"])
         self._aux_widget.ui_widget.city_input.setText(self._stores[current_row]["city"])
         self._aux_widget.ui_widget.phone_input.setText(self._stores[current_row]["phone"])
         self._aux_widget.ui_widget.mail_input.setText(self._stores[current_row]["mail"])
         self._aux_widget.ui_widget.ok_button.clicked.connect(self._handle_store_update_ok_button)
-        # logic end
         self._aux_widget.show()
     def _handle_store_delete(self):
         current_row = self.ui_widget.store_table_widget.currentRow()
@@ -358,14 +357,14 @@ class ManagementWidget(BaseWidget):
             return
         self._employees = self._viewmodel.employee.read_employees(self._stores[index - 1]["uuid"])
         self._employees_tab.ui_widget.table_widget.setRowCount(len(self._employees))
-        for i, value in enumerate(self._employees):
-            for j in range(len(employee_values)):
-                if employee_values[j] == "identification":
+        for i, key in enumerate(self._employees):
+            for j, value in enumerate(employee_values):
+                if value == "identification":
                     self._employees_tab.ui_widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(
-                        RUT.get_pretty_rut(int(value["identification"]))))
+                        RUT.get_pretty_rut(int(key["identification"]))))
                 else:
                     self._employees_tab.ui_widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(
-                    str(value[employee_values[j]])))
+                    str(key[value])))
 
     def _handle_employee_create(self):
         if self._employees_tab.ui_widget.stores_list.currentText() == "":
@@ -476,7 +475,13 @@ class ManagementWidget(BaseWidget):
         if current_row == -1:
             QtWidgets.QMessageBox.warning(self._employees_tab.ui_widget, "Advertencia", "Debe seleccionar alguna fila.")
             return
-        result = QtWidgets.QMessageBox.question(self._employees_tab.ui_widget, "Pregunta", f"Desea borrar el empleado {self._employees[current_row]['name']} {self._employees[current_row]['lastName']}?")
+        employee_name: str = self._employees[current_row]['name']
+        employee_last_name: str = self._employees[current_row]['lastName']
+        result = QtWidgets.QMessageBox.question(
+            self._employees_tab.ui_widget,
+            "Pregunta",
+            f"Desea borrar el empleado {employee_name} {employee_last_name}?"
+        )
         if result == QtWidgets.QMessageBox.StandardButton.Yes:
             index = self._employees_tab.ui_widget.stores_list.currentIndex()
             self._viewmodel.employee.delete_employee(
