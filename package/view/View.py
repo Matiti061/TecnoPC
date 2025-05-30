@@ -1,7 +1,7 @@
-from BaseWidget import BaseWidget
-from EmployeeWidget import EmployeeWidget
-from LoginWidget import LoginWidget
-from ManagementWidget import ManagementWidget
+from .BaseWidget import BaseWidget
+from .EmployeeWidget import EmployeeWidget
+from .LoginWidget import LoginWidget
+from .ManagementWidget import ManagementWidget
 import os
 from package import ViewModel
 
