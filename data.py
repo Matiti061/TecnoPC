@@ -1,6 +1,10 @@
 import pathlib
 import random
-from package.model import Model, Manager, Store, Employee, Product
+from package.model import Model
+from package.model.manager import Manager
+from package.model.store import Store
+from package.model.employee import Employee
+from package.model.product import Product
 
 if pathlib.Path("data.json").exists():
     raise FileExistsError("Data file already exists")
