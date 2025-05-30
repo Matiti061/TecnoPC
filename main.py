@@ -1,9 +1,3 @@
-# pylint: disable=I1101
-
-"""
-This script executes the project.
-"""
-
 import sys
 from package.model import Model
 from package.viewmodel import ViewModel

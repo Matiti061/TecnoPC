@@ -1,6 +1,6 @@
-from .BaseWidget import BaseWidget
 import os
 from PySide6 import QtCore, QtWidgets
+from .base_widget import BaseWidget
 from ..viewmodel import ViewModel
 
 
@@ -35,7 +35,11 @@ class FormAddProduct(BaseWidget):
         column_keys = list(column_mapping.keys())
         for i, product in enumerate(self._products):
             for j, key in enumerate(column_keys):
-                self.ui_widget.products_table.setItem(i, j, QtWidgets.QTableWidgetItem(str(product[column_mapping[key]])))
+                self.ui_widget.products_table.setItem(
+                    i,
+                    j,
+                    QtWidgets.QTableWidgetItem(str(product[column_mapping[key]]))
+                )
 
         self.ui_widget.add_product.clicked.connect(self._handle_add_product)
         self._selected_products = []
@@ -58,13 +62,21 @@ class FormAddProduct(BaseWidget):
         for prod in self._selected_products:
             if prod["uuid"] == product_uuid:
                 prod["quantity"] += quantity
-                QtWidgets.QMessageBox.information(self.ui_widget, "Información", f"Cantidad actualizada a {prod['quantity']}.")
+                QtWidgets.QMessageBox.information(
+                    self.ui_widget,
+                    "Información",
+                    f"Cantidad actualizada a {prod['quantity']}."
+                )
                 break
         else:
             product_copy = selected_product.copy()
             product_copy["quantity"] = quantity
             self._selected_products.append(product_copy)
-            QtWidgets.QMessageBox.information(self.ui_widget, "Información", f"Componente agregado con cantidad {quantity}.")
+            QtWidgets.QMessageBox.information(
+                self.ui_widget,
+                "Información",
+                f"Componente agregado con cantidad {quantity}."
+            )
 
         self._result = self._selected_products
         self.product_selected.emit(self._selected_products)

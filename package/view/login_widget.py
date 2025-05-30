@@ -1,7 +1,7 @@
-from .BaseWidget import BaseWidget
 import os
 from PySide6 import QtGui, QtWidgets
-from .ManagementWidget import ManagementWidget
+from .base_widget import BaseWidget
+from .management_widget import ManagementWidget
 from ..viewmodel import ViewModel
 from ..rut import RUT
 

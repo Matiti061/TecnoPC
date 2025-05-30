@@ -1,8 +1,8 @@
-from .BaseWidget import BaseWidget
-from .CustomDialog import CustomDialog
-from .FormAddProduct import FormAddProduct
 import os
 from PySide6 import QtCore, QtWidgets
+from .base_widget import BaseWidget
+from .custom_dialog import CustomDialog
+from .form_add_product import FormAddProduct
 from ..viewmodel import ViewModel
 
 
@@ -55,7 +55,11 @@ class EmployeeWidget(BaseWidget):
 
     def _handle_tabs(self, index: int):
         if index == 1: # sale tab
-            self._handle_update(self.ui_widget.sell_table_widget, self.ui_widget.groupBox, self.ui_widget.sell_total_label)
+            self._handle_update(
+                self.ui_widget.sell_table_widget,
+                self.ui_widget.groupBox,
+                self.ui_widget.sell_total_label
+            )
 
         elif index == 2: # warranty tab
             self._handle_update(self.ui_widget.warranty_table)
@@ -160,7 +164,12 @@ class EmployeeWidget(BaseWidget):
             print("Diálogo cancelado")
         self._handle_update(self.ui_widget.warranty_table)
 
-    def _handle_update(self, table_widget: QtWidgets.QTableWidget, group_box: QtWidgets.QGroupBox = None, total_label: QtWidgets.QLabel = None):
+    def _handle_update(
+            self,
+            table_widget: QtWidgets.QTableWidget,
+            group_box: QtWidgets.QGroupBox = None,
+            total_label: QtWidgets.QLabel = None
+    ):
         table_widget.clearContents()
         table_widget.setRowCount(len(self._products_to_sell))
 

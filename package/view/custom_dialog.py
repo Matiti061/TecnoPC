@@ -60,7 +60,7 @@ class CustomDialog(QtWidgets.QDialog):
     def get_selected_option(self):
         if self.add_checkbox.isChecked():
             return True
-        elif self.discard_checkbox.isChecked():
+        if self.discard_checkbox.isChecked():
             return False
         return None
 
