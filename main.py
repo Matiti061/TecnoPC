@@ -5,7 +5,9 @@ This script executes the project.
 """
 
 import sys
-from package import Model, View, ViewModel
+from package.model.Model import Model
+from package import ViewModel
+from package.view.View import View
 
 if __name__ == "__main__":
     from PySide6 import QtWidgets
