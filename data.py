@@ -1,7 +1,3 @@
-"""
-Generates an initial data.json containing sample data.
-"""
-
 import pathlib
 import random
 from package.model import Model, Manager, Store, Employee, Product
@@ -29,7 +25,7 @@ for store in stores:
 
 # Employees
 employees = [
-    ["22000000", Employee("Juan", "Pérez", "987654321", "juan.perez@tecnopc.cl", "juanperez123")], # digito verificador es 1
+    ["22000000", Employee("Juan", "Pérez", "987654321", "juan.perez@tecnopc.cl", "juanperez123")], # verificador 1
     ["23000000", Employee("María", "Gomez", "987654322", "maria.gomez@tecnopc.cl", "mariagomez123")], # dv K
     ["24000000", Employee("Carlos", "López", "987654323", "carlos.lopez@tecnopc.cl", "carloslopez123")], # 8
     ["25000000", Employee("Esteban", "Martínez", "987654324", "esteban.martinez@tecnopc.cl", "estebanmartinez123")], # 6
@@ -37,7 +33,9 @@ employees = [
 ]
 employee_uuids = []
 for employee in employees:
-    employee_uuids.append(model.employee.create_employee(store_uuids[random.randint(0, len(store_uuids) - 1)], employee[0], employee[1]))
+    employee_uuids.append(
+        model.employee.create_employee(store_uuids[random.randint(0, len(store_uuids) - 1)], employee[0], employee[1])
+    )
 
 # Products
 products = [
