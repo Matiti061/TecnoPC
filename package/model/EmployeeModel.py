@@ -1,5 +1,5 @@
-from Employee import Employee
-from _InternalModel import _InternalModel
+from .Employee import Employee
+from ._InternalModel import _InternalModel
 import time
 import uuid
 

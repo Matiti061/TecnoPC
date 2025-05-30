@@ -1,8 +1,8 @@
-from _InternalModel import _InternalModel
-from ManagerModel import ManagerModel
-from StoreModel import StoreModel
-from EmployeeModel import EmployeeModel
-from ProductModel import ProductModel
+from ._InternalModel import _InternalModel
+from .ManagerModel import ManagerModel
+from .StoreModel import StoreModel
+from .EmployeeModel import EmployeeModel
+from .ProductModel import ProductModel
 
 class Model:
     """
