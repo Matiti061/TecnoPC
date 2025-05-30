@@ -11,7 +11,7 @@ class RUT:
             f"{self.rut}-{self._verification_digit}",
             f"{self.rut}{self._verification_digit}"
         ]
-        return ruts
+        return ruts + [rut.replace('K', 'k') for rut in ruts]
 
     def get_pretty_rut(self):
         return f"{self.rut:,}-{self._verification_digit}".replace(',', '.')

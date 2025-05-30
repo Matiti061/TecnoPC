@@ -1,15 +1,12 @@
-from PySide6 import Qt, QtWidgets
+from PySide6 import QtCore, QtWidgets
 
 class CustomDialog(QtWidgets.QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("Ventana de garantía")
         self.setFixedSize(300, 200)
-        self.setWindowFlags(self.windowFlags() & ~Qt.WindowType.WindowContextHelpButtonHint)
+        self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint)
 
-        self.init_ui()
-
-    def init_ui(self):
         main_layout = QtWidgets.QVBoxLayout(self)
 
         checkbox_layout = QtWidgets.QHBoxLayout()
@@ -45,7 +42,9 @@ class CustomDialog(QtWidgets.QDialog):
         self.add_checkbox.toggled.connect(self.toggle_spinbox_enable)
         self.discard_checkbox.toggled.connect(self.toggle_spinbox_enable)
 
-        button_box = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel)
+        button_box = QtWidgets.QDialogButtonBox(
+            QtWidgets.QDialogButtonBox.StandardButton.Ok | QtWidgets.QDialogButtonBox.StandardButton.Cancel
+        )
         button_box.accepted.connect(self.accept)
         button_box.rejected.connect(self.reject)
 
