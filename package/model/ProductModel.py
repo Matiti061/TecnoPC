@@ -1,5 +1,5 @@
-from _InternalModel import _InternalModel
-from Product import Product
+from ._InternalModel import _InternalModel
+from .Product import Product
 import time
 import uuid
 

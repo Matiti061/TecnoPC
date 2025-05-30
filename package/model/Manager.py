@@ -1,5 +1,5 @@
 import dataclasses
-from Employee import Employee
+from .Employee import Employee
 
 @dataclasses.dataclass
 class Manager(Employee):

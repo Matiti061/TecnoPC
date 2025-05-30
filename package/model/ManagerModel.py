@@ -1,5 +1,5 @@
-from _InternalModel import _InternalModel
-from Manager import Manager
+from ._InternalModel import _InternalModel
+from .Manager import Manager
 import time
 import uuid
 
