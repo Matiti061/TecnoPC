@@ -7,34 +7,24 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>260</height>
+    <height>322</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Inicio de sesión</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="0">
+   <item row="2" column="0">
     <widget class="QPushButton" name="ok_button">
      <property name="text">
       <string>OK</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
+   <item row="3" column="0">
     <widget class="QLabel" name="employee_forgot_password_label">
      <property name="text">
       <string>¿Olvidó su contraseña?&lt;br&gt;Comuníquese con un gerente para cambiar su contraseña.</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0">
-    <widget class="QLabel" name="manager_forgot_password_label">
-     <property name="enabled">
-      <bool>true</bool>
-     </property>
-     <property name="text">
-      <string>¿Olvidó su contraseña?&lt;br&gt;Comuníquese con Soporte Técnico para cambiar su contraseña.</string>
      </property>
     </widget>
    </item>
@@ -79,7 +69,27 @@
        </item>
       </layout>
      </item>
+     <item>
+      <widget class="QLabel" name="store_label">
+       <property name="text">
+        <string>Tienda</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="store_combo_box"/>
+     </item>
     </layout>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="manager_forgot_password_label">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="text">
+      <string>¿Olvidó su contraseña?&lt;br&gt;Comuníquese con Soporte Técnico para cambiar su contraseña.</string>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

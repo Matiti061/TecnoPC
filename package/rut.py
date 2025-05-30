@@ -1,7 +1,7 @@
 class RUT:
     def __init__(self, rut: str):
         self._rut = int(rut.replace('-', '').replace('.', '')[:-1])
-        self._verification_digit = self._get_verification_digit()
+        self._verification_digit = RUT.get_verification_digit(self._rut)
         if rut not in self._get_all_ruts():
             raise ValueError("Invalid RUT")
 
@@ -16,10 +16,15 @@ class RUT:
     def _get_pretty_rut(self):
         return f"{self.rut:,}-{self._verification_digit}".replace(',', '.')
 
-    def _get_verification_digit(self):
+    @staticmethod
+    def get_pretty_rut(rut: int):
+        return f"{rut:,}-{RUT.get_verification_digit(rut)}".replace(',', '.')
+
+    @staticmethod
+    def get_verification_digit(rut: int):
         multiplier = 2
         result = 0
-        for character in str(self._rut)[::-1]:
+        for character in str(rut)[::-1]:
             if multiplier > 7:
                 multiplier = 2
             result += int(character) * multiplier
