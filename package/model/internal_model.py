@@ -40,5 +40,4 @@ class _InternalModel:
 
     def save(self):
         with open("data.json", "w", encoding="utf-8") as file:
-            # TODO: Remove indent for prod
-            json.dump(self.data, file, indent=4)
+            json.dump(self.data, file)

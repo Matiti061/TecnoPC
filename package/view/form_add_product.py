@@ -52,7 +52,7 @@ class FormAddProduct(BaseWidget):
         if current_row == -1:
             QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe seleccionar alguna fila.")
             return
-        if quantity == 0:
+        if not quantity:
             QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Ingrese una cantidad válida.")
             return
 

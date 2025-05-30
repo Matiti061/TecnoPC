@@ -13,7 +13,6 @@ class EmployeeWidget(BaseWidget):
         self._viewmodel = viewmodel
         self._employee_uuid = employee_uuid
         self._total = 0
-        self._stores = self._viewmodel.store.read_stores()
         self._products_to_sell = []
         self._ui_widget.name_label.setText(employee_name)
         self._ui_widget.tab_widget.removeTab(1)
@@ -29,7 +28,7 @@ class EmployeeWidget(BaseWidget):
         }
 
         self._store = None
-        for store in self._stores:
+        for store in self._viewmodel.store.read_stores():
             employees = self._viewmodel.employee.read_employees(store["uuid"])
             for employee in employees:
                 if employee.get("uuid") == self._employee_uuid:
@@ -104,7 +103,7 @@ class EmployeeWidget(BaseWidget):
         self._handle_update(self.ui_widget.sell_table_widget, self.ui_widget.groupBox, self.ui_widget.sell_total_label)
 
     def _handle_cancel_sell(self): # note: clear the table
-        if len(self._products_to_sell) == 0:
+        if not self._products_to_sell:
             QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe haber algún item.")
             return
 
@@ -120,7 +119,7 @@ class EmployeeWidget(BaseWidget):
                 seller = item
                 break
 
-        if len(self._products_to_sell) == 0:
+        if not self._products_to_sell:
             QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe haber algún item.")
             return
 
@@ -175,12 +174,12 @@ class EmployeeWidget(BaseWidget):
         table_widget.setRowCount(len(self._products_to_sell))
 
         if group_box is not None:
-            if len(self._products_to_sell) != 0:
+            if self._products_to_sell:
                 group_box.setTitle("Venta en proceso")
             else:
                 group_box.setTitle("No hay componentes para vender")
 
-        if len(self._products_to_sell) != 0:
+        if self._products_to_sell:
             column_keys = list(self.column_mapping.keys())
             for i, product in enumerate(self._products_to_sell):
                 for j, key in enumerate(column_keys):
