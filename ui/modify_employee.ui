@@ -86,7 +86,7 @@
      <item>
       <widget class="QLineEdit" name="password_input">
        <property name="inputMask">
-        <string>0</string>
+        <string/>
        </property>
        <property name="alignment">
         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>

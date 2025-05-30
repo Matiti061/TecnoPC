@@ -1,11 +1,10 @@
 import os
 
 from PySide6 import QtCore, QtGui, QtUiTools, QtWidgets
-from PySide6.QtGui import QIcon
-from PySide6.QtCore import Qt, QSize
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout,
-    QCheckBox, QSpinBox, QPushButton, QDialogButtonBox, QLabel,
+    QCheckBox, QSpinBox, QDialogButtonBox, QLabel,
     QAbstractItemView, QButtonGroup
 )
 from .rut import RUT
@@ -104,8 +103,8 @@ class ManagementWidget(BaseWidget):
                 if values[j] == "name":
                     self._store_names.append(value[values[j]])
         # add employees tab stores
-        self._employees_tab.ui_widget.stores_list.addItems(self._store_names)
-        self._products_tab.ui_widget.stores_list.addItems(self._store_names)
+        self._employees_tab.ui_widget.stores_list.addItems([""] + self._store_names)
+        self._products_tab.ui_widget.stores_list.addItems([""] + self._store_names)
         # store CRUD
         self.ui_widget.store_table_widget.setCurrentCell(-1, -1)
         self.ui_widget.store_create_button.clicked.connect(self._handle_store_create)
@@ -115,22 +114,34 @@ class ManagementWidget(BaseWidget):
 
 
         # product CRUD
-        self._products = self._viewmodel.product.read_products()
+        self._products_tab.ui_widget.create_button.clicked.connect(self._handle_product_create)
+        self._products_tab.ui_widget.update_button.clicked.connect(self._handle_product_update)
+        self._products_tab.ui_widget.delete_button.clicked.connect(self._handle_product_delete)
+        self._products_tab.ui_widget.stores_list.currentTextChanged.connect(self._handle_product_store_change)
+        self._handle_product_store_change()
+
+    # ...existing store handlers...
+
+    def _handle_product_store_change(self):
+        index = self._products_tab.ui_widget.stores_list.currentIndex()
+        self._products = self._viewmodel.product.read_products(self._stores[index - 1]["uuid"])
         product_columns = ["Marca", "Modelo", "Categoría", "Descripción", "Precio"]
         product_values = ["brand", "model", "category", "description", "price"]
         self._products_tab.ui_widget.table_widget.setColumnCount(len(product_columns))
         self._products_tab.ui_widget.table_widget.setHorizontalHeaderLabels(product_columns)
+        if index == 0:
+            self._products_tab.ui_widget.table_widget.setRowCount(0)
+            return
         self._products_tab.ui_widget.table_widget.setRowCount(len(self._products))
         for i, value in enumerate(self._products):
             for j in range(len(product_values)):
-                self._products_tab.ui_widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(str(value[product_values[j]])))
-        self._products_tab.ui_widget.create_button.clicked.connect(self._handle_product_create)
-        self._products_tab.ui_widget.update_button.clicked.connect(self._handle_product_update)
-        self._products_tab.ui_widget.delete_button.clicked.connect(self._handle_product_delete)
-
-    # ...existing store handlers...
+                self._products_tab.ui_widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(
+                    str(value[product_values[j]])))
 
     def _handle_product_create(self):
+        if self._products_tab.ui_widget.stores_list.currentText() == "":
+            QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe seleccionar una tienda.")
+            return
         self._aux_widget = ModifyProductWidget()
         self._aux_widget.ui_widget.ok_button.clicked.connect(self._handle_product_create_ok)
         self._aux_widget.show()
@@ -157,10 +168,10 @@ class ManagementWidget(BaseWidget):
             self._aux_widget.ui_widget.description_input.text(),
             self._aux_widget.ui_widget.price_input.text(),
         )
-        uuid = self._viewmodel.product.create_product(new_product)
+        index = self._products_tab.ui_widget.stores_list.currentIndex()
+        self._viewmodel.product.create_product(self._stores[index - 1]["uuid"], new_product)
         # Actualizar UI y datos locales
-        new_product["uuid"] = uuid
-        self._products.append(new_product)
+        self._products = self._viewmodel.product.read_products(self._stores[index - 1]["uuid"])
         row = self._products_tab.ui_widget.table_widget.rowCount()
         self._products_tab.ui_widget.table_widget.insertRow(row)
         self._products_tab.ui_widget.table_widget.setItem(row, 0, QtWidgets.QTableWidgetItem(brand))
@@ -172,6 +183,9 @@ class ManagementWidget(BaseWidget):
         self._aux_widget.ui_widget.close()
 
     def _handle_product_update(self):
+        if self._products_tab.ui_widget.stores_list.currentText() == "":
+            QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe seleccionar una tienda.")
+            return
         current_row = self._products_tab.ui_widget.table_widget.currentRow()
         if current_row == -1:
             QtWidgets.QMessageBox.warning(self._products_tab.ui_widget, "Advertencia", "Debe seleccionar alguna fila.")
@@ -208,9 +222,10 @@ class ManagementWidget(BaseWidget):
             "description": description,
             "price": price
         }
-        self._viewmodel.product.update_product(self._products[row]["uuid"], updated_product)
+        index = self._products_tab.ui_widget.stores_list.currentIndex()
+        self._viewmodel.product.update_product(self._stores[index - 1]["uuid"], self._products[row]["uuid"], Product(brand, model, category, description, price))
         # Actualizar UI y datos locales
-        self._products[row].update(updated_product)
+        # self._products[row].update(updated_product)
         self._products_tab.ui_widget.table_widget.setItem(row, 0, QtWidgets.QTableWidgetItem(brand))
         self._products_tab.ui_widget.table_widget.setItem(row, 1, QtWidgets.QTableWidgetItem(model))
         self._products_tab.ui_widget.table_widget.setItem(row, 2, QtWidgets.QTableWidgetItem(category))
@@ -220,16 +235,20 @@ class ManagementWidget(BaseWidget):
         self._aux_widget.ui_widget.close()
 
     def _handle_product_delete(self):
+        if self._products_tab.ui_widget.stores_list.currentText() == "":
+            QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe seleccionar una tienda.")
+            return
         current_row = self._products_tab.ui_widget.table_widget.currentRow()
         if current_row == -1:
             QtWidgets.QMessageBox.warning(self._products_tab.ui_widget, "Advertencia", "Debe seleccionar alguna fila.")
             return
         result = QtWidgets.QMessageBox.question(self._products_tab.ui_widget, "Pregunta", f"Desea borrar el producto {self._products[current_row]['model']}?")
-        if result == QtWidgets.QMessageBox.Yes:
-            self._viewmodel.product.delete_product(self._products[current_row]["uuid"])
-            del self._products[current_row]
+        if result == QtWidgets.QMessageBox.StandardButton.Yes:
+            index = self._products_tab.ui_widget.stores_list.currentIndex()
+            self._viewmodel.product.delete_product(self._stores[index - 1]["uuid"], self._products[current_row]["uuid"])
             self._products_tab.ui_widget.table_widget.removeRow(current_row)
             QtWidgets.QMessageBox.information(self._products_tab.ui_widget, "Información", "Producto borrado con éxito.")
+            self.ui_widget.store_table_widget.setCurrentCell(-1, -1)
 
 
     def _handle_store_create(self):
@@ -308,16 +327,15 @@ class ManagementWidget(BaseWidget):
             QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe seleccionar alguna fila.")
             return
         result = QtWidgets.QMessageBox.question(self.ui_widget, "Pregunta", f"Desea borrar la tienda {self._stores[current_row]['name']}?")
-        if result == QtWidgets.QMessageBox.Yes:
+        if result == QtWidgets.QMessageBox.StandardButton.Yes:
             self._viewmodel.store.delete_store(self._stores[current_row]["uuid"])
-            del self._stores[current_row]
             self._store_names.pop(current_row)
             self.ui_widget.store_table_widget.removeRow(current_row)
             self.ui_widget.store_table_widget.setRowCount(len(self._stores))
             self._employees_tab.ui_widget.stores_list.clear()
             self._products_tab.ui_widget.stores_list.clear()
-            self._employees_tab.ui_widget.stores_list.addItems(self._store_names)
-            self._products_tab.ui_widget.stores_list.addItems(self._store_names)
+            self._employees_tab.ui_widget.stores_list.addItems([""] + self._store_names)
+            self._products_tab.ui_widget.stores_list.addItems([""] + self._store_names)
             self.ui_widget.store_table_widget.setCurrentCell(-1, -1)
             QtWidgets.QMessageBox.information(self.ui_widget, "Información", "Tienda borrada con éxito.")
 
@@ -371,8 +389,8 @@ class ManagementWidget(BaseWidget):
 
         # Update store names in combo boxes
         self._store_names[current_row] = updated_store.name
-        self._employees_tab.ui_widget.stores_list.setItemText(current_row, updated_store.name)
-        self._products_tab.ui_widget.stores_list.setItemText(current_row, updated_store.name)
+        self._employees_tab.ui_widget.stores_list.setItemText(current_row + 1, updated_store.name)
+        self._products_tab.ui_widget.stores_list.setItemText(current_row + 1, updated_store.name)
 
         QtWidgets.QMessageBox.information(self._aux_widget.ui_widget, "Información", "Tienda actualizada con éxito.")
         self._aux_widget.ui_widget.close()
@@ -401,7 +419,7 @@ class EmployeeWidget(BaseWidget):
             "Cantidad": "quantity",
             "Precio": "price",
             "Id": "uuid",
-            "Garantia": "warranty"
+            "Garantía": "warranty"
         }
 
         self._store = None
@@ -435,10 +453,10 @@ class EmployeeWidget(BaseWidget):
             self._handle_update(self.ui_widget.sell_table_widget, self.ui_widget.groupBox, self.ui_widget.sell_total_label)
 
         elif index == 2: # warranty tab
-            self._handle_update(self.ui_widget.warranty_table, None, None)
+            self._handle_update(self.ui_widget.warranty_table)
 
     def _handle_add_product(self): # note: just for the sale
-        self._aux_widget = form_add_product(self._viewmodel, self._store)
+        self._aux_widget = FormAddProduct(self._viewmodel, self._store)
         self._aux_widget.product_selected.connect(self._handle_add_product_selected)
         self._aux_widget.show()
 
@@ -472,7 +490,7 @@ class EmployeeWidget(BaseWidget):
         if current_row == -1:
             QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe seleccionar alguna fila.")
             return
-        del self._products_to_sell[current_row]
+        del self._products_to_sell[current_row]  # TODO check
         self._handle_update(self.ui_widget.sell_table_widget, self.ui_widget.groupBox, self.ui_widget.sell_total_label)
 
     def _handle_cancel_sell(self): # note: clear the table
@@ -496,22 +514,22 @@ class EmployeeWidget(BaseWidget):
             QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe haber algún item.")
             return
 
-        recivo = f"Recibo de venta\nTienda: {self._store['name']}\nVendedor: {seller['name']}\nItems:\n"
+        receipt = f"Recibo de venta\nTienda: {self._store['name']}\nVendedor: {seller['name']}\nItems:\n"
         total = 0
         for product in self._products_to_sell:
             model = product[0]
             quantity = int(product[3])
             price = int(product[4])
             subtotal = quantity * price
-            if product[6] != None:
+            if product[6] is not None:
                 warranty = product[6]
             else:
-                warranty = "sin garantia"
-            recivo += f"{model} ({warranty}) - {quantity} x {price} = {subtotal}\n"
+                warranty = "sin garantía"
+            receipt += f"{model} ({warranty}) - {quantity} x {price} = {subtotal}\n"
             total += subtotal
-        recivo += f"Total: {total:,} CLP\nGracias por su compra!"
+        receipt += f"Total: {total:,} CLP\nGracias por su compra!"
 
-        QtWidgets.QMessageBox.information(self.ui_widget, "Recibo de Venta", recivo)
+        QtWidgets.QMessageBox.information(self.ui_widget, "Recibo de Venta", receipt)
 
         self._products_to_sell = []
         self._total = 0
@@ -524,23 +542,23 @@ class EmployeeWidget(BaseWidget):
             QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe seleccionar alguna fila.")
             return
         dialog = CustomDialog()
-        if dialog.exec() == QDialog.Accepted:
+        if dialog.exec() == QDialog.DialogCode.Accepted:
             selected_option = dialog.get_selected_option()
             spinbox_value = dialog.get_spinbox_value()
 
             if selected_option:
-                self._products_to_sell[current_row][6] = f"garantia de {spinbox_value} meses"
+                self._products_to_sell[current_row][6] = f"garantía de {spinbox_value} meses"
             else:
-                self._products_to_sell[current_row][6] = "sin garantia"
+                self._products_to_sell[current_row][6] = "sin garantía"
         else:
             print("Diálogo cancelado")
-        self._handle_update(self.ui_widget.warranty_table, None, None)
+        self._handle_update(self.ui_widget.warranty_table)
 
-    def _handle_update(self, table_widget: QtWidgets.QTableWidget, group_box: QtWidgets.QGroupBox, total_label: QtWidgets.QLabel):
+    def _handle_update(self, table_widget: QtWidgets.QTableWidget, group_box: QtWidgets.QGroupBox = None, total_label: QtWidgets.QLabel = None):
         table_widget.clearContents()
         table_widget.setRowCount(len(self._products_to_sell))
 
-        if group_box != None:
+        if group_box is not None:
             if len(self._products_to_sell) != 0:
                 group_box.setTitle("Venta en proceso")
             else:
@@ -559,7 +577,7 @@ class EmployeeWidget(BaseWidget):
 
         self._total = sum(int(product[3]) * int(product[4]) for product in self._products_to_sell)
 
-        if total_label != None:
+        if total_label is not None:
             total_label.setText(f"Total: {self._total:,} CLP")
 
 class View(BaseWidget):
@@ -592,7 +610,7 @@ class View(BaseWidget):
         self._widget.ui_widget.employee_forgot_password_label.hide()
         self._widget.show()
 
-class form_add_product(BaseWidget):
+class FormAddProduct(BaseWidget):
     product_selected = QtCore.Signal(list)
     def __init__(self, viewmodel: ViewModel, store):
         super().__init__(os.path.join("ui", "form_add_product.ui"))
@@ -664,9 +682,9 @@ class form_add_product(BaseWidget):
 class CustomDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("Ventana de garantia")
+        self.setWindowTitle("Ventana de garantía")
         self.setFixedSize(300, 200)
-        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowType.WindowContextHelpButtonHint)
 
         self.init_ui()
 
@@ -674,8 +692,8 @@ class CustomDialog(QDialog):
         main_layout = QVBoxLayout(self)
 
         checkbox_layout = QHBoxLayout()
-        self.add_checkbox = QCheckBox("Añadir garantia")
-        self.discard_checkbox = QCheckBox("Descartar garantia")
+        self.add_checkbox = QCheckBox("Añadir garantía")
+        self.discard_checkbox = QCheckBox("Descartar garantía")
 
         self.checkbox_group = QButtonGroup(self)
         self.checkbox_group.setExclusive(True)
