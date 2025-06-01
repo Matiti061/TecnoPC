@@ -4,6 +4,8 @@ from .base_widget import BaseWidget
 from .custom_dialog import CustomDialog
 from .form_add_product import FormAddProduct
 from ..viewmodel import ViewModel
+from ..rut import RUT
+from ..model.sale import Sale
 
 
 class EmployeeWidget(BaseWidget):
@@ -15,7 +17,6 @@ class EmployeeWidget(BaseWidget):
         self._total = 0
         self._products_to_sell = []
         self._ui_widget.name_label.setText(employee_name)
-        self._ui_widget.tab_widget.removeTab(1)
 
         self.column_mapping = {
             "Nombre": "model",
@@ -51,17 +52,18 @@ class EmployeeWidget(BaseWidget):
         self.ui_widget.warranty_table.setHorizontalHeaderLabels(list(self.column_mapping.keys()))
         self.ui_widget.warranty_table.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
         self.ui_widget.warranty_add_button.clicked.connect(self._handle_add_warranty)
+        self._handle_update(self.ui_widget.sell_table_widget, self.ui_widget.groupBox, self.ui_widget.sell_total_label)
 
 
     def _handle_tabs(self, index: int):
-        if index == 1: # sale tab
+        if not index: # sale tab
             self._handle_update(
                 self.ui_widget.sell_table_widget,
                 self.ui_widget.groupBox,
                 self.ui_widget.sell_total_label
             )
 
-        elif index == 2: # warranty tab
+        elif index == 1: # warranty tab
             self._handle_update(self.ui_widget.warranty_table)
 
     def _handle_add_product(self): # note: just for the sale
@@ -118,12 +120,20 @@ class EmployeeWidget(BaseWidget):
             if self._employee_uuid == item["uuid"]:
                 seller = item
                 break
+        try:
+            RUT(self.ui_widget.client_rut.text())
+            rut_client = self.ui_widget.client_rut.text()
+        except ValueError:
+            QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe haber un rut valido.")
+            return
+
 
         if not self._products_to_sell:
             QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe haber algún item.")
             return
 
-        receipt = f"Recibo de venta\nTienda: {self._store['name']}\nVendedor: {seller['name']}\nItems:\n"
+        receipt = f"Recibo de venta\nTienda: {self._store['name']}\nVendedor: {seller['name']}\n"
+        receipt += f"Rut del cliente: {rut_client}\nItems:\n"
         total = 0
         for product in self._products_to_sell:
             model = product[0]
@@ -138,12 +148,16 @@ class EmployeeWidget(BaseWidget):
             total += subtotal
         total = f"{total:,}".replace(',','.')
         receipt += f"Total: ${total}\nGracias por su compra!"
+        self._viewmodel.sale.create_sale(
+            Sale(self._store["uuid"], self._employee_uuid, rut_client, self._products_to_sell)
+        )
 
         QtWidgets.QMessageBox.information(self.ui_widget, "Recibo de Venta", receipt)
 
         self._products_to_sell = []
         self._total = 0
         self._handle_update(self.ui_widget.sell_table_widget, self.ui_widget.groupBox, self.ui_widget.sell_total_label)
+        self.ui_widget.client_rut.setText("")
 
     def _handle_add_warranty(self):
         current_row = self.ui_widget.warranty_table.currentRow()
