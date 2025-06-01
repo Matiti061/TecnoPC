@@ -393,7 +393,7 @@ class ManagementWidget(BaseWidget):
         # Crear empleado
         new_employee = Employee(name, last_name, phone, mail, password)
         index = self._employees_tab.ui_widget.stores_list.currentIndex()
-        self._viewmodel.employee.create_employee(self._stores[index - 1]["uuid"], identification.rut, new_employee)
+        self._viewmodel.employee.create_employee(self._stores[index - 1]["uuid"], str(identification.rut), new_employee)
         # Actualizar UI y datos locales
         self._employees = self._viewmodel.employee.read_employees(self._stores[index - 1]["uuid"])
         row = self._employees_tab.ui_widget.table_widget.rowCount()
