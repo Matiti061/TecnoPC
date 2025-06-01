@@ -40,4 +40,4 @@ class _InternalModel:
 
     def save(self):
         with open("data.json", "w", encoding="utf-8") as file:
-            json.dump(self.data, file)
+            json.dump(self.data, file, indent=4)
