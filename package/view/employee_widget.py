@@ -16,7 +16,7 @@ class EmployeeWidget(BaseWidget):
         self._employee_uuid = employee_uuid
         self._total = 0
         self._products_to_sell = []
-        self.ui_widget.name_label.setText(employee_name)
+        self.widget.name_label.setText(employee_name)
 
         self.column_mapping = {
             "Nombre": "model",
@@ -36,35 +36,35 @@ class EmployeeWidget(BaseWidget):
                     self._store = store
                     break
 
-        self.ui_widget.tab_widget.currentChanged.connect(self._handle_tabs)
+        self.widget.tab_widget.currentChanged.connect(self._handle_tabs)
 
         # sale tab
-        self.ui_widget.sell_table_widget.setColumnCount(len(self.column_mapping))
-        self.ui_widget.sell_table_widget.setHorizontalHeaderLabels(list(self.column_mapping.keys()))
-        self.ui_widget.sell_table_widget.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
-        self.ui_widget.sell_add_product.clicked.connect(self._handle_add_product)
-        self.ui_widget.sell_delete_product.clicked.connect(self._handle_delete_product)
-        self.ui_widget.sell_cancel_button.clicked.connect(self._handle_cancel_sell)
-        self.ui_widget.sell_finale_button.clicked.connect(self._handle_end_sell)
+        self.widget.sell_table_widget.setColumnCount(len(self.column_mapping))
+        self.widget.sell_table_widget.setHorizontalHeaderLabels(list(self.column_mapping.keys()))
+        self.widget.sell_table_widget.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.widget.sell_add_product.clicked.connect(self._handle_add_product)
+        self.widget.sell_delete_product.clicked.connect(self._handle_delete_product)
+        self.widget.sell_cancel_button.clicked.connect(self._handle_cancel_sell)
+        self.widget.sell_finale_button.clicked.connect(self._handle_end_sell)
 
         # warranty tab
-        self.ui_widget.warranty_table.setColumnCount(len(self.column_mapping))
-        self.ui_widget.warranty_table.setHorizontalHeaderLabels(list(self.column_mapping.keys()))
-        self.ui_widget.warranty_table.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
-        self.ui_widget.warranty_add_button.clicked.connect(self._handle_add_warranty)
-        self._handle_update(self.ui_widget.sell_table_widget, self.ui_widget.groupBox, self.ui_widget.sell_total_label)
+        self.widget.warranty_table.setColumnCount(len(self.column_mapping))
+        self.widget.warranty_table.setHorizontalHeaderLabels(list(self.column_mapping.keys()))
+        self.widget.warranty_table.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.widget.warranty_add_button.clicked.connect(self._handle_add_warranty)
+        self._handle_update(self.widget.sell_table_widget, self.widget.groupBox, self.widget.sell_total_label)
 
 
     def _handle_tabs(self, index: int):
         if not index: # sale tab
             self._handle_update(
-                self.ui_widget.sell_table_widget,
-                self.ui_widget.groupBox,
-                self.ui_widget.sell_total_label
+                self.widget.sell_table_widget,
+                self.widget.groupBox,
+                self.widget.sell_total_label
             )
 
         elif index == 1: # warranty tab
-            self._handle_update(self.ui_widget.warranty_table)
+            self._handle_update(self.widget.warranty_table)
 
     def _handle_add_product(self): # note: just for the sale
         self._aux_widget = FormAddProduct(self._viewmodel, self._store)
@@ -93,26 +93,26 @@ class EmployeeWidget(BaseWidget):
                     ])
                     self._total += product["quantity"] * int(product["price"])
 
-        self._handle_update(self.ui_widget.sell_table_widget, self.ui_widget.groupBox, self.ui_widget.sell_total_label)
+        self._handle_update(self.widget.sell_table_widget, self.widget.groupBox, self.widget.sell_total_label)
 
     def _handle_delete_product(self): # note: just for the sale
-        current_row = self.ui_widget.sell_table_widget.currentRow()
+        current_row = self.widget.sell_table_widget.currentRow()
 
         if current_row == -1:
-            QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe seleccionar alguna fila.")
+            QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe seleccionar alguna fila.")
             return
         del self._products_to_sell[current_row]
-        self._handle_update(self.ui_widget.sell_table_widget, self.ui_widget.groupBox, self.ui_widget.sell_total_label)
+        self._handle_update(self.widget.sell_table_widget, self.widget.groupBox, self.widget.sell_total_label)
 
     def _handle_cancel_sell(self): # note: clear the table
         if not self._products_to_sell:
-            QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe haber algún item.")
+            QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe haber algún item.")
             return
 
         self._products_to_sell = []
         self._total = 0
 
-        self._handle_update(self.ui_widget.sell_table_widget, self.ui_widget.groupBox, self.ui_widget.sell_total_label)
+        self._handle_update(self.widget.sell_table_widget, self.widget.groupBox, self.widget.sell_total_label)
 
     def _handle_end_sell(self):
         seller = None
@@ -121,15 +121,15 @@ class EmployeeWidget(BaseWidget):
                 seller = item
                 break
         try:
-            RUT(self.ui_widget.client_rut.text())
-            rut_client = self.ui_widget.client_rut.text()
+            RUT(self.widget.client_rut.text())
+            rut_client = self.widget.client_rut.text()
         except ValueError:
-            QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe haber un rut valido.")
+            QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe haber un rut valido.")
             return
 
 
         if not self._products_to_sell:
-            QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe haber algún item.")
+            QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe haber algún item.")
             return
 
         receipt = f"Recibo de venta\nTienda: {self._store['name']}\nVendedor: {seller['name']}\n"
@@ -152,18 +152,18 @@ class EmployeeWidget(BaseWidget):
             Sale(self._store["uuid"], self._employee_uuid, rut_client, self._products_to_sell)
         )
 
-        QtWidgets.QMessageBox.information(self.ui_widget, "Recibo de Venta", receipt)
+        QtWidgets.QMessageBox.information(self.widget, "Recibo de Venta", receipt)
 
         self._products_to_sell = []
         self._total = 0
-        self._handle_update(self.ui_widget.sell_table_widget, self.ui_widget.groupBox, self.ui_widget.sell_total_label)
-        self.ui_widget.client_rut.setText("")
+        self._handle_update(self.widget.sell_table_widget, self.widget.groupBox, self.widget.sell_total_label)
+        self.widget.client_rut.setText("")
 
     def _handle_add_warranty(self):
-        current_row = self.ui_widget.warranty_table.currentRow()
+        current_row = self.widget.warranty_table.currentRow()
 
         if current_row == -1:
-            QtWidgets.QMessageBox.warning(self.ui_widget, "Advertencia", "Debe seleccionar alguna fila.")
+            QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe seleccionar alguna fila.")
             return
         dialog = CustomDialog()
         if dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
@@ -176,7 +176,7 @@ class EmployeeWidget(BaseWidget):
                 self._products_to_sell[current_row][6] = "sin garantía"
         else:
             print("Diálogo cancelado")
-        self._handle_update(self.ui_widget.warranty_table)
+        self._handle_update(self.widget.warranty_table)
 
     def _handle_update(
             self,
