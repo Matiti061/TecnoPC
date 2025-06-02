@@ -1,6 +1,6 @@
 import json
 
-class _InternalModel:
+class InternalModel:
     def __init__(self):
         try:
             with open("data.json", encoding="utf-8") as file:

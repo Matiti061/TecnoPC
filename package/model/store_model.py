@@ -1,15 +1,15 @@
 import time
 import uuid
-from .internal_model import _InternalModel
+from .internal_model import InternalModel
 from .store import Store
 
 class StoreModel:
-    def __init__(self, model: _InternalModel):
-        self._model = model
+    def __init__(self, model: InternalModel):
+        self.model = model
 
     def create_store(self, store: Store):
         store_uuid = str(uuid.uuid4())
-        self._model.data["stores"].append({
+        self.model.data["stores"].append({
             "uuid": store_uuid,
             "name": store.name,
             "address": store.address,
@@ -21,14 +21,14 @@ class StoreModel:
             "createdAt": f"{int(time.time())}",
             "updatedAt": None
         })
-        self._model.save()
+        self.model.save()
         return store_uuid
 
     def read_stores(self) -> list:
-        return self._model.data["stores"]
+        return self.model.data["stores"]
 
     def update_store(self, store_uuid: str, store: Store):
-        self._model.edit_entity("stores", store_uuid, {
+        self.model.edit_entity("stores", store_uuid, {
             "name": store.name,
             "address": store.address,
             "city": store.city,
@@ -38,4 +38,4 @@ class StoreModel:
         })
 
     def delete_store(self, store_uuid: str):
-        self._model.delete_entity("stores", store_uuid)
+        self.model.delete_entity("stores", store_uuid)

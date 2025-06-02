@@ -11,229 +11,229 @@ from ..rut import RUT
 class ManagementWidget(BaseWidget):
     def __init__(self, viewmodel: ViewModel):
         super().__init__(os.path.join("ui", "management.ui"))
-        self._products: list
-        self._employees: list
-        self._viewmodel = viewmodel
-        self._aux_widget: BaseWidget
-        self._employees_tab = BaseWidget(os.path.join("ui", "management_widget.ui"))
-        self._products_tab = BaseWidget(os.path.join("ui", "management_widget.ui"))
-        self._stores = self._viewmodel.store.read_stores()
-        self.widget.tab_widget.addTab(self._employees_tab.widget, "Empleados")
-        self.widget.tab_widget.addTab(self._products_tab.widget, "Componentes")
+        self.products: list
+        self.employees: list
+        self.viewmodel = viewmodel
+        self.aux_widget: BaseWidget
+        self.employees_tab = BaseWidget(os.path.join("ui", "management_widget.ui"))
+        self.products_tab = BaseWidget(os.path.join("ui", "management_widget.ui"))
+        self.stores = self.viewmodel.store.read_stores()
+        self.widget.tab_widget.addTab(self.employees_tab.widget, "Empleados")
+        self.widget.tab_widget.addTab(self.products_tab.widget, "Componentes")
         # store table view
         columns = ["Nombre", "Dirección", "Ciudad", "Teléfono", "Correo electrónico"]
         values = ["name", "address", "city", "phone", "mail"]
         self.widget.store_table_widget.setColumnCount(len(columns))
         self.widget.store_table_widget.setHorizontalHeaderLabels(columns)
-        self.widget.store_table_widget.setRowCount(len(self._stores))
-        for i, value in enumerate(self._stores):
+        self.widget.store_table_widget.setRowCount(len(self.stores))
+        for i, value in enumerate(self.stores):
             for j in range(len(value)):
                 self.widget.store_table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(value[values[j]]))
                 if j == len(values) - 1:
                     break
         # add employees tab stores
-        self._employees_tab.widget.stores_list.addItems([""] + [store["name"] for store in self._stores])
-        self._products_tab.widget.stores_list.addItems([""] + [store["name"] for store in self._stores])
+        self.employees_tab.widget.stores_list.addItems([""] + [store["name"] for store in self.stores])
+        self.products_tab.widget.stores_list.addItems([""] + [store["name"] for store in self.stores])
         # store CRUD
         self.widget.store_table_widget.setCurrentCell(-1, -1)
-        self.widget.store_create_button.clicked.connect(self._handle_store_create)
-        self.widget.store_update_button.clicked.connect(self._handle_store_update)
-        self.widget.store_delete_button.clicked.connect(self._handle_store_delete)
+        self.widget.store_create_button.clicked.connect(self.handle_store_create)
+        self.widget.store_update_button.clicked.connect(self.handle_store_update)
+        self.widget.store_delete_button.clicked.connect(self.handle_store_delete)
         # employee CRUD
 
 
         # product CRUD
-        self._products_tab.widget.create_button.clicked.connect(self._handle_product_create)
-        self._products_tab.widget.update_button.clicked.connect(self._handle_product_update)
-        self._products_tab.widget.delete_button.clicked.connect(self._handle_product_delete)
-        self._products_tab.widget.stores_list.currentTextChanged.connect(self._handle_product_store_change)
-        self._handle_product_store_change()
+        self.products_tab.widget.create_button.clicked.connect(self.handle_product_create)
+        self.products_tab.widget.update_button.clicked.connect(self.handle_product_update)
+        self.products_tab.widget.delete_button.clicked.connect(self.handle_product_delete)
+        self.products_tab.widget.stores_list.currentTextChanged.connect(self.handle_product_store_change)
+        self.handle_product_store_change()
 
         # employee CRUD
-        self._employees_tab.widget.create_button.clicked.connect(self._handle_employee_create)
-        self._employees_tab.widget.update_button.clicked.connect(self._handle_employee_update)
-        self._employees_tab.widget.delete_button.clicked.connect(self._handle_employee_delete)
-        self._employees_tab.widget.stores_list.currentTextChanged.connect(self._handle_employee_store_change)
-        self._handle_employee_store_change()
+        self.employees_tab.widget.create_button.clicked.connect(self.handle_employee_create)
+        self.employees_tab.widget.update_button.clicked.connect(self.handle_employee_update)
+        self.employees_tab.widget.delete_button.clicked.connect(self.handle_employee_delete)
+        self.employees_tab.widget.stores_list.currentTextChanged.connect(self.handle_employee_store_change)
+        self.handle_employee_store_change()
 
     # ...existing store handlers...
 
-    def _handle_product_store_change(self):
-        index = self._products_tab.widget.stores_list.currentIndex()
+    def handle_product_store_change(self):
+        index = self.products_tab.widget.stores_list.currentIndex()
         product_columns = ["Marca", "Modelo", "Categoría", "Descripción", "Precio"]
         product_values = ["brand", "model", "category", "description", "price"]
-        self._products_tab.widget.table_widget.setColumnCount(len(product_columns))
-        self._products_tab.widget.table_widget.setHorizontalHeaderLabels(product_columns)
+        self.products_tab.widget.table_widget.setColumnCount(len(product_columns))
+        self.products_tab.widget.table_widget.setHorizontalHeaderLabels(product_columns)
         if not index:
-            self._products_tab.widget.table_widget.setRowCount(0)
+            self.products_tab.widget.table_widget.setRowCount(0)
             return
-        self._products = self._viewmodel.product.read_products(self._stores[index - 1]["uuid"])
-        self._products_tab.widget.table_widget.setRowCount(len(self._products))
-        for i, key in enumerate(self._products):
+        self.products = self.viewmodel.product.read_products(self.stores[index - 1]["uuid"])
+        self.products_tab.widget.table_widget.setRowCount(len(self.products))
+        for i, key in enumerate(self.products):
             for j, value in enumerate(product_values):
-                self._products_tab.widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(
+                self.products_tab.widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(
                     str(key[value])))
 
-    def _handle_product_create(self):
-        if not self._products_tab.widget.stores_list.currentText():
+    def handle_product_create(self):
+        if not self.products_tab.widget.stores_list.currentText():
             QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe seleccionar una tienda.")
             return
-        self._aux_widget = BaseWidget(os.path.join("ui", "modify_product.ui"))
-        self._aux_widget.widget.ok_button.clicked.connect(self._handle_product_create_ok)
-        self._aux_widget.show()
+        self.aux_widget = BaseWidget(os.path.join("ui", "modify_product.ui"))
+        self.aux_widget.widget.ok_button.clicked.connect(self.handle_product_create_ok)
+        self.aux_widget.show()
 
-    def _handle_product_create_ok(self):
-        brand = self._aux_widget.widget.brand_input.text()
-        model = self._aux_widget.widget.model_input.text()
-        category = self._aux_widget.widget.category_input.text()
-        description = self._aux_widget.widget.description_input.text()
-        price_text = self._aux_widget.widget.price_input.text()
+    def handle_product_create_ok(self):
+        brand = self.aux_widget.widget.brand_input.text()
+        model = self.aux_widget.widget.model_input.text()
+        category = self.aux_widget.widget.category_input.text()
+        description = self.aux_widget.widget.description_input.text()
+        price_text = self.aux_widget.widget.price_input.text()
         if not brand or not model or not category or not description or not price_text:
-            QtWidgets.QMessageBox.warning(self._aux_widget.widget, "Advertencia", "Complete todos los campos.")
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Complete todos los campos.")
             return
         try:
             price = int(price_text)
         except ValueError:
-            QtWidgets.QMessageBox.warning(self._aux_widget.widget, "Advertencia", "El precio debe ser un número.")
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "El precio debe ser un número.")
             return
         # Crear producto
         new_product = Product(
-            self._aux_widget.widget.brand_input.text(),
-            self._aux_widget.widget.model_input.text(),
-            self._aux_widget.widget.category_input.text(),
-            self._aux_widget.widget.description_input.text(),
-            int(self._aux_widget.widget.price_input.text()),
+            self.aux_widget.widget.brand_input.text(),
+            self.aux_widget.widget.model_input.text(),
+            self.aux_widget.widget.category_input.text(),
+            self.aux_widget.widget.description_input.text(),
+            int(self.aux_widget.widget.price_input.text()),
         )
-        index = self._products_tab.widget.stores_list.currentIndex()
-        self._viewmodel.product.create_product(self._stores[index - 1]["uuid"], new_product)
+        index = self.products_tab.widget.stores_list.currentIndex()
+        self.viewmodel.product.create_product(self.stores[index - 1]["uuid"], new_product)
         # Actualizar UI y datos locales
-        self._products = self._viewmodel.product.read_products(self._stores[index - 1]["uuid"])
-        row = self._products_tab.widget.table_widget.rowCount()
-        self._products_tab.widget.table_widget.insertRow(row)
-        self._products_tab.widget.table_widget.setItem(row, 0, QtWidgets.QTableWidgetItem(brand))
-        self._products_tab.widget.table_widget.setItem(row, 1, QtWidgets.QTableWidgetItem(model))
-        self._products_tab.widget.table_widget.setItem(row, 2, QtWidgets.QTableWidgetItem(category))
-        self._products_tab.widget.table_widget.setItem(row, 3, QtWidgets.QTableWidgetItem(description))
-        self._products_tab.widget.table_widget.setItem(row, 4, QtWidgets.QTableWidgetItem(str(price)))
-        QtWidgets.QMessageBox.information(self._aux_widget.widget, "Información", "Componente agregado con éxito.")
-        self._aux_widget.widget.close()
+        self.products = self.viewmodel.product.read_products(self.stores[index - 1]["uuid"])
+        row = self.products_tab.widget.table_widget.rowCount()
+        self.products_tab.widget.table_widget.insertRow(row)
+        self.products_tab.widget.table_widget.setItem(row, 0, QtWidgets.QTableWidgetItem(brand))
+        self.products_tab.widget.table_widget.setItem(row, 1, QtWidgets.QTableWidgetItem(model))
+        self.products_tab.widget.table_widget.setItem(row, 2, QtWidgets.QTableWidgetItem(category))
+        self.products_tab.widget.table_widget.setItem(row, 3, QtWidgets.QTableWidgetItem(description))
+        self.products_tab.widget.table_widget.setItem(row, 4, QtWidgets.QTableWidgetItem(str(price)))
+        QtWidgets.QMessageBox.information(self.aux_widget.widget, "Información", "Componente agregado con éxito.")
+        self.aux_widget.widget.close()
 
-    def _handle_product_update(self):
-        if not self._products_tab.widget.stores_list.currentText():
+    def handle_product_update(self):
+        if not self.products_tab.widget.stores_list.currentText():
             QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe seleccionar una tienda.")
             return
-        current_row = self._products_tab.widget.table_widget.currentRow()
+        current_row = self.products_tab.widget.table_widget.currentRow()
         if current_row == -1:
-            QtWidgets.QMessageBox.warning(self._products_tab.widget, "Advertencia", "Debe seleccionar alguna fila.")
+            QtWidgets.QMessageBox.warning(self.products_tab.widget, "Advertencia", "Debe seleccionar alguna fila.")
             return
-        product = self._products[current_row]
-        self._aux_widget = BaseWidget(os.path.join("ui", "modify_product.ui"))
-        self._aux_widget.widget.brand_input.setText(product["brand"])
-        self._aux_widget.widget.model_input.setText(product["model"])
-        self._aux_widget.widget.category_input.setText(product["category"])
-        self._aux_widget.widget.description_input.setText(product["description"])
-        self._aux_widget.widget.price_input.setText(str(product["price"]))
-        self._aux_widget.widget.ok_button.clicked.connect(lambda: self._handle_product_update_ok(current_row))
-        self._aux_widget.show()
+        product = self.products[current_row]
+        self.aux_widget = BaseWidget(os.path.join("ui", "modify_product.ui"))
+        self.aux_widget.widget.brand_input.setText(product["brand"])
+        self.aux_widget.widget.model_input.setText(product["model"])
+        self.aux_widget.widget.category_input.setText(product["category"])
+        self.aux_widget.widget.description_input.setText(product["description"])
+        self.aux_widget.widget.price_input.setText(str(product["price"]))
+        self.aux_widget.widget.ok_button.clicked.connect(lambda: self.handle_product_update_ok(current_row))
+        self.aux_widget.show()
 
-    def _handle_product_update_ok(self, row):
-        brand = self._aux_widget.widget.brand_input.text()
-        model = self._aux_widget.widget.model_input.text()
-        category = self._aux_widget.widget.category_input.text()
-        description = self._aux_widget.widget.description_input.text()
-        price_text = self._aux_widget.widget.price_input.text()
+    def handle_product_update_ok(self, row):
+        brand = self.aux_widget.widget.brand_input.text()
+        model = self.aux_widget.widget.model_input.text()
+        category = self.aux_widget.widget.category_input.text()
+        description = self.aux_widget.widget.description_input.text()
+        price_text = self.aux_widget.widget.price_input.text()
         if not brand or not model or not category or not description or not price_text:
-            QtWidgets.QMessageBox.warning(self._aux_widget.widget, "Advertencia", "Complete todos los campos.")
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Complete todos los campos.")
             return
         try:
             price = int(price_text)
         except ValueError:
-            QtWidgets.QMessageBox.warning(self._aux_widget.widget, "Advertencia", "El precio debe ser un número.")
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "El precio debe ser un número.")
             return
         # Actualizar producto
-        index = self._products_tab.widget.stores_list.currentIndex()
-        self._viewmodel.product.update_product(
-            self._stores[index - 1]["uuid"],
-            self._products[row]["uuid"],
+        index = self.products_tab.widget.stores_list.currentIndex()
+        self.viewmodel.product.update_product(
+            self.stores[index - 1]["uuid"],
+            self.products[row]["uuid"],
             Product(brand, model, category, description, price)
         )
         # Actualizar UI y datos locales
-        self._products_tab.widget.table_widget.setItem(row, 0, QtWidgets.QTableWidgetItem(brand))
-        self._products_tab.widget.table_widget.setItem(row, 1, QtWidgets.QTableWidgetItem(model))
-        self._products_tab.widget.table_widget.setItem(row, 2, QtWidgets.QTableWidgetItem(category))
-        self._products_tab.widget.table_widget.setItem(row, 3, QtWidgets.QTableWidgetItem(description))
-        self._products_tab.widget.table_widget.setItem(row, 4, QtWidgets.QTableWidgetItem(str(price)))
+        self.products_tab.widget.table_widget.setItem(row, 0, QtWidgets.QTableWidgetItem(brand))
+        self.products_tab.widget.table_widget.setItem(row, 1, QtWidgets.QTableWidgetItem(model))
+        self.products_tab.widget.table_widget.setItem(row, 2, QtWidgets.QTableWidgetItem(category))
+        self.products_tab.widget.table_widget.setItem(row, 3, QtWidgets.QTableWidgetItem(description))
+        self.products_tab.widget.table_widget.setItem(row, 4, QtWidgets.QTableWidgetItem(str(price)))
         QtWidgets.QMessageBox.information(
-            self._aux_widget.widget,
+            self.aux_widget.widget,
             "Información",
             "Componente actualizado con éxito."
         )
-        self._aux_widget.widget.close()
+        self.aux_widget.widget.close()
 
-    def _handle_product_delete(self):
-        if not self._products_tab.widget.stores_list.currentText():
+    def handle_product_delete(self):
+        if not self.products_tab.widget.stores_list.currentText():
             QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe seleccionar una tienda.")
             return
-        current_row = self._products_tab.widget.table_widget.currentRow()
+        current_row = self.products_tab.widget.table_widget.currentRow()
         if current_row == -1:
-            QtWidgets.QMessageBox.warning(self._products_tab.widget, "Advertencia", "Debe seleccionar alguna fila.")
+            QtWidgets.QMessageBox.warning(self.products_tab.widget, "Advertencia", "Debe seleccionar alguna fila.")
             return
         result = QtWidgets.QMessageBox.question(
-            self._products_tab.widget,
+            self.products_tab.widget,
             "Pregunta",
-            f"Desea borrar el componente {self._products[current_row]['model']}?"
+            f"Desea borrar el componente {self.products[current_row]['model']}?"
         )
         if result == QtWidgets.QMessageBox.StandardButton.Yes:
-            index = self._products_tab.widget.stores_list.currentIndex()
-            self._viewmodel.product.delete_product(self._stores[index - 1]["uuid"], self._products[current_row]["uuid"])
-            self._products_tab.widget.table_widget.removeRow(current_row)
+            index = self.products_tab.widget.stores_list.currentIndex()
+            self.viewmodel.product.delete_product(self.stores[index - 1]["uuid"], self.products[current_row]["uuid"])
+            self.products_tab.widget.table_widget.removeRow(current_row)
             QtWidgets.QMessageBox.information(
-                self._products_tab.widget,
+                self.products_tab.widget,
                 "Información",
                 "Componente borrado con éxito."
             )
             self.widget.store_table_widget.setCurrentCell(-1, -1)
 
 
-    def _handle_store_create(self):
-        self._aux_widget = BaseWidget(os.path.join("ui", "modify_store.ui"))
-        self._aux_widget.widget.ok_button.clicked.connect(self._handle_store_create_ok_button)
-        self._aux_widget.show()
+    def handle_store_create(self):
+        self.aux_widget = BaseWidget(os.path.join("ui", "modify_store.ui"))
+        self.aux_widget.widget.ok_button.clicked.connect(self.handle_store_create_ok_button)
+        self.aux_widget.show()
 
-    def _handle_store_create_ok_button(self):
-        if not self._aux_widget.widget.name_input.text():
-            QtWidgets.QMessageBox.warning(self._aux_widget.widget, "Advertencia", "Ingrese un nombre.")
+    def handle_store_create_ok_button(self):
+        if not self.aux_widget.widget.name_input.text():
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese un nombre.")
             return
-        if not self._aux_widget.widget.address_input.text():
-            QtWidgets.QMessageBox.warning(self._aux_widget.widget, "Advertencia", "Ingrese una dirección.")
+        if not self.aux_widget.widget.address_input.text():
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese una dirección.")
             return
-        if not self._aux_widget.widget.city_input.text():
-            QtWidgets.QMessageBox.warning(self._aux_widget.widget, "Advertencia", "Ingrese una ciudad.")
+        if not self.aux_widget.widget.city_input.text():
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese una ciudad.")
             return
-        if not self._aux_widget.widget.phone_input.text():
-            QtWidgets.QMessageBox.warning(self._aux_widget.widget, "Advertencia", "Ingrese un teléfono.")
+        if not self.aux_widget.widget.phone_input.text():
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese un teléfono.")
             return
-        phone_number = self._aux_widget.widget.phone_input.text()
+        phone_number = self.aux_widget.widget.phone_input.text()
         if not (phone_number[0] == "+" and phone_number[1:].isnumeric()):
             QtWidgets.QMessageBox.warning(
-                self._aux_widget.widget,
+                self.aux_widget.widget,
                 "Advertencia",
                 "Ingrese un teléfono válido. (anteponga el +)"
             )
             return
-        if not self._aux_widget.widget.mail_input.text():
-            QtWidgets.QMessageBox.warning(self._aux_widget.widget, "Advertencia", "Ingrese un correo.")
+        if not self.aux_widget.widget.mail_input.text():
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese un correo.")
             return
         # Add the new store
         new_store = Store(
-            self._aux_widget.widget.name_input.text(),
-            self._aux_widget.widget.address_input.text(),
-            self._aux_widget.widget.city_input.text(),
-            self._aux_widget.widget.phone_input.text(),
-            self._aux_widget.widget.mail_input.text()
+            self.aux_widget.widget.name_input.text(),
+            self.aux_widget.widget.address_input.text(),
+            self.aux_widget.widget.city_input.text(),
+            self.aux_widget.widget.phone_input.text(),
+            self.aux_widget.widget.mail_input.text()
         )
         # Update UI
-        self._stores = self._viewmodel.store.read_stores()
+        self.stores = self.viewmodel.store.read_stores()
         row = self.widget.store_table_widget.rowCount()
         self.widget.store_table_widget.insertRow(row)
         self.widget.store_table_widget.setItem(row, 0, QtWidgets.QTableWidgetItem(new_store.name))
@@ -241,24 +241,24 @@ class ManagementWidget(BaseWidget):
         self.widget.store_table_widget.setItem(row, 2, QtWidgets.QTableWidgetItem(new_store.city))
         self.widget.store_table_widget.setItem(row, 3, QtWidgets.QTableWidgetItem(new_store.phone))
         self.widget.store_table_widget.setItem(row, 4, QtWidgets.QTableWidgetItem(new_store.mail))
-        self._employees_tab.widget.stores_list.addItem(new_store.name)
-        self._products_tab.widget.stores_list.addItem(new_store.name)
-        QtWidgets.QMessageBox.information(self._aux_widget.widget, "Información", "Tienda agregada con éxito.")
-        self._aux_widget.widget.close()
-    def _handle_store_update(self):
+        self.employees_tab.widget.stores_list.addItem(new_store.name)
+        self.products_tab.widget.stores_list.addItem(new_store.name)
+        QtWidgets.QMessageBox.information(self.aux_widget.widget, "Información", "Tienda agregada con éxito.")
+        self.aux_widget.widget.close()
+    def handle_store_update(self):
         current_row = self.widget.store_table_widget.currentRow()
         if current_row == -1:
             QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe seleccionar alguna fila.")
             return
-        self._aux_widget = BaseWidget(os.path.join("ui", "modify_store.ui"))
-        self._aux_widget.widget.name_input.setText(self._stores[current_row]["name"])
-        self._aux_widget.widget.address_input.setText(self._stores[current_row]["address"])
-        self._aux_widget.widget.city_input.setText(self._stores[current_row]["city"])
-        self._aux_widget.widget.phone_input.setText(self._stores[current_row]["phone"])
-        self._aux_widget.widget.mail_input.setText(self._stores[current_row]["mail"])
-        self._aux_widget.widget.ok_button.clicked.connect(self._handle_store_update_ok_button)
-        self._aux_widget.show()
-    def _handle_store_delete(self):
+        self.aux_widget = BaseWidget(os.path.join("ui", "modify_store.ui"))
+        self.aux_widget.widget.name_input.setText(self.stores[current_row]["name"])
+        self.aux_widget.widget.address_input.setText(self.stores[current_row]["address"])
+        self.aux_widget.widget.city_input.setText(self.stores[current_row]["city"])
+        self.aux_widget.widget.phone_input.setText(self.stores[current_row]["phone"])
+        self.aux_widget.widget.mail_input.setText(self.stores[current_row]["mail"])
+        self.aux_widget.widget.ok_button.clicked.connect(self.handle_store_update_ok_button)
+        self.aux_widget.show()
+    def handle_store_delete(self):
         current_row = self.widget.store_table_widget.currentRow()
         if current_row == -1:
             QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe seleccionar alguna fila.")
@@ -266,64 +266,64 @@ class ManagementWidget(BaseWidget):
         result = QtWidgets.QMessageBox.question(
             self.widget,
             "Pregunta",
-            f"Desea borrar la tienda {self._stores[current_row]['name']}?"
+            f"Desea borrar la tienda {self.stores[current_row]['name']}?"
         )
         if result == QtWidgets.QMessageBox.StandardButton.Yes:
-            self._viewmodel.store.delete_store(self._stores[current_row]["uuid"])
+            self.viewmodel.store.delete_store(self.stores[current_row]["uuid"])
             self.widget.store_table_widget.removeRow(current_row)
-            self.widget.store_table_widget.setRowCount(len(self._stores))
-            self._employees_tab.widget.stores_list.clear()
-            self._products_tab.widget.stores_list.clear()
-            self._employees_tab.widget.stores_list.addItems([""] + [store["name"] for store in self._stores])
-            self._products_tab.widget.stores_list.addItems([""] + [store["name"] for store in self._stores])
+            self.widget.store_table_widget.setRowCount(len(self.stores))
+            self.employees_tab.widget.stores_list.clear()
+            self.products_tab.widget.stores_list.clear()
+            self.employees_tab.widget.stores_list.addItems([""] + [store["name"] for store in self.stores])
+            self.products_tab.widget.stores_list.addItems([""] + [store["name"] for store in self.stores])
             self.widget.store_table_widget.setCurrentCell(-1, -1)
             QtWidgets.QMessageBox.information(self.widget, "Información", "Tienda borrada con éxito.")
 
-    def _handle_store_update_ok_button(self):
+    def handle_store_update_ok_button(self):
         current_row = self.widget.store_table_widget.currentRow()
-        if not self._aux_widget.widget.name_input.text():
-            QtWidgets.QMessageBox.warning(self._aux_widget.widget, "Advertencia", "Ingrese un nombre.")
+        if not self.aux_widget.widget.name_input.text():
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese un nombre.")
             return
-        if not self._aux_widget.widget.address_input.text():
-            QtWidgets.QMessageBox.warning(self._aux_widget.widget, "Advertencia", "Ingrese una dirección.")
+        if not self.aux_widget.widget.address_input.text():
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese una dirección.")
             return
-        if not self._aux_widget.widget.city_input.text():
-            QtWidgets.QMessageBox.warning(self._aux_widget.widget, "Advertencia", "Ingrese una ciudad.")
+        if not self.aux_widget.widget.city_input.text():
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese una ciudad.")
             return
-        if not self._aux_widget.widget.phone_input.text():
-            QtWidgets.QMessageBox.warning(self._aux_widget.widget, "Advertencia", "Ingrese un teléfono.")
+        if not self.aux_widget.widget.phone_input.text():
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese un teléfono.")
             return
-        phone_number = self._aux_widget.widget.phone_input.text()
+        phone_number = self.aux_widget.widget.phone_input.text()
         if not (phone_number[0] == "+" and phone_number[1:].isnumeric()):
             QtWidgets.QMessageBox.warning(
-                self._aux_widget.widget,
+                self.aux_widget.widget,
                 "Advertencia",
                 "Ingrese un teléfono válido. (anteponga el +)"
             )
             return
-        if not self._aux_widget.widget.mail_input.text():
-            QtWidgets.QMessageBox.warning(self._aux_widget.widget, "Advertencia", "Ingrese un correo.")
+        if not self.aux_widget.widget.mail_input.text():
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese un correo.")
             return
 
         # Update the store in the data source
         updated_store = Store(
-            self._aux_widget.widget.name_input.text(),
-            self._aux_widget.widget.address_input.text(),
-            self._aux_widget.widget.city_input.text(),
-            self._aux_widget.widget.phone_input.text(),
-            self._aux_widget.widget.mail_input.text()
+            self.aux_widget.widget.name_input.text(),
+            self.aux_widget.widget.address_input.text(),
+            self.aux_widget.widget.city_input.text(),
+            self.aux_widget.widget.phone_input.text(),
+            self.aux_widget.widget.mail_input.text()
         )
-        self._viewmodel.store.update_store(
-            self._stores[current_row]["uuid"],
+        self.viewmodel.store.update_store(
+            self.stores[current_row]["uuid"],
             updated_store
         )
 
         # Update local data structures and UI
-        self._stores[current_row]["name"] = updated_store.name
-        self._stores[current_row]["address"] = updated_store.address
-        self._stores[current_row]["city"] = updated_store.city
-        self._stores[current_row]["phone"] = updated_store.phone
-        self._stores[current_row]["mail"] = updated_store.mail
+        self.stores[current_row]["name"] = updated_store.name
+        self.stores[current_row]["address"] = updated_store.address
+        self.stores[current_row]["city"] = updated_store.city
+        self.stores[current_row]["phone"] = updated_store.phone
+        self.stores[current_row]["mail"] = updated_store.mail
 
         self.widget.store_table_widget.setItem(current_row, 0, QtWidgets.QTableWidgetItem(updated_store.name))
         self.widget.store_table_widget.setItem(current_row, 1, QtWidgets.QTableWidgetItem(updated_store.address))
@@ -332,157 +332,157 @@ class ManagementWidget(BaseWidget):
         self.widget.store_table_widget.setItem(current_row, 4, QtWidgets.QTableWidgetItem(updated_store.mail))
 
         # Update store names in combo boxes
-        self._employees_tab.widget.stores_list.setItemText(current_row + 1, updated_store.name)
-        self._products_tab.widget.stores_list.setItemText(current_row + 1, updated_store.name)
+        self.employees_tab.widget.stores_list.setItemText(current_row + 1, updated_store.name)
+        self.products_tab.widget.stores_list.setItemText(current_row + 1, updated_store.name)
 
-        QtWidgets.QMessageBox.information(self._aux_widget.widget, "Información", "Tienda actualizada con éxito.")
-        self._aux_widget.widget.close()
+        QtWidgets.QMessageBox.information(self.aux_widget.widget, "Información", "Tienda actualizada con éxito.")
+        self.aux_widget.widget.close()
 
-    def _handle_employee_store_change(self):
-        index = self._employees_tab.widget.stores_list.currentIndex()
+    def handle_employee_store_change(self):
+        index = self.employees_tab.widget.stores_list.currentIndex()
         employee_columns = ["RUT", "Nombre", "Apellido", "Teléfono", "Correo electrónico"]
         employee_values = ["identification", "name", "lastName", "phone", "mail"]
-        self._employees_tab.widget.table_widget.setColumnCount(len(employee_columns))
-        self._employees_tab.widget.table_widget.setHorizontalHeaderLabels(employee_columns)
+        self.employees_tab.widget.table_widget.setColumnCount(len(employee_columns))
+        self.employees_tab.widget.table_widget.setHorizontalHeaderLabels(employee_columns)
         if not index:
-            self._employees_tab.widget.table_widget.setRowCount(0)
+            self.employees_tab.widget.table_widget.setRowCount(0)
             return
-        self._employees = self._viewmodel.employee.read_employees(self._stores[index - 1]["uuid"])
-        self._employees_tab.widget.table_widget.setRowCount(len(self._employees))
-        for i, key in enumerate(self._employees):
+        self.employees = self.viewmodel.employee.read_employees(self.stores[index - 1]["uuid"])
+        self.employees_tab.widget.table_widget.setRowCount(len(self.employees))
+        for i, key in enumerate(self.employees):
             for j, value in enumerate(employee_values):
                 if value == "identification":
-                    self._employees_tab.widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(
+                    self.employees_tab.widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(
                         RUT.get_pretty_rut_static(int(key["identification"]))))
                 else:
-                    self._employees_tab.widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(
+                    self.employees_tab.widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(
                     str(key[value])))
 
-    def _handle_employee_create(self):
-        if not self._employees_tab.widget.stores_list.currentText():
+    def handle_employee_create(self):
+        if not self.employees_tab.widget.stores_list.currentText():
             QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe seleccionar una tienda.")
             return
-        self._aux_widget = BaseWidget(os.path.join("ui", "modify_employee.ui"))
-        self._aux_widget.widget.ok_button.clicked.connect(self._handle_employee_create_ok)
-        self._aux_widget.widget.password_input.setPlaceholderText("Requerido")
-        self._aux_widget.show()
+        self.aux_widget = BaseWidget(os.path.join("ui", "modify_employee.ui"))
+        self.aux_widget.widget.ok_button.clicked.connect(self.handle_employee_create_ok)
+        self.aux_widget.widget.password_input.setPlaceholderText("Requerido")
+        self.aux_widget.show()
 
-    def _handle_employee_create_ok(self):
+    def handle_employee_create_ok(self):
         try:
-            identification = RUT(self._aux_widget.widget.rut_input.text())
+            identification = RUT(self.aux_widget.widget.rut_input.text())
         except ValueError:
-            QtWidgets.QMessageBox.warning(self._aux_widget.widget, "Advertencia", "RUT inválido.")
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "RUT inválido.")
             return
-        name = self._aux_widget.widget.name_input.text()
-        last_name = self._aux_widget.widget.last_name_input.text()
-        phone = self._aux_widget.widget.phone_input.text()
-        mail = self._aux_widget.widget.mail_input.text()
-        password = self._aux_widget.widget.password_input.text()
+        name = self.aux_widget.widget.name_input.text()
+        last_name = self.aux_widget.widget.last_name_input.text()
+        phone = self.aux_widget.widget.phone_input.text()
+        mail = self.aux_widget.widget.mail_input.text()
+        password = self.aux_widget.widget.password_input.text()
         if not name or not last_name or not phone or not mail or not password:
-            QtWidgets.QMessageBox.warning(self._aux_widget.widget, "Advertencia", "Complete todos los campos.")
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Complete todos los campos.")
             return
         if len(password) < 8:
             QtWidgets.QMessageBox.warning(
-                self._aux_widget.widget,
+                self.aux_widget.widget,
                 "Advertencia",
                 "Por política su contraseña debe tener 8 o más caracteres."
             )
             return
         # Crear empleado
         new_employee = Employee(name, last_name, phone, mail, password)
-        index = self._employees_tab.widget.stores_list.currentIndex()
-        self._viewmodel.employee.create_employee(self._stores[index - 1]["uuid"], str(identification.rut), new_employee)
+        index = self.employees_tab.widget.stores_list.currentIndex()
+        self.viewmodel.employee.create_employee(self.stores[index - 1]["uuid"], str(identification.rut), new_employee)
         # Actualizar UI y datos locales
-        self._employees = self._viewmodel.employee.read_employees(self._stores[index - 1]["uuid"])
-        row = self._employees_tab.widget.table_widget.rowCount()
-        self._employees_tab.widget.table_widget.insertRow(row)
-        self._employees_tab.widget.table_widget.setItem(
+        self.employees = self.viewmodel.employee.read_employees(self.stores[index - 1]["uuid"])
+        row = self.employees_tab.widget.table_widget.rowCount()
+        self.employees_tab.widget.table_widget.insertRow(row)
+        self.employees_tab.widget.table_widget.setItem(
             row,
             0,
             QtWidgets.QTableWidgetItem(identification.get_pretty_rut())
         )
-        self._employees_tab.widget.table_widget.setItem(row, 1, QtWidgets.QTableWidgetItem(name))
-        self._employees_tab.widget.table_widget.setItem(row, 2, QtWidgets.QTableWidgetItem(last_name))
-        self._employees_tab.widget.table_widget.setItem(row, 3, QtWidgets.QTableWidgetItem(phone))
-        self._employees_tab.widget.table_widget.setItem(row, 4, QtWidgets.QTableWidgetItem(mail))
-        QtWidgets.QMessageBox.information(self._aux_widget.widget, "Información", "Empleado agregado con éxito.")
-        self._aux_widget.widget.close()
+        self.employees_tab.widget.table_widget.setItem(row, 1, QtWidgets.QTableWidgetItem(name))
+        self.employees_tab.widget.table_widget.setItem(row, 2, QtWidgets.QTableWidgetItem(last_name))
+        self.employees_tab.widget.table_widget.setItem(row, 3, QtWidgets.QTableWidgetItem(phone))
+        self.employees_tab.widget.table_widget.setItem(row, 4, QtWidgets.QTableWidgetItem(mail))
+        QtWidgets.QMessageBox.information(self.aux_widget.widget, "Información", "Empleado agregado con éxito.")
+        self.aux_widget.widget.close()
 
-    def _handle_employee_update(self):
-        if not self._employees_tab.widget.stores_list.currentText():
+    def handle_employee_update(self):
+        if not self.employees_tab.widget.stores_list.currentText():
             QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe seleccionar una tienda.")
             return
-        current_row = self._employees_tab.widget.table_widget.currentRow()
+        current_row = self.employees_tab.widget.table_widget.currentRow()
         if current_row == -1:
-            QtWidgets.QMessageBox.warning(self._employees_tab.widget, "Advertencia", "Debe seleccionar alguna fila.")
+            QtWidgets.QMessageBox.warning(self.employees_tab.widget, "Advertencia", "Debe seleccionar alguna fila.")
             return
-        employee = self._employees[current_row]
-        self._aux_widget = BaseWidget(os.path.join("ui", "modify_employee.ui"))
-        self._aux_widget.widget.rut_input.setText(RUT.get_pretty_rut_static(int(employee["identification"])))
-        self._aux_widget.widget.rut_input.setEnabled(False)
-        self._aux_widget.widget.name_input.setText(employee["name"])
-        self._aux_widget.widget.last_name_input.setText(employee["lastName"])
-        self._aux_widget.widget.phone_input.setText(employee["phone"])
-        self._aux_widget.widget.mail_input.setText(employee["mail"])
-        self._aux_widget.widget.ok_button.clicked.connect(lambda: self._handle_employee_update_ok(current_row))
-        self._aux_widget.show()
+        employee = self.employees[current_row]
+        self.aux_widget = BaseWidget(os.path.join("ui", "modify_employee.ui"))
+        self.aux_widget.widget.rut_input.setText(RUT.get_pretty_rut_static(int(employee["identification"])))
+        self.aux_widget.widget.rut_input.setEnabled(False)
+        self.aux_widget.widget.name_input.setText(employee["name"])
+        self.aux_widget.widget.last_name_input.setText(employee["lastName"])
+        self.aux_widget.widget.phone_input.setText(employee["phone"])
+        self.aux_widget.widget.mail_input.setText(employee["mail"])
+        self.aux_widget.widget.ok_button.clicked.connect(lambda: self.handle_employee_update_ok(current_row))
+        self.aux_widget.show()
 
-    def _handle_employee_update_ok(self, row):
-        name = self._aux_widget.widget.name_input.text()
-        last_name = self._aux_widget.widget.last_name_input.text()
-        phone = self._aux_widget.widget.phone_input.text()
-        mail = self._aux_widget.widget.mail_input.text()
-        password = self._aux_widget.widget.password_input.text()
+    def handle_employee_update_ok(self, row):
+        name = self.aux_widget.widget.name_input.text()
+        last_name = self.aux_widget.widget.last_name_input.text()
+        phone = self.aux_widget.widget.phone_input.text()
+        mail = self.aux_widget.widget.mail_input.text()
+        password = self.aux_widget.widget.password_input.text()
         if not name or not last_name or not phone or not mail:
-            QtWidgets.QMessageBox.warning(self._aux_widget.widget, "Advertencia", "Complete todos los campos.")
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Complete todos los campos.")
             return
         if not password:
-            password = self._employees[row]["password"]
+            password = self.employees[row]["password"]
         elif len(password) < 8:
             QtWidgets.QMessageBox.warning(
-                self._aux_widget.widget,
+                self.aux_widget.widget,
                 "Advertencia",
                 "Por política su contraseña debe tener 8 o más caracteres."
             )
             return
         # Actualizar empleado
-        index = self._employees_tab.widget.stores_list.currentIndex()
-        self._viewmodel.employee.update_employee(
-            self._stores[index - 1]["uuid"],
-            self._employees[row]["uuid"], Employee(name, last_name, phone, mail, password)
+        index = self.employees_tab.widget.stores_list.currentIndex()
+        self.viewmodel.employee.update_employee(
+            self.stores[index - 1]["uuid"],
+            self.employees[row]["uuid"], Employee(name, last_name, phone, mail, password)
         )
         # Actualizar UI y datos locales
-        self._employees_tab.widget.table_widget.setItem(row, 1, QtWidgets.QTableWidgetItem(name))
-        self._employees_tab.widget.table_widget.setItem(row, 2, QtWidgets.QTableWidgetItem(last_name))
-        self._employees_tab.widget.table_widget.setItem(row, 3, QtWidgets.QTableWidgetItem(phone))
-        self._employees_tab.widget.table_widget.setItem(row, 4, QtWidgets.QTableWidgetItem(mail))
-        QtWidgets.QMessageBox.information(self._aux_widget.widget, "Información", "Empleado actualizado con éxito.")
-        self._aux_widget.widget.close()
+        self.employees_tab.widget.table_widget.setItem(row, 1, QtWidgets.QTableWidgetItem(name))
+        self.employees_tab.widget.table_widget.setItem(row, 2, QtWidgets.QTableWidgetItem(last_name))
+        self.employees_tab.widget.table_widget.setItem(row, 3, QtWidgets.QTableWidgetItem(phone))
+        self.employees_tab.widget.table_widget.setItem(row, 4, QtWidgets.QTableWidgetItem(mail))
+        QtWidgets.QMessageBox.information(self.aux_widget.widget, "Información", "Empleado actualizado con éxito.")
+        self.aux_widget.widget.close()
 
-    def _handle_employee_delete(self):
-        if not self._employees_tab.widget.stores_list.currentText():
+    def handle_employee_delete(self):
+        if not self.employees_tab.widget.stores_list.currentText():
             QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe seleccionar una tienda.")
             return
-        current_row = self._employees_tab.widget.table_widget.currentRow()
+        current_row = self.employees_tab.widget.table_widget.currentRow()
         if current_row == -1:
-            QtWidgets.QMessageBox.warning(self._employees_tab.widget, "Advertencia", "Debe seleccionar alguna fila.")
+            QtWidgets.QMessageBox.warning(self.employees_tab.widget, "Advertencia", "Debe seleccionar alguna fila.")
             return
-        employee_name: str = self._employees[current_row]['name']
-        employee_last_name: str = self._employees[current_row]['lastName']
+        employee_name: str = self.employees[current_row]['name']
+        employee_last_name: str = self.employees[current_row]['lastName']
         result = QtWidgets.QMessageBox.question(
-            self._employees_tab.widget,
+            self.employees_tab.widget,
             "Pregunta",
             f"Desea borrar el empleado {employee_name} {employee_last_name}?"
         )
         if result == QtWidgets.QMessageBox.StandardButton.Yes:
-            index = self._employees_tab.widget.stores_list.currentIndex()
-            self._viewmodel.employee.delete_employee(
-                self._stores[index - 1]["uuid"],
-                self._employees[current_row]["uuid"]
+            index = self.employees_tab.widget.stores_list.currentIndex()
+            self.viewmodel.employee.delete_employee(
+                self.stores[index - 1]["uuid"],
+                self.employees[current_row]["uuid"]
             )
-            self._employees_tab.widget.table_widget.removeRow(current_row)
+            self.employees_tab.widget.table_widget.removeRow(current_row)
             QtWidgets.QMessageBox.information(
-                self._employees_tab.widget,
+                self.employees_tab.widget,
                 "Información",
                 "Empleado borrado con éxito."
             )

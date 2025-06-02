@@ -1,15 +1,15 @@
 import time
 import uuid
-from .internal_model import _InternalModel
+from .internal_model import InternalModel
 from .manager import Manager
 
 class ManagerModel:
-    def __init__(self, model: _InternalModel):
-        self._model = model
+    def __init__(self, model: InternalModel):
+        self.model = model
 
     def create_manager(self, identification: str, manager: Manager):
         manager_uuid = str(uuid.uuid4())
-        self._model.data["managers"].append({
+        self.model.data["managers"].append({
             "uuid": manager_uuid,
             "identification": identification,
             "name": manager.name,
@@ -20,14 +20,14 @@ class ManagerModel:
             "createdAt": f"{int(time.time())}",
             "updatedAt": None
         })
-        self._model.save()
+        self.model.save()
         return manager_uuid
 
     def read_managers(self) -> list:
-        return self._model.data["managers"]
+        return self.model.data["managers"]
 
     def update_manager(self, manager_uuid: str, manager: Manager):
-        self._model.edit_entity("managers", manager_uuid, {
+        self.model.edit_entity("managers", manager_uuid, {
             "name": manager.name,
             "lastName": manager.last_name,
             "phone": manager.phone,
@@ -37,4 +37,4 @@ class ManagerModel:
         })
 
     def delete_manager(self, manager_uuid: str):
-        self._model.delete_entity("managers", manager_uuid)
+        self.model.delete_entity("managers", manager_uuid)
