@@ -1,8 +1,6 @@
 import os
 from PySide6 import QtWidgets
 from .base_widget import BaseWidget
-from .modify_employee_widget import ModifyEmployeeWidget
-from .modify_product_widget import ModifyProductWidget
 from ..viewmodel import ViewModel
 from ..model.employee import Employee
 from ..model.product import Product
@@ -80,7 +78,7 @@ class ManagementWidget(BaseWidget):
         if not self._products_tab.widget.stores_list.currentText():
             QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe seleccionar una tienda.")
             return
-        self._aux_widget = ModifyProductWidget()
+        self._aux_widget = BaseWidget(os.path.join("ui", "modify_product.ui"))
         self._aux_widget.widget.ok_button.clicked.connect(self._handle_product_create_ok)
         self._aux_widget.show()
 
@@ -129,7 +127,7 @@ class ManagementWidget(BaseWidget):
             QtWidgets.QMessageBox.warning(self._products_tab.widget, "Advertencia", "Debe seleccionar alguna fila.")
             return
         product = self._products[current_row]
-        self._aux_widget = ModifyProductWidget()
+        self._aux_widget = BaseWidget(os.path.join("ui", "modify_product.ui"))
         self._aux_widget.widget.brand_input.setText(product["brand"])
         self._aux_widget.widget.model_input.setText(product["model"])
         self._aux_widget.widget.category_input.setText(product["category"])
@@ -364,7 +362,7 @@ class ManagementWidget(BaseWidget):
         if not self._employees_tab.widget.stores_list.currentText():
             QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe seleccionar una tienda.")
             return
-        self._aux_widget = ModifyEmployeeWidget()
+        self._aux_widget = BaseWidget(os.path.join("ui", "modify_employee.ui"))
         self._aux_widget.widget.ok_button.clicked.connect(self._handle_employee_create_ok)
         self._aux_widget.widget.password_input.setPlaceholderText("Requerido")
         self._aux_widget.show()
@@ -419,7 +417,7 @@ class ManagementWidget(BaseWidget):
             QtWidgets.QMessageBox.warning(self._employees_tab.widget, "Advertencia", "Debe seleccionar alguna fila.")
             return
         employee = self._employees[current_row]
-        self._aux_widget = ModifyEmployeeWidget()
+        self._aux_widget = BaseWidget(os.path.join("ui", "modify_employee.ui"))
         self._aux_widget.widget.rut_input.setText(RUT.get_pretty_rut_static(int(employee["identification"])))
         self._aux_widget.widget.rut_input.setEnabled(False)
         self._aux_widget.widget.name_input.setText(employee["name"])
