@@ -1,6 +1,6 @@
 import time
 import uuid
-from .employee import Employee
+from ..dataclasses.employee import Employee
 from .internal_model import InternalModel
 
 class EmployeeModel:

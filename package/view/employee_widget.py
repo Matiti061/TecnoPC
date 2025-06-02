@@ -5,7 +5,7 @@ from .custom_dialog import CustomDialog
 from .form_add_product import FormAddProduct
 from ..viewmodel import ViewModel
 from ..rut import RUT
-from ..model.sale import Sale
+from ..dataclasses.sale import Sale
 
 
 class EmployeeWidget(BaseWidget):
