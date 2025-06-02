@@ -1,16 +1,17 @@
 import os
 from PySide6 import QtCore, QtWidgets
+from PySide6.QtCore import Signal
 from .base_widget import BaseWidget
 from ..viewmodel import ViewModel
 
 
 class FormAddProduct(BaseWidget):
+    product_selected = Signal(list)
+
     def __init__(self, viewmodel: ViewModel, store):
         super().__init__(os.path.join("ui", "form_add_product.ui"))
         self.viewmodel = viewmodel
-        self.store = store
-        self.product_selected = QtCore.Signal(list)
-        self.products_uuid = self.store["products"]
+        self.products_uuid = store["products"]
         self.products = []
 
         column_mapping = {

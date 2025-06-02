@@ -77,15 +77,15 @@ class EmployeeWidget(BaseWidget):
                         self.total += product["quantity"] * int(product["price"])
                         break
                 else:
-                    self.products_to_sell.append([
-                        product["model"],
-                        product["category"],
-                        product["brand"],
-                        str(product["quantity"]),
-                        str(product["price"]),
-                        product["uuid"],
-                        None
-                    ])
+                    self.products_to_sell.append({
+                        "model": product["model"],
+                        "category": product["category"],
+                        "brand": product["brand"],
+                        "quantity": str(product["quantity"]),
+                        "price": str(product["price"]),
+                        "uuid": product["uuid"],
+                        "warranty": None
+                        })
                     self.total += product["quantity"] * int(product["price"])
 
         self.handle_update(self.widget.sell_table_widget, self.widget.groupBox, self.widget.sell_total_label)
