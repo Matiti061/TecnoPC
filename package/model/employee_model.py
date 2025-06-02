@@ -3,6 +3,7 @@ import uuid
 from ..dataclasses.employee import Employee
 from .internal_model import InternalModel
 
+
 class EmployeeModel:
     def __init__(self, model: InternalModel):
         self.model = model

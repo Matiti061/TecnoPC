@@ -5,6 +5,7 @@ from .employee_model import EmployeeModel
 from .product_model import ProductModel
 from .sale_model import SaleModel
 
+
 class Model:
     def __init__(self):
         self.model = InternalModel()

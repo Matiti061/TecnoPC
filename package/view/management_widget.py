@@ -11,10 +11,10 @@ from ..rut import RUT
 class ManagementWidget(BaseWidget):
     def __init__(self, viewmodel: ViewModel):
         super().__init__(os.path.join("ui", "management.ui"))
-        self.products: list
-        self.employees: list
+        self.products = None
+        self.employees = None
         self.viewmodel = viewmodel
-        self.aux_widget: BaseWidget
+        self.aux_widget = None
         self.employees_tab = BaseWidget(os.path.join("ui", "management_widget.ui"))
         self.products_tab = BaseWidget(os.path.join("ui", "management_widget.ui"))
         self.stores = self.viewmodel.store.read_stores()
@@ -40,7 +40,6 @@ class ManagementWidget(BaseWidget):
         self.widget.store_update_button.clicked.connect(self.handle_store_update)
         self.widget.store_delete_button.clicked.connect(self.handle_store_delete)
         # employee CRUD
-
 
         # product CRUD
         self.products_tab.widget.create_button.clicked.connect(self.handle_product_create)
@@ -194,7 +193,6 @@ class ManagementWidget(BaseWidget):
             )
             self.widget.store_table_widget.setCurrentCell(-1, -1)
 
-
     def handle_store_create(self):
         self.aux_widget = BaseWidget(os.path.join("ui", "modify_store.ui"))
         self.aux_widget.widget.ok_button.clicked.connect(self.handle_store_create_ok_button)
@@ -245,6 +243,7 @@ class ManagementWidget(BaseWidget):
         self.products_tab.widget.stores_list.addItem(new_store.name)
         QtWidgets.QMessageBox.information(self.aux_widget.widget, "Información", "Tienda agregada con éxito.")
         self.aux_widget.widget.close()
+
     def handle_store_update(self):
         current_row = self.widget.store_table_widget.currentRow()
         if current_row == -1:
@@ -258,6 +257,7 @@ class ManagementWidget(BaseWidget):
         self.aux_widget.widget.mail_input.setText(self.stores[current_row]["mail"])
         self.aux_widget.widget.ok_button.clicked.connect(self.handle_store_update_ok_button)
         self.aux_widget.show()
+
     def handle_store_delete(self):
         current_row = self.widget.store_table_widget.currentRow()
         if current_row == -1:
@@ -355,8 +355,7 @@ class ManagementWidget(BaseWidget):
                     self.employees_tab.widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(
                         RUT.get_pretty_rut_static(int(key["identification"]))))
                 else:
-                    self.employees_tab.widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(
-                    str(key[value])))
+                    self.employees_tab.widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(str(key[value])))
 
     def handle_employee_create(self):
         if not self.employees_tab.widget.stores_list.currentText():

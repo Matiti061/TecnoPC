@@ -3,6 +3,7 @@ import uuid
 from .internal_model import InternalModel
 from ..dataclasses.manager import Manager
 
+
 class ManagerModel:
     def __init__(self, model: InternalModel):
         self.model = model
