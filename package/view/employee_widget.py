@@ -10,8 +10,8 @@ from ..dataclasses.sale import Sale
 
 class EmployeeWidget(BaseWidget):
     def __init__(self, viewmodel: ViewModel, employee_uuid: str, employee_name: str):
-        super().__init__(os.path.join("ui","employee.ui"))
-        self.aux_widget: FormAddProduct
+        super().__init__(os.path.join("ui", "employee.ui"))
+        self.aux_widget = None
         self.viewmodel = viewmodel
         self.employee_uuid = employee_uuid
         self.total = 0
@@ -54,21 +54,20 @@ class EmployeeWidget(BaseWidget):
         self.widget.warranty_add_button.clicked.connect(self.handle_add_warranty)
         self.handle_update(self.widget.sell_table_widget, self.widget.groupBox, self.widget.sell_total_label)
 
-
     def handle_tabs(self, index: int):
-        if not index: # sale tab
+        if not index:  # sale tab
             self.handle_update(self.widget.sell_table_widget, self.widget.groupBox, self.widget.sell_total_label)
 
-        elif index == 1: # warranty tab
+        elif index == 1:  # warranty tab
             self.handle_update(self.widget.warranty_table)
 
-    def handle_add_product(self): # note: just for the sale
+    def handle_add_product(self):  # note: just for the sale
         self.aux_widget = FormAddProduct(self.viewmodel, self.store)
         self.aux_widget.product_selected.connect(self.handle_add_product_selected)
         self.aux_widget.show()
 
     @QtCore.Slot(list)
-    def handle_add_product_selected(self, selected_products): # note: for the sale
+    def handle_add_product_selected(self, selected_products):  # note: for the sale
         if selected_products:
 
             for product in selected_products:
@@ -91,7 +90,7 @@ class EmployeeWidget(BaseWidget):
 
         self.handle_update(self.widget.sell_table_widget, self.widget.groupBox, self.widget.sell_total_label)
 
-    def handle_delete_product(self): # note: just for the sale
+    def handle_delete_product(self):  # note: just for the sale
         current_row = self.widget.sell_table_widget.currentRow()
 
         if current_row == -1:
@@ -100,7 +99,7 @@ class EmployeeWidget(BaseWidget):
         del self.products_to_sell[current_row]
         self.handle_update(self.widget.sell_table_widget, self.widget.groupBox, self.widget.sell_total_label)
 
-    def handle_cancel_sell(self): # note: clear the table
+    def handle_cancel_sell(self):  # note: clear the table
         if not self.products_to_sell:
             QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe haber algún item.")
             return
@@ -123,7 +122,6 @@ class EmployeeWidget(BaseWidget):
             QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe haber un rut valido.")
             return
 
-
         if not self.products_to_sell:
             QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe haber algún item.")
             return
@@ -142,7 +140,7 @@ class EmployeeWidget(BaseWidget):
                 warranty = "sin garantía"
             receipt += f"{model} ({warranty}) - {quantity} x {price} = {subtotal}\n"
             total += subtotal
-        total = f"{total:,}".replace(',','.')
+        total = f"{total:,}".replace(',', '.')
         receipt += f"Total: ${total}\nGracias por su compra!"
         self.viewmodel.sale.create_sale(
             Sale(self.store["uuid"], self.employee_uuid, rut_client, self.products_to_sell)
@@ -197,7 +195,7 @@ class EmployeeWidget(BaseWidget):
                     if value is None:
                         value = "no tiene"
                     if key == "Precio":
-                        price = f"${int(value):,}".replace(',','.')
+                        price = f"${int(value):,}".replace(',', '.')
                         table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(str(price)))
                     else:
                         table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(str(value)))

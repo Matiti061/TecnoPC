@@ -5,11 +5,11 @@ from ..viewmodel import ViewModel
 
 
 class FormAddProduct(BaseWidget):
-    product_selected = QtCore.Signal(list)
     def __init__(self, viewmodel: ViewModel, store):
         super().__init__(os.path.join("ui", "form_add_product.ui"))
         self.viewmodel = viewmodel
         self.store = store
+        self.product_selected = QtCore.Signal(list)
         self.products_uuid = self.store["products"]
         self.products = []
 

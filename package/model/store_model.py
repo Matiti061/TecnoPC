@@ -3,6 +3,7 @@ import uuid
 from .internal_model import InternalModel
 from ..dataclasses.store import Store
 
+
 class StoreModel:
     def __init__(self, model: InternalModel):
         self.model = model

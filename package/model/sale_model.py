@@ -3,9 +3,11 @@ import time
 from .internal_model import InternalModel
 from ..dataclasses.sale import Sale
 
+
 class SaleModel:
     def __init__(self, model: InternalModel):
         self.model = model
+
     def create_sale(self, sale: Sale):
         sale_uuid = str(uuid.uuid4())
         self.model.data["sales"].append({
@@ -19,5 +21,6 @@ class SaleModel:
         })
         self.model.save()
         return sale_uuid
+
     def read_sales(self) -> list:
         return self.model.data["sales"]

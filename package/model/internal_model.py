@@ -1,5 +1,6 @@
 import json
 
+
 class InternalModel:
     def __init__(self):
         try:

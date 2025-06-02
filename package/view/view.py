@@ -10,7 +10,7 @@ class View(BaseWidget):
     def __init__(self, viewmodel: ViewModel):
         super().__init__(os.path.join("ui", "main.ui"))
         self.viewmodel = viewmodel
-        self.aux_widget: LoginWidget
+        self.aux_widget = None
         # Employee button
         self.widget.employee_button.clicked.connect(self.handle_employee_login)
         # Manager button

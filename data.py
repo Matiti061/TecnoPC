@@ -29,11 +29,16 @@ for store in stores:
 
 # Employees
 employees = [
-    ["22000000", Employee("Juan", "Pérez", "987654321", "juan.perez@tecnopc.cl", "juanperez123")], # verificador 1
-    ["23000000", Employee("María", "Gomez", "987654322", "maria.gomez@tecnopc.cl", "mariagomez123")], # dv K
-    ["24000000", Employee("Carlos", "López", "987654323", "carlos.lopez@tecnopc.cl", "carloslopez123")], # 8
-    ["25000000", Employee("Esteban", "Martínez", "987654324", "esteban.martinez@tecnopc.cl", "estebanmartinez123")], # 6
-    ["27000000", Employee("Jesús", "Minnitti", "945612783", "jesus.minnitti@tecnopc.cl", "jesusminnitti123")] # 2
+    # 22.000.000-1
+    ["22000000", Employee("Juan", "Pérez", "987654321", "juan.perez@tecnopc.cl", "juanperez123")],
+    # 23.000.000-K
+    ["23000000", Employee("María", "Gomez", "987654322", "maria.gomez@tecnopc.cl", "mariagomez123")],
+    # 24.000.000-8
+    ["24000000", Employee("Carlos", "López", "987654323", "carlos.lopez@tecnopc.cl", "carloslopez123")],
+    # 25.000.000-6
+    ["25000000", Employee("Esteban", "Martínez", "987654324", "esteban.martinez@tecnopc.cl", "estebanmartinez123")],
+    # 27.000.000-2
+    ["27000000", Employee("Jesús", "Minnitti", "945612783", "jesus.minnitti@tecnopc.cl", "jesusminnitti123")]
 ]
 employee_uuids = []
 for employee in employees:
