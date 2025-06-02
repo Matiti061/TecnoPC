@@ -16,7 +16,7 @@ class EmployeeWidget(BaseWidget):
         self._employee_uuid = employee_uuid
         self._total = 0
         self._products_to_sell = []
-        self._ui_widget.name_label.setText(employee_name)
+        self.ui_widget.name_label.setText(employee_name)
 
         self.column_mapping = {
             "Nombre": "model",

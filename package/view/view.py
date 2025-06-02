@@ -17,7 +17,7 @@ class View(BaseWidget):
         self.ui_widget.manager_button.clicked.connect(self._handle_manager_login)
 
     def _callback(self, user_type: str, employee_uuid: str = None, employee_name: str = None):
-        self._ui_widget.close()
+        self.ui_widget.close()
         del self._widget
         if user_type == "employee":
             self._widget = EmployeeWidget(self._viewmodel, employee_uuid, employee_name)

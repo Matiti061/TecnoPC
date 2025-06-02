@@ -1,7 +1,7 @@
 class RUT:
     def __init__(self, rut: str):
-        self._rut = int(rut.replace('-', '').replace('.', '')[:-1])
-        self._verification_digit = RUT.get_verification_digit(self._rut)
+        self.rut = int(rut.replace('-', '').replace('.', '')[:-1])
+        self._verification_digit = RUT.get_verification_digit(self.rut)
         if rut not in self._get_all_ruts():
             raise ValueError("Invalid RUT")
 
@@ -35,7 +35,3 @@ class RUT:
         if result == 11:
             return '0'
         return str(result)
-
-    @property
-    def rut(self):
-        return self._rut

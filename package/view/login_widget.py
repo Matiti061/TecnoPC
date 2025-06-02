@@ -20,8 +20,8 @@ class LoginWidget(BaseWidget):
         self._store_names = []
         self._store_uuids = []
         if user_type == "manager":
-            self._ui_widget.store_label.hide()
-            self._ui_widget.store_combo_box.hide()
+            self.ui_widget.store_label.hide()
+            self.ui_widget.store_combo_box.hide()
         for store in self._viewmodel.store.read_stores():
             self._store_names.append(store["name"])
             self._store_uuids.append(store["uuid"])

@@ -80,7 +80,7 @@ class FormAddProduct(BaseWidget):
 
         self._result = self._selected_products
         self.product_selected.emit(self._selected_products)
-        self._ui_widget.close()
+        self.ui_widget.close()
 
     def get_selected_products(self):
         return self._result
