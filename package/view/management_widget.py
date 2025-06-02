@@ -2,9 +2,9 @@ import os
 from PySide6 import QtWidgets
 from .base_widget import BaseWidget
 from ..viewmodel import ViewModel
-from ..model.employee import Employee
-from ..model.product import Product
-from ..model.store import Store
+from ..dataclasses.employee import Employee
+from ..dataclasses.product import Product
+from ..dataclasses.store import Store
 from ..rut import RUT
 
 

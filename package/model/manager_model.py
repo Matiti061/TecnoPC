@@ -1,7 +1,7 @@
 import time
 import uuid
 from .internal_model import InternalModel
-from .manager import Manager
+from ..dataclasses.manager import Manager
 
 class ManagerModel:
     def __init__(self, model: InternalModel):

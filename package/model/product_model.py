@@ -1,7 +1,7 @@
 import time
 import uuid
 from .internal_model import InternalModel
-from .product import Product
+from ..dataclasses.product import Product
 
 class ProductModel:
     def __init__(self, model: InternalModel):
