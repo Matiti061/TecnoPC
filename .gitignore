@@ -1,5 +1,5 @@
 data.json
 .idea
 __pycache__
+ui/*.py
 .vscode
-/ui/*.py

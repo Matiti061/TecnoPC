@@ -1,11 +1,7 @@
-# pylint: disable=I1101
-
-"""
-This script executes the project.
-"""
-
 import sys
-from package import Model, View, ViewModel
+from package.model import Model
+from package.view import View
+from package.viewmodel import ViewModel
 
 if __name__ == "__main__":
     from PySide6 import QtWidgets
