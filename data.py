@@ -1,9 +1,8 @@
 import pathlib
 import random
 from package.model import Model
-from package.dataclasses.manager import Manager
 from package.dataclasses.store import Store
-from package.dataclasses.employee import Employee
+from package.dataclasses.person import Person
 from package.dataclasses.product import Product
 
 if pathlib.Path("data.json").exists():
@@ -12,8 +11,10 @@ if pathlib.Path("data.json").exists():
 model = Model()
 
 # Managers
-model.manager.create_manager("12345678", Manager("Matías", "Barrientos", "+56912345678",
-                                                 "matias.barrientos@administracion.tecnopc.cl", "contraseña123"))
+model.manager.create_manager(
+    "12345678",
+    Person("Matías", "Barrientos", "+56912345678", "matias.barrientos@administracion.tecnopc.cl", "contraseña123")
+)
 
 # Stores
 stores = [
@@ -30,15 +31,15 @@ for store in stores:
 # Employees
 employees = [
     # 22.000.000-1
-    ["22000000", Employee("Juan", "Pérez", "987654321", "juan.perez@tecnopc.cl", "juanperez123")],
+    ["22000000", Person("Juan", "Pérez", "987654321", "juan.perez@tecnopc.cl", "juanperez123")],
     # 23.000.000-K
-    ["23000000", Employee("María", "Gomez", "987654322", "maria.gomez@tecnopc.cl", "mariagomez123")],
+    ["23000000", Person("María", "Gomez", "987654322", "maria.gomez@tecnopc.cl", "mariagomez123")],
     # 24.000.000-8
-    ["24000000", Employee("Carlos", "López", "987654323", "carlos.lopez@tecnopc.cl", "carloslopez123")],
+    ["24000000", Person("Carlos", "López", "987654323", "carlos.lopez@tecnopc.cl", "carloslopez123")],
     # 25.000.000-6
-    ["25000000", Employee("Esteban", "Martínez", "987654324", "esteban.martinez@tecnopc.cl", "estebanmartinez123")],
+    ["25000000", Person("Esteban", "Martínez", "987654324", "esteban.martinez@tecnopc.cl", "estebanmartinez123")],
     # 27.000.000-2
-    ["27000000", Employee("Jesús", "Minnitti", "945612783", "jesus.minnitti@tecnopc.cl", "jesusminnitti123")]
+    ["27000000", Person("Jesús", "Minnitti", "945612783", "jesus.minnitti@tecnopc.cl", "jesusminnitti123")]
 ]
 employee_uuids = []
 for employee in employees:

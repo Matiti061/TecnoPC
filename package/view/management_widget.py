@@ -2,7 +2,7 @@ import os
 from PySide6 import QtWidgets
 from .base_widget import BaseWidget
 from ..viewmodel import ViewModel
-from ..dataclasses.employee import Employee
+from ..dataclasses.person import Person
 from ..dataclasses.product import Product
 from ..dataclasses.store import Store
 from ..rut import RUT
@@ -388,7 +388,7 @@ class ManagementWidget(BaseWidget):
             )
             return
         # Crear empleado
-        new_employee = Employee(name, last_name, phone, mail, password)
+        new_employee = Person(name, last_name, phone, mail, password)
         index = self.employees_tab.widget.stores_list.currentIndex()
         self.viewmodel.employee.create_employee(self.stores[index - 1]["uuid"], str(identification.rut), new_employee)
         # Actualizar UI y datos locales
@@ -448,7 +448,7 @@ class ManagementWidget(BaseWidget):
         index = self.employees_tab.widget.stores_list.currentIndex()
         self.viewmodel.employee.update_employee(
             self.stores[index - 1]["uuid"],
-            self.employees[row]["uuid"], Employee(name, last_name, phone, mail, password)
+            self.employees[row]["uuid"], Person(name, last_name, phone, mail, password)
         )
         # Actualizar UI y datos locales
         self.employees_tab.widget.table_widget.setItem(row, 1, QtWidgets.QTableWidgetItem(name))

@@ -1,14 +1,14 @@
 import time
 import uuid
 from .internal_model import InternalModel
-from ..dataclasses.manager import Manager
+from ..dataclasses.person import Person
 
 
 class ManagerModel:
     def __init__(self, model: InternalModel):
         self.model = model
 
-    def create_manager(self, identification: str, manager: Manager):
+    def create_manager(self, identification: str, manager: Person):
         manager_uuid = str(uuid.uuid4())
         self.model.data["managers"].append({
             "uuid": manager_uuid,
@@ -27,7 +27,7 @@ class ManagerModel:
     def read_managers(self) -> list:
         return self.model.data["managers"]
 
-    def update_manager(self, manager_uuid: str, manager: Manager):
+    def update_manager(self, manager_uuid: str, manager: Person):
         self.model.edit_entity("managers", manager_uuid, {
             "name": manager.name,
             "lastName": manager.last_name,
