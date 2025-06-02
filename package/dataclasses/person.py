@@ -2,7 +2,7 @@ import dataclasses
 
 
 @dataclasses.dataclass
-class Employee:
+class Person:
     name: str
     last_name: str
     phone: str

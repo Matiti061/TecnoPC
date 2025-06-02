@@ -1,6 +1,6 @@
 import time
 import uuid
-from ..dataclasses.employee import Employee
+from ..dataclasses.person import Person
 from .internal_model import InternalModel
 
 
@@ -8,7 +8,7 @@ class EmployeeModel:
     def __init__(self, model: InternalModel):
         self.model = model
 
-    def create_employee(self, store_uuid: str, identification: str, employee: Employee):
+    def create_employee(self, store_uuid: str, identification: str, employee: Person):
         employee_uuid = str(uuid.uuid4())
         index = self.model.locate_entity("stores", store_uuid)
         self.model.data["stores"][index]["employees"].append({
@@ -29,7 +29,7 @@ class EmployeeModel:
         index = self.model.locate_entity("stores", store_uuid)
         return self.model.data["stores"][index]["employees"]
 
-    def update_employee(self, store_uuid: str, employee_uuid: str, employee: Employee):
+    def update_employee(self, store_uuid: str, employee_uuid: str, employee: Person):
         i, j = self.model.locate_nested_entity(["stores", "employees"], [store_uuid, employee_uuid])
         self.model.data["stores"][i]["employees"][j].update({
             "name": employee.name,
