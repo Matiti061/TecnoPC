@@ -8,10 +8,10 @@ class FormAddProduct(BaseWidget):
     product_selected = QtCore.Signal(list)
     def __init__(self, viewmodel: ViewModel, store):
         super().__init__(os.path.join("ui", "form_add_product.ui"))
-        self._viewmodel = viewmodel
-        self._store = store
-        self._products_uuid = self._store["products"]
-        self._products = []
+        self.viewmodel = viewmodel
+        self.store = store
+        self.products_uuid = self.store["products"]
+        self.products = []
 
         column_mapping = {
             "Nombre": "model",
@@ -22,18 +22,18 @@ class FormAddProduct(BaseWidget):
             "ID": "uuid"
         }
 
-        for product in self._products_uuid:
-            for item in self._viewmodel.product.read_products(store["uuid"]):
+        for product in self.products_uuid:
+            for item in self.viewmodel.product.read_products(store["uuid"]):
                 if product["uuid"] == item["uuid"]:
-                    self._products.append(item)
+                    self.products.append(item)
 
         self.widget.products_table.setColumnCount(len(column_mapping))
         self.widget.products_table.setHorizontalHeaderLabels(list(column_mapping.keys()))
-        self.widget.products_table.setRowCount(len(self._products))
+        self.widget.products_table.setRowCount(len(self.products))
         self.widget.products_table.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
 
         column_keys = list(column_mapping.keys())
-        for i, product in enumerate(self._products):
+        for i, product in enumerate(self.products):
             for j, key in enumerate(column_keys):
                 self.widget.products_table.setItem(
                     i,
@@ -41,11 +41,11 @@ class FormAddProduct(BaseWidget):
                     QtWidgets.QTableWidgetItem(str(product[column_mapping[key]]))
                 )
 
-        self.widget.add_product.clicked.connect(self._handle_add_product)
-        self._selected_products = []
-        self._result = None
+        self.widget.add_product.clicked.connect(self.handle_add_product)
+        self.selected_products = []
+        self.result = None
 
-    def _handle_add_product(self):
+    def handle_add_product(self):
         current_row = self.widget.products_table.currentRow()
         quantity = self.widget.quantity_spinbox.value()
 
@@ -56,10 +56,10 @@ class FormAddProduct(BaseWidget):
             QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Ingrese una cantidad válida.")
             return
 
-        selected_product: dict = self._products[current_row]
+        selected_product: dict = self.products[current_row]
         product_uuid = selected_product["uuid"]
 
-        for prod in self._selected_products:
+        for prod in self.selected_products:
             if prod["uuid"] == product_uuid:
                 prod["quantity"] += quantity
                 QtWidgets.QMessageBox.information(
@@ -71,16 +71,16 @@ class FormAddProduct(BaseWidget):
         else:
             product_copy = selected_product.copy()
             product_copy["quantity"] = quantity
-            self._selected_products.append(product_copy)
+            self.selected_products.append(product_copy)
             QtWidgets.QMessageBox.information(
                 self.widget,
                 "Información",
                 f"Componente agregado con cantidad {quantity}."
             )
 
-        self._result = self._selected_products
-        self.product_selected.emit(self._selected_products)
+        self.result = self.selected_products
+        self.product_selected.emit(self.selected_products)
         self.widget.close()
 
     def get_selected_products(self):
-        return self._result
+        return self.result

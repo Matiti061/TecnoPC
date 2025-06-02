@@ -1,20 +1,20 @@
 class RUT:
     def __init__(self, rut: str):
         self.rut = int(rut.replace('-', '').replace('.', '')[:-1])
-        self._verification_digit = RUT.get_verification_digit(self.rut)
-        if rut not in self._get_all_ruts():
+        self.verification_digit = RUT.get_verification_digit(self.rut)
+        if rut not in self.get_all_ruts():
             raise ValueError("Invalid RUT")
 
-    def _get_all_ruts(self):
+    def get_all_ruts(self):
         ruts = [
             self.get_pretty_rut(),
-            f"{self.rut}-{self._verification_digit}",
-            f"{self.rut}{self._verification_digit}"
+            f"{self.rut}-{self.verification_digit}",
+            f"{self.rut}{self.verification_digit}"
         ]
         return ruts + [rut.replace('K', 'k') for rut in ruts]
 
     def get_pretty_rut(self):
-        return f"{self.rut:,}-{self._verification_digit}".replace(',', '.')
+        return f"{self.rut:,}-{self.verification_digit}".replace(',', '.')
 
     @staticmethod
     def get_pretty_rut_static(rut: int):
