@@ -138,7 +138,7 @@ class EmployeeWidget(BaseWidget):
                 warranty = product[6]
             else:
                 warranty = "sin garantía"
-            receipt += f"{model} ({warranty}) - {quantity} x {price} = {subtotal}\n"
+            receipt += f"{model} ({warranty}) - {quantity} x ${f"{price:,}".replace(',','.')} = ${f"{subtotal:,}".replace(',','.')}\n"
             total += subtotal
         total = f"{total:,}".replace(',', '.')
         receipt += f"Total: ${total}\nGracias por su compra!"

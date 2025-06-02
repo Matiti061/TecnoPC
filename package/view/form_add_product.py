@@ -38,7 +38,7 @@ class FormAddProduct(BaseWidget):
                 self.widget.products_table.setItem(
                     i,
                     j,
-                    QtWidgets.QTableWidgetItem(str(product[column_mapping[key]]))
+                    QtWidgets.QTableWidgetItem(str(product[column_mapping[key]]) if column_mapping[key] != "price" else f"${product[column_mapping[key]]:,}".replace(',','.'))
                 )
 
         self.widget.add_product.clicked.connect(self.handle_add_product)
