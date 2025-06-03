@@ -73,8 +73,8 @@ class EmployeeWidget(BaseWidget):
 
         # client tab
         self.widget.client_create_button.clicked.connect(self.handle_create_client)
-        self.widget.client_delete_button.clicked.connect(self.handle_update_client)
-        self.widget.client_update_button.clicked.connect(self.handle_discard_client)
+        self.widget.client_delete_button.clicked.connect(self.handle_discard_client)
+        self.widget.client_update_button.clicked.connect(self.handle_update_client_1)
         
     def handle_tabs(self, index: int):
         if not index:  # sale tab
@@ -84,7 +84,7 @@ class EmployeeWidget(BaseWidget):
         elif index == 1:  # warranty tab
             self.handle_update(self.widget.warranty_table, None, None)
         elif index == 2:
-            self.handle_update_client(self.widget.client_table_widget)
+            self.handle_update_client_2(self.widget.client_table_widget)
 
     def handle_add_product(self):  # note: just for the sale
         self.aux_widget = FormAddProduct(self.viewmodel, self.store)
@@ -188,9 +188,9 @@ class EmployeeWidget(BaseWidget):
             spinbox_value = dialog.get_spinbox_value()
 
             if selected_option:
-                self.products_to_sell[current_row][6] = f"garantía de {spinbox_value} meses"
+                self.products_to_sell[current_row]["warranty"] = f"garantía de {spinbox_value} meses"
             else:
-                self.products_to_sell[current_row][6] = "sin garantía"
+                self.products_to_sell[current_row]["warranty"] = "sin garantía"
         self.handle_update(self.widget.warranty_table)
 
     def handle_create_client(self):
@@ -201,27 +201,28 @@ class EmployeeWidget(BaseWidget):
     @QtCore.Slot(bool)
     def handle_createClient(self, clientData):
         if clientData:
-            self.handle_update_client(self.widget.client_table_widget)
+            self.handle_update_client_2(self.widget.client_table_widget)
         else:
             QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "se canceló la creacion del cliente.")
             return
     
-    def handle_update_client(self):
+    def handle_update_client_1(self):
         current_row = self.widget.client_table_widget.currentRow()
 
         if current_row == -1:
-            QtWidgets.QMessageBox.warning(self.employees_tab.widget, "Advertencia", "Debe seleccionar alguna fila.")
+            QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe seleccionar alguna fila.")
             return
         
-        client = self.viewmodel.client.get_client[current_row]
-        self.aux_widget = formAddClient(self.viewmodel)
+        client = self.viewmodel.client.get_client(self.list_client[current_row]["uuid"])
+        self.aux_widget = formAddClient(self.viewmodel, True, self.list_client[current_row])
         self.aux_widget.widget.rut_input.setText(RUT.get_pretty_rut_static(int(client["identification"])))
         self.aux_widget.widget.rut_input.setEnabled(False)
         self.aux_widget.widget.name_input.setText(client["name"])
         self.aux_widget.widget.last_name_input.setText(client["lastName"])
         self.aux_widget.widget.phone_input.setText(client["phone"])
         self.aux_widget.widget.mail_input.setText(client["mail"])
-        self.aux_widget.widget.ok_button.clicked.connect(lambda: self.handle_client_update_ok(current_row))
+        self.aux_widget.widget.address_input.setText(client["address"])
+        # self.aux_widget.widget.ok_button.clicked.connect(lambda: self.handle_client_update_ok(current_row))
         self.aux_widget.show()
 
     def handle_client_update_ok(self, row):
@@ -339,11 +340,22 @@ class EmployeeWidget(BaseWidget):
         pass
 
     def handle_discard_client(self):
-        return
-        self.clean_input()
-
-        QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Los datos han sido descartados.")
-        return
+        current_row = self.widget.client_table_widget.currentRow()
+        if current_row == -1:
+            QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe seleccionar alguna fila.")
+            return
+        result = QtWidgets.QMessageBox.question(
+            self.widget,
+            "Pregunta",
+            f"Desea borrar el cliente {self.list_client[current_row]["name"]} {self.list_client[current_row]["lastName"]}?"
+        )
+        if result == QtWidgets.QMessageBox.StandardButton.Yes:
+            self.viewmodel.client.delete_client(self.list_client[current_row]["uuid"])
+            self.widget.client_table_widget.removeRow(current_row)
+            # self.list_client.pop(current_row)
+            self.widget.client_table_widget.setRowCount(len(self.list_client))
+            self.widget.client_table_widget.setCurrentCell(-1, -1)
+            QtWidgets.QMessageBox.information(self.widget, "Información", "Cliente borrado con éxito.")
     
     def handle_update(
             self,
@@ -381,7 +393,7 @@ class EmployeeWidget(BaseWidget):
             total = f"{self.total:,}".replace(',', '.')
             total_label.setText(f"Total: ${total}")
     
-    def handle_update_client(self, table_widget: QtWidgets.QTableWidget):
+    def handle_update_client_2(self, table_widget: QtWidgets.QTableWidget):
         data = self.viewmodel.client.get_client()
         table_widget.clearContents()
         table_widget.setRowCount(len(data))

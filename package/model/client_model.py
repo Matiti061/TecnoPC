@@ -48,6 +48,6 @@ class ClientModel:
         self.model.save()
 
     def delete_client(self, client_uuid: str):
-        i = self.model.locate_entity(["client"], [client_uuid])
+        i = self.model.locate_entity("client", client_uuid)
         del self.model.data["client"][i]
         self.model.save()
