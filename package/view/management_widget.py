@@ -516,18 +516,18 @@ class ManagementWidget(BaseWidget):
 
     def handle_provider_add(self):
         self.aux_widget = BaseWidget(os.path.join("ui", "proovedor_add.ui"))
-        ok_button = self.aux_widget.widget.findChild(QtWidgets.QPushButton, "ok_button")
+        ok_button = self.aux_widget.widget.findChild(QtWidgets.QPushButton, "aceptar_button")
         def on_ok():
-            id_ = self.aux_widget.widget.id_input.text()
-            nombre = self.aux_widget.widget.nombre_empresa_input.text()
+            # id_ = self.aux_widget.widget.id_input.text()
+            nombre = self.aux_widget.widget.nombre_input.text()
             telefono = self.aux_widget.widget.telefono_input.text()
-            correo = self.aux_widget.widget.correo_input.text()
+            correo = self.aux_widget.widget.email_input.text()
             direccion = self.aux_widget.widget.direccion_input.text()
-            if not id_ or not nombre or not telefono or not correo or not direccion:
+            if not nombre or not telefono or not correo or not direccion:
                 QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Complete todos los campos.")
                 return
             try:
-                self.viewmodel.provider.create_provider(id_, nombre, telefono, correo, direccion)
+                self.viewmodel.provider.create_provider(None, nombre, telefono, correo, direccion)
                 QtWidgets.QMessageBox.information(self.aux_widget.widget, "Información", "Proveedor agregado con éxito.")
                 self.aux_widget.widget.close()
                 self.load_providers_table()
@@ -548,14 +548,14 @@ class ManagementWidget(BaseWidget):
         self.aux_widget = BaseWidget(os.path.join("ui", "proovedor_add.ui"))
         self.aux_widget.widget.id_input.setText(str(provider["id"]))
         self.aux_widget.widget.id_input.setEnabled(False)
-        self.aux_widget.widget.nombre_empresa_input.setText(provider["nombre_empresa"])
+        self.aux_widget.widget.nombre_input.setText(provider["nombre_empresa"])
         self.aux_widget.widget.telefono_input.setText(provider["telefono"])
-        self.aux_widget.widget.correo_input.setText(provider["correo"])
+        self.aux_widget.widget.email_input.setText(provider["correo"])
         self.aux_widget.widget.direccion_input.setText(provider["direccion"])
         def on_ok():
-            nombre = self.aux_widget.widget.nombre_empresa_input.text()
+            nombre = self.aux_widget.widget.nombre_input.text()
             telefono = self.aux_widget.widget.telefono_input.text()
-            correo = self.aux_widget.widget.correo_input.text()
+            correo = self.aux_widget.widget.email_input.text()
             direccion = self.aux_widget.widget.direccion_input.text()
             if not nombre or not telefono or not correo or not direccion:
                 QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Complete todos los campos.")
