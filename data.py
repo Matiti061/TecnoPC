@@ -28,6 +28,11 @@ store_uuids = []
 for store in stores:
     store_uuids.append(model.store.create_store(store))
 
+model.provider.create_provider("Proveedor 1", "12121212", "a@a.com", "1212")
+model.provider.create_provider("Proveedor 2", "12121212", "a@a.com", "1212")
+
+del model
+model = Model()
 # Employees
 employees = [
     # 22.000.000-1
@@ -49,21 +54,21 @@ for employee in employees:
 
 # Products
 products = [
-    Product("AMD", "Ryzen 5 5600X", "Procesador", "6 núcleos, 12 hilos", 159990),
-    Product("Asus", "ROG Strix B550-F", "Placa madre", "ATX, AM4", 129990),
-    Product("Corsair", "RM750x", "Fuente de poder", "750W, 80 Plus Gold", 89990),
-    Product("Corsair", "Vengeance LPX 32GB", "RAM", "DDR4 3200MHz", 129990),
-    Product("Gigabyte", "AORUS GeForce RTX 3060", "Tarjeta gráfica", "12GB GDDR6", 499990),
-    Product("Gigastone", "Game Turbo 1TB", "SSD", "SATA III", 39990),
-    Product("Gigastone", "Game Turbo 2x16GB", "RAM", "DDR4 3200MHz", 64990),
-    Product("Intel", "Core i5-12400F", "Procesador", "6 núcleos, 12 hilos", 199990),
-    Product("Intel", "Core i7-12700K", "Procesador", "12 núcleos, 20 hilos", 299990),
-    Product("Kingston", "A2000 500GB", "SSD", "NVMe M.2", 49990),
-    Product("Kingston", "Fury 16GB", "RAM", "DDR4 3200MHz", 75990),
-    Product("MSI", "MAG B550M Mortar", "Placa madre", "Micro-ATX, AM4", 89990),
-    Product("Samsung", "970 EVO Plus 1TB", "SSD", "NVMe M.2", 129990),
-    Product("Seagate", "Barracuda 2TB", "HDD", "7200RPM, SATA III", 49990),
-    Product("Western Digital", "Blue 1TB", "HDD", "7200RPM, SATA III", 39990)
+    Product("AMD", "Ryzen 5 5600X", "Procesador", "6 núcleos, 12 hilos", 159990, "Proveedor 1"),
+    Product("Asus", "ROG Strix B550-F", "Placa madre", "ATX, AM4", 129990, "Proveedor 1"),
+    Product("Corsair", "RM750x", "Fuente de poder", "750W, 80 Plus Gold", 89990, "Proveedor 1"),
+    Product("Corsair", "Vengeance LPX 32GB", "RAM", "DDR4 3200MHz", 129990, "Proveedor 1"),
+    Product("Gigabyte", "AORUS GeForce RTX 3060", "Tarjeta gráfica", "12GB GDDR6", 499990, "Proveedor 1"),
+    Product("Gigastone", "Game Turbo 1TB", "SSD", "SATA III", 39990, "Proveedor 1"),
+    Product("Gigastone", "Game Turbo 2x16GB", "RAM", "DDR4 3200MHz", 64990, "Proveedor 1"),
+    Product("Intel", "Core i5-12400F", "Procesador", "6 núcleos, 12 hilos", 199990, "Proveedor 1"),
+    Product("Intel", "Core i7-12700K", "Procesador", "12 núcleos, 20 hilos", 299990, "Proveedor 1"),
+    Product("Kingston", "A2000 500GB", "SSD", "NVMe M.2", 49990, "Proveedor 1"),
+    Product("Kingston", "Fury 16GB", "RAM", "DDR4 3200MHz", 75990, "Proveedor 1"),
+    Product("MSI", "MAG B550M Mortar", "Placa madre", "Micro-ATX, AM4", 89990, "Proveedor 1"),
+    Product("Samsung", "970 EVO Plus 1TB", "SSD", "NVMe M.2", 129990, "Proveedor 1"),
+    Product("Seagate", "Barracuda 2TB", "HDD", "7200RPM, SATA III", 49990, "Proveedor 1"),
+    Product("Western Digital", "Blue 1TB", "HDD", "7200RPM, SATA III", 39990, "Proveedor 1"),
 ]
 product_uuids = []
 for product in products:
