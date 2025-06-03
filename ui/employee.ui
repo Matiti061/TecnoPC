@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>551</width>
-    <height>314</height>
+    <width>578</width>
+    <height>404</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -98,6 +98,13 @@
        </item>
        <item row="1" column="1">
         <widget class="QComboBox" name="client_comboBox"/>
+       </item>
+       <item row="1" column="2">
+        <widget class="QPushButton" name="sale_history_button">
+         <property name="text">
+          <string>Historial de ventas</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
