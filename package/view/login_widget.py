@@ -43,7 +43,10 @@ class LoginWidget(BaseWidget):
         try:
             identification = RUT(self.widget.rut_input.text())
             if self.user_type == "employee":
-                store_uuid = self.store_uuids[self.widget.store_combo_box.currentIndex() - 1]
+                store_index = self.widget.store_combo_box.currentIndex()
+                if store_index <= 0:
+                    raise ValueError("No ha seleccionado una tienda.")
+                store_uuid = self.store_uuids[store_index - 1]
             else:
                 store_uuid = None
             info = self.viewmodel.try_login(identification.rut, password, store_uuid)

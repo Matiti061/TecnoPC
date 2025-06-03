@@ -5,6 +5,7 @@ from .employee_model import EmployeeModel
 from .client_model import ClientModel
 from .product_model import ProductModel
 from .sale_model import SaleModel
+from .provider_model import ProviderModel
 
 
 class Model:
@@ -16,3 +17,4 @@ class Model:
         self.client = ClientModel(self.model)
         self.product = ProductModel(self.model)
         self.sale = SaleModel(self.model)
+        self.provider = ProviderModel()
