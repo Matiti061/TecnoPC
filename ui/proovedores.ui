@@ -27,7 +27,7 @@
       <bool>true</bool>
      </property>
      <property name="selectionBehavior">
-      <enum>QAbstractItemView::SelectRows</enum>
+      <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
      </property>
      <property name="sortingEnabled">
       <bool>true</bool>
@@ -39,7 +39,7 @@
      </column>
      <column>
       <property name="text">
-       <string>Nombre/Empresa</string>
+       <string>Empresa</string>
       </property>
      </column>
      <column>
@@ -49,7 +49,7 @@
      </column>
      <column>
       <property name="text">
-       <string>Email</string>
+       <string>Correo</string>
       </property>
      </column>
      <column>

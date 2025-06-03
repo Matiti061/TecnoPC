@@ -23,20 +23,20 @@ class EmployeeWidget(BaseWidget):
 
         self.column_mapping = {
             "Nombre": "model",
-            "Categoria": "category",
+            "Categoría": "category",
             "Marca": "brand",
             "Cantidad": "quantity",
             "Precio": "price",
-            "Id": "uuid",
+            "ID": "uuid",
             "Garantía": "warranty"
         }
         self.column_mapping_client = {
-            "Rut": "identification",
+            "RUT": "identification",
             "Nombre": "name",
             "Apellido": "lastName",
-            "Telefono": "phone",
+            "Teléfono": "phone",
             "Correo": "mail",
-            "Direccion": "address"
+            "Dirección": "address"
         }
 
         self.store = None
@@ -150,7 +150,7 @@ class EmployeeWidget(BaseWidget):
         index = self.widget.client_comboBox.currentIndex() - 1
         receipt = f"Recibo de venta\nTienda: {self.store['name']}\nVendedor: {seller['name']}\n"
         receipt += f"Nombre del cliente: {self.list_client[index]["name"]} {self.list_client[index]["lastName"]}\n"
-        receipt += f"Rut del cliente: {RUT.get_pretty_rut_static(int(self.list_client[index]['identification']))}\nItems:\n"
+        receipt += f"RUT del cliente: {RUT.get_pretty_rut_static(int(self.list_client[index]['identification']))}\nItems:\n"
         total = 0
         for product in self.products_to_sell:
             model = product["model"]
