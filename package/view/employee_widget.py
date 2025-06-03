@@ -42,7 +42,6 @@ class EmployeeWidget(BaseWidget):
 
         # sale tab
         self.list_client = self.viewmodel.client.get_client()
-        print(f"lista de clientes: {self.list_client}")
         self.widget.client_comboBox.insertItem(0, "-- seleccione una opcion --")
         for client in self.list_client:
             self.widget.client_comboBox.addItem(f"{client["name"]} {client["lastName"]}")
@@ -65,15 +64,16 @@ class EmployeeWidget(BaseWidget):
         # client tab
         self.widget.add_pushButton.clicked.connect(self.handle_add_client)
         self.widget.discard_pushButton.clicked.connect(self.handle_discard_client)
+        self.widget.methodpay_comboBox.addItems(
+            ["Tarjeta de debito", "Tarjeta de credito", "Efectivo", "Transferencia"])
 
     def handle_tabs(self, index: int):
         if not index:  # sale tab
             self.handle_update(self.widget.sell_table_widget, self.widget.groupBox, self.widget.sell_total_label)
-            self.widget.client_comboBox.addItems(self.list_client)
+            self.widget.client_comboBox.clear()
+            self.widget.client_comboBox.addItems(["-- seleccione una opcion --"] + [f"{value["name"]} {value["lastName"]}" for value in self.list_client])
         elif index == 1:  # warranty tab
             self.handle_update(self.widget.warranty_table)
-        elif index == 2:
-            self.widget.methodpay_comboBox.addItems(["Tarjeta de debito","Tarjeta de credito", "Efectivo", "Transferencia"])
 
     def handle_add_product(self):  # note: just for the sale
         self.aux_widget = FormAddProduct(self.viewmodel, self.store)
@@ -139,7 +139,7 @@ class EmployeeWidget(BaseWidget):
         index = self.widget.client_comboBox.currentIndex() - 1
         receipt = f"Recibo de venta\nTienda: {self.store['name']}\nVendedor: {seller['name']}\n"
         receipt += f"Nombre del cliente: {self.list_client[index]["name"]} {self.list_client[index]["lastName"]}\n"
-        receipt += f"Rut del cliente: {self.list_client[index]['identification']}\nItems:\n"
+        receipt += f"Rut del cliente: {RUT.get_pretty_rut_static(int(self.list_client[index]['identification']))}\nItems:\n"
         total = 0
         for product in self.products_to_sell:
             model = product["model"]
@@ -180,8 +180,6 @@ class EmployeeWidget(BaseWidget):
                 self.products_to_sell[current_row][6] = f"garantía de {spinbox_value} meses"
             else:
                 self.products_to_sell[current_row][6] = "sin garantía"
-        else:
-            print("Diálogo cancelado")
         self.handle_update(self.widget.warranty_table)
 
     def handle_add_client(self):
@@ -192,7 +190,7 @@ class EmployeeWidget(BaseWidget):
             QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe ingresar un apellido.")
             return
         try:
-            RUT(self.widget.rut_lineEdit.text())
+            rut = RUT(self.widget.rut_lineEdit.text())
         except ValueError:
             QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe ingresar un rut valido.")
             return
@@ -209,7 +207,7 @@ class EmployeeWidget(BaseWidget):
             QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe seleccionar una opcion valida.")
             return
         self.viewmodel.client.create_client(
-            str(self.widget.rut_lineEdit.text()),
+            str(rut.rut),
             Person(
                 str(self.widget.name_lineEdit.text()),
                 str(self.widget.lastname_lineEdit.text()),
