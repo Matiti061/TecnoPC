@@ -7,7 +7,7 @@ class InternalModel:
             with open("data.json", encoding="utf-8") as file:
                 self.data: dict = json.load(file)
         except FileNotFoundError:
-            self.data = json.loads('{"managers": [], "stores": [], "sales": []}')
+            self.data = json.loads('{"managers": [], "stores": [], "sales": [], "client": []}')
             self.save()
         except json.decoder.JSONDecodeError as e:
             raise RuntimeError(f"JSON decoding error, manual intervention needed: {e}") from e
@@ -23,7 +23,7 @@ class InternalModel:
         self.save()
 
     def locate_entity(self, key: str, entity_uuid: str):
-        if key not in ["managers", "stores", "employees", "products", "sales"]:
+        if key not in ["managers", "stores", "employees", "products", "sales", "client"]:
             raise ValueError("Invalid key")
         for index, value in enumerate(self.data[key]):  # type: int, dict
             if value["uuid"] == entity_uuid:

@@ -2,6 +2,7 @@ from .internal_model import InternalModel
 from .manager_model import ManagerModel
 from .store_model import StoreModel
 from .employee_model import EmployeeModel
+from .client_model import ClientModel
 from .product_model import ProductModel
 from .sale_model import SaleModel
 
@@ -12,5 +13,6 @@ class Model:
         self.manager = ManagerModel(self.model)
         self.store = StoreModel(self.model)
         self.employee = EmployeeModel(self.model)
+        self.client = ClientModel(self.model)
         self.product = ProductModel(self.model)
         self.sale = SaleModel(self.model)
