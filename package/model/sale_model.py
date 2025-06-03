@@ -24,3 +24,6 @@ class SaleModel:
 
     def read_sales(self) -> list:
         return self.model.data["sales"]
+
+    def delete(self, sale_uuid: str):
+        self.model.delete_entity("sales", sale_uuid)

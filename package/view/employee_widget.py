@@ -42,7 +42,7 @@ class EmployeeWidget(BaseWidget):
 
         # sale tab
         self.list_client = self.viewmodel.client.get_client()
-        self.widget.client_comboBox.insertItem(0, "-- seleccione una opcion --")
+        self.widget.client_comboBox.insertItem(0, "-- seleccione una opción --")
         for client in self.list_client:
             self.widget.client_comboBox.addItem(f"{client["name"]} {client["lastName"]}")
 
@@ -53,6 +53,7 @@ class EmployeeWidget(BaseWidget):
         self.widget.sell_delete_product.clicked.connect(self.handle_delete_product)
         self.widget.sell_cancel_button.clicked.connect(self.handle_cancel_sell)
         self.widget.sell_finale_button.clicked.connect(self.handle_end_sell)
+        self.widget.sale_history_button.clicked.connect(self.handle_sale_history_button)
 
         # warranty tab
         self.widget.warranty_table.setColumnCount(len(self.column_mapping))
@@ -71,7 +72,7 @@ class EmployeeWidget(BaseWidget):
         if not index:  # sale tab
             self.handle_update(self.widget.sell_table_widget, self.widget.groupBox, self.widget.sell_total_label)
             self.widget.client_comboBox.clear()
-            self.widget.client_comboBox.addItems(["-- seleccione una opcion --"] + [f"{value["name"]} {value["lastName"]}" for value in self.list_client])
+            self.widget.client_comboBox.addItems(["-- seleccione una opción --"] + [f"{value["name"]} {value["lastName"]}" for value in self.list_client])
         elif index == 1:  # warranty tab
             self.handle_update(self.widget.warranty_table)
 
@@ -129,7 +130,7 @@ class EmployeeWidget(BaseWidget):
             if self.employee_uuid == item["uuid"]:
                 seller = item
                 break
-        if self.widget.client_comboBox.currentText() == "-- seleccione una opcion --":
+        if self.widget.client_comboBox.currentText() == "-- seleccione una opción --":
             QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe seleccionar una opcion valida.")
             return
 
@@ -221,6 +222,97 @@ class EmployeeWidget(BaseWidget):
         QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Cliente ingresado con exito.")
         self.clean_input()
         return
+
+    def handle_sale_history_button(self):
+        index = self.widget.client_comboBox.currentIndex()
+        if index == 0:
+            QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe seleccionar un cliente para esta funcionalidad.")
+            return
+        # logic
+        self.aux_widget = BaseWidget(os.path.join("ui", "saleHistory.ui"))
+        self.aux_widget.show()
+        keys = ["createdAt", "client_rut", "updatedAt"]
+        values = ["Fecha de venta", "RUT de cliente", "Fecha de modificación"]
+        self.sales = []
+        for sale in self.viewmodel.sale.read_sales():
+            if sale["client_rut"] == self.list_client[index - 1]["identification"]:
+                self.sales.append(sale)
+        if len(self.sales) == 0:
+            QtWidgets.QMessageBox.information(self.widget, "Información", "Este cliente no posee ventas registradas.")
+            return
+        # TableWidget
+        self.aux_widget.widget.table_widget.setColumnCount(len(keys))
+        self.aux_widget.widget.table_widget.setHorizontalHeaderLabels(values)
+        self.aux_widget.widget.table_widget.setRowCount(len(self.sales))
+        for i, sale in enumerate(self.sales):
+            for j, key in enumerate(keys):
+                if key == "client_rut":
+                    self.aux_widget.widget.table_widget.setItem(
+                        i,
+                        j,
+                        QtWidgets.QTableWidgetItem(RUT.get_pretty_rut_static(int(sale[key]))))
+                elif key == "createdAt":
+                    date = QtCore.QDateTime()
+                    date.setSecsSinceEpoch(int(sale[key]))
+                    self.aux_widget.widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem((date.toString())))
+                elif key == "updatedAt":
+                    if not sale[key]:
+                        self.aux_widget.widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem("No modificado"))
+                    else:
+                        date = QtCore.QDateTime()
+                        date.setSecsSinceEpoch(int(sale[key]))
+                        self.aux_widget.widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem((date.toString())))
+                else:
+                    self.aux_widget.widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(str(sale[key])))
+        self.aux_widget.widget.table_widget.setCurrentCell(-1, -1)
+        # Button connections
+        self.aux_widget.widget.details_button.clicked.connect(self.handle_details_button)
+        self.aux_widget.widget.delete_button.clicked.connect(self.handle_delete_button)
+        self.aux_widget.widget.update_button.clicked.connect(self.handle_update_button)
+
+    def handle_details_button(self):
+        current_row = self.aux_widget.widget.table_widget.currentRow()
+        if current_row == -1:
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Debe seleccionar alguna fila.")
+            return
+        index = self.aux_widget.widget.table_widget.currentRow()
+        sales = self.sales[index]["products"]
+        message = f"Productos vendidos: {len(sales)}\n"
+        message += f"--------------------\n"
+        subtotal = 0
+        for sale in sales:
+            message += f"Modelo: {sale["model"]}\n"
+            message += f"Categoría: {sale["category"]}\n"
+            message += f"Marca: {sale["brand"]}\n"
+            message += f"Cantidad: {sale["quantity"]}\n"
+            message += f"Precio c/u: ${f"{int(sale["price"]):,}".replace(',', '.')}\n"
+            message += f"Garantía: {sale["warranty"] if sale["warranty"] else "No tiene"}\n"
+            message += f"Subtotal: {f"${int(sale["price"]) * int(sale["quantity"]):,}".replace(',', '.')}\n"
+            subtotal += int(sale["price"]) * int(sale["quantity"])
+            message += f"--------------------\n"
+        message += f"Total de venta: ${f"{int(subtotal):,}".replace(',', '.')}."
+        QtWidgets.QMessageBox.information(self.aux_widget.widget, "Venta", message)
+
+    def handle_delete_button(self):
+        current_row = self.aux_widget.widget.table_widget.currentRow()
+        if current_row == -1:
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Debe seleccionar alguna fila.")
+            return
+        result = QtWidgets.QMessageBox.question(
+            self.aux_widget.widget,
+            "Pregunta",
+            f"Desea borrar la venta número {current_row +  1}?"
+        )
+        if result == QtWidgets.QMessageBox.StandardButton.Yes:
+            self.viewmodel.sale.delete(self.sales[current_row]["uuid"])
+            self.aux_widget.widget.table_widget.removeRow(current_row)
+            self.sales.pop(current_row)
+            self.aux_widget.widget.table_widget.setRowCount(len(self.sales))
+            self.aux_widget.widget.table_widget.setCurrentCell(-1, -1)
+            QtWidgets.QMessageBox.information(self.aux_widget.widget, "Información", "Venta borrada con éxito.")
+
+    def handle_update_button(self):
+        pass
 
     def handle_discard_client(self):
         self.clean_input()
