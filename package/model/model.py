@@ -17,4 +17,4 @@ class Model:
         self.client = ClientModel(self.model)
         self.product = ProductModel(self.model)
         self.sale = SaleModel(self.model)
-        self.provider = ProviderModel()
+        self.provider = ProviderModel(self.model)
