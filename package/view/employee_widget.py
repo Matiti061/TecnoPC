@@ -3,6 +3,7 @@ from PySide6 import QtCore, QtWidgets
 from .base_widget import BaseWidget
 from .custom_dialog import CustomDialog
 from .form_add_product import FormAddProduct
+from .form_add_client import formAddClient
 from ..viewmodel import ViewModel
 from ..rut import RUT
 from ..dataclasses.sale import Sale
@@ -28,6 +29,14 @@ class EmployeeWidget(BaseWidget):
             "Precio": "price",
             "Id": "uuid",
             "Garantía": "warranty"
+        }
+        self.column_mapping_client = {
+            "Rut": "identification",
+            "Nombre": "name",
+            "Apellido": "lastName",
+            "Telefono": "phone",
+            "Correo": "mail",
+            "Direccion": "address"
         }
 
         self.store = None
@@ -62,18 +71,19 @@ class EmployeeWidget(BaseWidget):
         self.handle_update(self.widget.sell_table_widget, self.widget.groupBox, self.widget.sell_total_label)
 
         # client tab
-        self.widget.add_pushButton.clicked.connect(self.handle_add_client)
-        self.widget.discard_pushButton.clicked.connect(self.handle_discard_client)
-        self.widget.methodpay_comboBox.addItems(
-            ["Tarjeta de debito", "Tarjeta de credito", "Efectivo", "Transferencia"])
-
+        self.widget.client_create_button.clicked.connect(self.handle_create_client)
+        self.widget.client_delete_button.clicked.connect(self.handle_update_client)
+        self.widget.client_update_button.clicked.connect(self.handle_discard_client)
+        
     def handle_tabs(self, index: int):
         if not index:  # sale tab
             self.handle_update(self.widget.sell_table_widget, self.widget.groupBox, self.widget.sell_total_label)
             self.widget.client_comboBox.clear()
             self.widget.client_comboBox.addItems(["-- seleccione una opcion --"] + [f"{value["name"]} {value["lastName"]}" for value in self.list_client])
         elif index == 1:  # warranty tab
-            self.handle_update(self.widget.warranty_table)
+            self.handle_update(self.widget.warranty_table, None, None)
+        elif index == 2:
+            self.handle_update_client(self.widget.client_table_widget)
 
     def handle_add_product(self):  # note: just for the sale
         self.aux_widget = FormAddProduct(self.viewmodel, self.store)
@@ -182,61 +192,67 @@ class EmployeeWidget(BaseWidget):
                 self.products_to_sell[current_row][6] = "sin garantía"
         self.handle_update(self.widget.warranty_table)
 
-    def handle_add_client(self):
-        if self.widget.name_lineEdit.text() == "":
-            QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe ingresar un nombre.")
+    def handle_create_client(self):
+        self.aux_widget = formAddClient(self.viewmodel)
+        self.aux_widget.client_create.connect(self.handle_createClient)
+        self.aux_widget.show()
+    
+    @QtCore.Slot(bool)
+    def handle_createClient(self, clientData):
+        if clientData:
+            self.handle_update_client(self.widget.client_table_widget)
+        else:
+            QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "se canceló la creacion del cliente.")
             return
-        if self.widget.lastname_lineEdit.text() == "":
-            QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe ingresar un apellido.")
+    
+    def handle_update_client(self):
+        current_row = self.widget.client_table_widget.currentRow()
+
+        if current_row == -1:
+            QtWidgets.QMessageBox.warning(self.employees_tab.widget, "Advertencia", "Debe seleccionar alguna fila.")
             return
-        try:
-            rut = RUT(self.widget.rut_lineEdit.text())
-        except ValueError:
-            QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe ingresar un rut valido.")
+        
+        client = self.viewmodel.client.get_client[current_row]
+        self.aux_widget = formAddClient(self.viewmodel)
+        self.aux_widget.widget.rut_input.setText(RUT.get_pretty_rut_static(int(client["identification"])))
+        self.aux_widget.widget.rut_input.setEnabled(False)
+        self.aux_widget.widget.name_input.setText(client["name"])
+        self.aux_widget.widget.last_name_input.setText(client["lastName"])
+        self.aux_widget.widget.phone_input.setText(client["phone"])
+        self.aux_widget.widget.mail_input.setText(client["mail"])
+        self.aux_widget.widget.ok_button.clicked.connect(lambda: self.handle_client_update_ok(current_row))
+        self.aux_widget.show()
+
+    def handle_client_update_ok(self, row):
+        name = self.aux_widget.widget.name_input.text()
+        last_name = self.aux_widget.widget.last_name_input.text()
+        phone = self.aux_widget.widget.phone_input.text()
+        mail = self.aux_widget.widget.mail_input.text()
+        if not name or not last_name or not phone or not mail:
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Complete todos los campos.")
             return
-        if self.widget.mail_lineEdit.text() == "":
-            QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe ingresar un correo valido.")
-            return
-        if self.widget.phone_lineEdit.text() == "" or not validate_phone(str(self.widget.phone_lineEdit.text())):
-            QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe ingresar un telefono valido.")
-            return
-        if self.widget.address_lineEdit.text() == "":
-            QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe ingresar una direccion valida.")
-            return
-        if self.widget.methodpay_comboBox.currentIndex() == -1:
-            QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe seleccionar una opcion valida.")
-            return
-        self.viewmodel.client.create_client(
-            str(rut.rut),
-            Person(
-                str(self.widget.name_lineEdit.text()),
-                str(self.widget.lastname_lineEdit.text()),
-                str(self.widget.phone_lineEdit.text()),
-                str(self.widget.mail_lineEdit.text()),
-                "0"
-            ),
-            str(self.widget.methodpay_comboBox.currentText()),
-            str(self.widget.address_lineEdit.text())
+        
+        # Actualizar empleado
+        index = self.widget.client_table_widget.currentIndex()
+        self.viewmodel.client.update_employee(
+            self.stores[index - 1]["uuid"],
+            self.employees[row], Person(name, last_name, phone, mail)
         )
-        QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Cliente ingresado con exito.")
-        self.clean_input()
-        return
+        # Actualizar UI y datos locales
+        self.employees_tab.widget.table_widget.setItem(row, 1, QtWidgets.QTableWidgetItem(name))
+        self.employees_tab.widget.table_widget.setItem(row, 2, QtWidgets.QTableWidgetItem(last_name))
+        self.employees_tab.widget.table_widget.setItem(row, 3, QtWidgets.QTableWidgetItem(phone))
+        self.employees_tab.widget.table_widget.setItem(row, 4, QtWidgets.QTableWidgetItem(mail))
+        QtWidgets.QMessageBox.information(self.aux_widget.widget, "Información", "Empleado actualizado con éxito.")
+        self.aux_widget.widget.close()
 
     def handle_discard_client(self):
+        return
         self.clean_input()
 
         QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Los datos han sido descartados.")
         return
-
-    def clean_input(self):
-        self.widget.name_lineEdit.setText("")
-        self.widget.lastname_lineEdit.setText("")
-        self.widget.rut_lineEdit.setText("")
-        self.widget.phone_lineEdit.setText("")
-        self.widget.mail_lineEdit.setText("")
-        self.widget.address_lineEdit.setText("")
-        self.widget.methodpay_comboBox.setCurrentIndex(-1)
-
+    
     def handle_update(
             self,
             table_widget: QtWidgets.QTableWidget,
@@ -272,3 +288,15 @@ class EmployeeWidget(BaseWidget):
         if total_label is not None:
             total = f"{self.total:,}".replace(',', '.')
             total_label.setText(f"Total: ${total}")
+    
+    def handle_update_client(self, table_widget: QtWidgets.QTableWidget):
+        data = self.viewmodel.client.get_client()
+        table_widget.clearContents()
+        table_widget.setRowCount(len(data))
+        column_keys = list(self.column_mapping_client.keys())
+        table_widget.setColumnCount(len(self.column_mapping_client))
+        table_widget.setHorizontalHeaderLabels(list(self.column_mapping_client.keys()))
+
+        for i, client in enumerate(data):
+            for j, key in enumerate(column_keys):
+                table_widget.setItem(i,j, QtWidgets.QTableWidgetItem(str(client.get(self.column_mapping_client[key]))))
