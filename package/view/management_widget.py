@@ -17,9 +17,12 @@ class ManagementWidget(BaseWidget):
         self.aux_widget = None
         self.employees_tab = BaseWidget(os.path.join("ui", "management_widget.ui"))
         self.products_tab = BaseWidget(os.path.join("ui", "management_widget.ui"))
+        self.providers_tab = BaseWidget(os.path.join("ui", "proovedores.ui"))
+        
         self.stores = self.viewmodel.store.read_stores()
         self.widget.tab_widget.addTab(self.employees_tab.widget, "Empleados")
         self.widget.tab_widget.addTab(self.products_tab.widget, "Componentes")
+        self.widget.tab_widget.addTab(self.providers_tab.widget, "Proveedores")
         # store table view
         columns = ["Nombre", "Dirección", "Ciudad", "Teléfono", "Correo electrónico"]
         values = ["name", "address", "city", "phone", "mail"]
@@ -54,6 +57,9 @@ class ManagementWidget(BaseWidget):
         self.employees_tab.widget.delete_button.clicked.connect(self.handle_employee_delete)
         self.employees_tab.widget.stores_list.currentTextChanged.connect(self.handle_employee_store_change)
         self.handle_employee_store_change()
+
+        # Inicializar la pestaña de proveedores
+        self.init_providers_tab()
 
     # ...existing store handlers...
 
@@ -486,3 +492,103 @@ class ManagementWidget(BaseWidget):
                 "Empleado borrado con éxito."
             )
             self.widget.store_table_widget.setCurrentCell(-1, -1)
+            
+    def init_providers_tab(self):
+        table = self.providers_tab.widget.tabla_proveedores
+        columns = ["ID", "Nombre/Empresa", "Teléfono", "Email", "Dirección"]
+        table.setColumnCount(len(columns))
+        table.setHorizontalHeaderLabels(columns)
+        self.load_providers_table()
+        self.providers_tab.widget.agregar_button.clicked.connect(self.handle_provider_add)
+        self.providers_tab.widget.editar_button.clicked.connect(self.handle_provider_edit)
+        self.providers_tab.widget.eliminar_button.clicked.connect(self.handle_provider_delete)
+
+    def load_providers_table(self):
+        providers = self.viewmodel.provider.read_provider()
+        table = self.providers_tab.widget.tabla_proveedores
+        table.setRowCount(len(providers))
+        for i, provider in enumerate(providers):
+            table.setItem(i, 0, QtWidgets.QTableWidgetItem(str(provider["id"])))
+            table.setItem(i, 1, QtWidgets.QTableWidgetItem(provider["nombre_empresa"]))
+            table.setItem(i, 2, QtWidgets.QTableWidgetItem(provider["telefono"]))
+            table.setItem(i, 3, QtWidgets.QTableWidgetItem(provider["correo"]))
+            table.setItem(i, 4, QtWidgets.QTableWidgetItem(provider["direccion"]))
+
+    def handle_provider_add(self):
+        self.aux_widget = BaseWidget(os.path.join("ui", "proovedor_add.ui"))
+        ok_button = self.aux_widget.widget.findChild(QtWidgets.QPushButton, "aceptar_button")
+        def on_ok():
+            # id_ = self.aux_widget.widget.id_input.text()
+            nombre = self.aux_widget.widget.nombre_input.text()
+            telefono = self.aux_widget.widget.telefono_input.text()
+            correo = self.aux_widget.widget.email_input.text()
+            direccion = self.aux_widget.widget.direccion_input.text()
+            if not nombre or not telefono or not correo or not direccion:
+                QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Complete todos los campos.")
+                return
+            try:
+                self.viewmodel.provider.create_provider(None, nombre, telefono, correo, direccion)
+                QtWidgets.QMessageBox.information(self.aux_widget.widget, "Información", "Proveedor agregado con éxito.")
+                self.aux_widget.widget.close()
+                self.load_providers_table()
+            except Exception as e:
+                QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Error", str(e))
+        if ok_button is not None:
+            ok_button.clicked.connect(on_ok)
+        self.aux_widget.show()
+
+    def handle_provider_edit(self):
+        table = self.providers_tab.widget.tabla_proveedores
+        current_row = table.currentRow()
+        if current_row == -1:
+            QtWidgets.QMessageBox.warning(self.providers_tab.widget, "Advertencia", "Debe seleccionar un proveedor.")
+            return
+        providers = self.viewmodel.provider.read_provider()
+        provider = providers[current_row]
+        self.aux_widget = BaseWidget(os.path.join("ui", "proovedor_add.ui"))
+        self.aux_widget.widget.id_input.setText(str(provider["id"]))
+        self.aux_widget.widget.id_input.setEnabled(False)
+        self.aux_widget.widget.nombre_input.setText(provider["nombre_empresa"])
+        self.aux_widget.widget.telefono_input.setText(provider["telefono"])
+        self.aux_widget.widget.email_input.setText(provider["correo"])
+        self.aux_widget.widget.direccion_input.setText(provider["direccion"])
+        def on_ok():
+            nombre = self.aux_widget.widget.nombre_input.text()
+            telefono = self.aux_widget.widget.telefono_input.text()
+            correo = self.aux_widget.widget.email_input.text()
+            direccion = self.aux_widget.widget.direccion_input.text()
+            if not nombre or not telefono or not correo or not direccion:
+                QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Complete todos los campos.")
+                return
+            try:
+                self.viewmodel.provider.edit_provider(
+                    provider["id"], nombre, telefono, correo, direccion
+                )
+                QtWidgets.QMessageBox.information(self.aux_widget.widget, "Información", "Proveedor editado con éxito.")
+                self.aux_widget.widget.close()
+                self.load_providers_table()
+            except Exception as e:
+                QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Error", str(e))
+        self.aux_widget.widget.ok_button.clicked.connect(on_ok)
+        self.aux_widget.show()
+
+    def handle_provider_delete(self):
+        table = self.providers_tab.widget.tabla_proveedores
+        current_row = table.currentRow()
+        if current_row == -1:
+            QtWidgets.QMessageBox.warning(self.providers_tab.widget, "Advertencia", "Debe seleccionar un proveedor.")
+            return
+        providers = self.viewmodel.provider.read_provider()
+        provider = providers[current_row]
+        result = QtWidgets.QMessageBox.question(
+            self.providers_tab.widget,
+            "Pregunta",
+            f"¿Desea borrar el proveedor {provider['nombre_empresa']}?"
+        )
+        if result == QtWidgets.QMessageBox.StandardButton.Yes:
+            try:
+                self.viewmodel.provider.delete_provider(provider["id"])
+                self.load_providers_table()
+                QtWidgets.QMessageBox.information(self.providers_tab.widget, "Información", "Proveedor borrado con éxito.")
+            except Exception as e:
+                QtWidgets.QMessageBox.warning(self.providers_tab.widget, "Error", str(e))
