@@ -11,6 +11,7 @@ class ViewModel:
         self.employee = self.model.employee
         self.product = self.model.product
         self.sale = self.model.sale
+        self.client = self.model.client
 
     def try_login(self, identification: int, password: str, store_uuid: str = None):
         for manager in self.model.manager.read_managers():
