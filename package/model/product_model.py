@@ -18,6 +18,7 @@ class ProductModel:
             "category": product.category,
             "description": product.description,
             "price": product.price,
+            "provider": product.provider,
             "createdAt": f"{int(time.time())}",
             "updatedAt": None
         })
@@ -36,6 +37,7 @@ class ProductModel:
             "category": product.category,
             "description": product.description,
             "price": product.price,
+            "provider": product.provider,
             "updatedAt": f"{int(time.time())}"
         })
         self.model.save()

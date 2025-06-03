@@ -5,6 +5,7 @@ from ..viewmodel import ViewModel
 from ..dataclasses.person import Person
 from ..dataclasses.product import Product
 from ..dataclasses.store import Store
+from ..dataclasses.provider import Provider
 from ..rut import RUT
 
 
@@ -57,16 +58,18 @@ class ManagementWidget(BaseWidget):
         self.employees_tab.widget.delete_button.clicked.connect(self.handle_employee_delete)
         self.employees_tab.widget.stores_list.currentTextChanged.connect(self.handle_employee_store_change)
         self.handle_employee_store_change()
+        # provider CRUD
+        self.providers_tab.widget.agregar_button.clicked.connect(self.handle_provider_create)
+        self.providers_tab.widget.editar_button.clicked.connect(self.handle_provider_update)
+        self.providers_tab.widget.eliminar_button.clicked.connect(self.handle_provider_delete)
 
-        # Inicializar la pestaña de proveedores
-        self.init_providers_tab()
 
     # ...existing store handlers...
 
     def handle_product_store_change(self):
         index = self.products_tab.widget.stores_list.currentIndex()
-        product_columns = ["Marca", "Modelo", "Categoría", "Descripción", "Precio"]
-        product_values = ["brand", "model", "category", "description", "price"]
+        product_columns = ["Marca", "Modelo", "Categoría", "Descripción", "Precio", "Proveedor"]
+        product_values = ["brand", "model", "category", "description", "price","provider"]
         self.products_tab.widget.table_widget.setColumnCount(len(product_columns))
         self.products_tab.widget.table_widget.setHorizontalHeaderLabels(product_columns)
         if not index:
@@ -83,8 +86,15 @@ class ManagementWidget(BaseWidget):
         if not self.products_tab.widget.stores_list.currentText():
             QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe seleccionar una tienda.")
             return
+        
+        _providers =self.viewmodel.provider.read_provider()
+        _providers_2=[]
+        for provider in _providers:
+            _providers_2.append(provider["nombre_empresa"])
+    
         self.aux_widget = BaseWidget(os.path.join("ui", "modify_product.ui"))
         self.aux_widget.widget.ok_button.clicked.connect(self.handle_product_create_ok)
+        self.aux_widget.widget.provider_input.addItems(_providers_2)
         self.aux_widget.show()
 
     def handle_product_create_ok(self):
@@ -108,6 +118,7 @@ class ManagementWidget(BaseWidget):
             self.aux_widget.widget.category_input.text(),
             self.aux_widget.widget.description_input.text(),
             int(self.aux_widget.widget.price_input.text()),
+            self.aux_widget.widget.provider_input.currentText()
         )
         index = self.products_tab.widget.stores_list.currentIndex()
         self.viewmodel.product.create_product(self.stores[index - 1]["uuid"], new_product)
@@ -120,6 +131,7 @@ class ManagementWidget(BaseWidget):
         self.products_tab.widget.table_widget.setItem(row, 2, QtWidgets.QTableWidgetItem(category))
         self.products_tab.widget.table_widget.setItem(row, 3, QtWidgets.QTableWidgetItem(description))
         self.products_tab.widget.table_widget.setItem(row, 4, QtWidgets.QTableWidgetItem(str(price)))
+        self.products_tab.widget.table_widget.setItem(row, 5, QtWidgets.QTableWidgetItem(self.aux_widget.widget.provider_input.currentText()))
         QtWidgets.QMessageBox.information(self.aux_widget.widget, "Información", "Componente agregado con éxito.")
         self.aux_widget.widget.close()
 
@@ -131,6 +143,12 @@ class ManagementWidget(BaseWidget):
         if current_row == -1:
             QtWidgets.QMessageBox.warning(self.products_tab.widget, "Advertencia", "Debe seleccionar alguna fila.")
             return
+
+        _providers =self.viewmodel.provider.read_provider()
+        _providers_2=[]
+        for provider in _providers:
+            _providers_2.append(provider["nombre_empresa"])
+
         product = self.products[current_row]
         self.aux_widget = BaseWidget(os.path.join("ui", "modify_product.ui"))
         self.aux_widget.widget.brand_input.setText(product["brand"])
@@ -138,6 +156,8 @@ class ManagementWidget(BaseWidget):
         self.aux_widget.widget.category_input.setText(product["category"])
         self.aux_widget.widget.description_input.setText(product["description"])
         self.aux_widget.widget.price_input.setText(str(product["price"]))
+        self.aux_widget.widget.provider_input.addItems(_providers_2)
+        self.aux_widget.widget.provider_input.setCurrentText(product["provider"])
         self.aux_widget.widget.ok_button.clicked.connect(lambda: self.handle_product_update_ok(current_row))
         self.aux_widget.show()
 
@@ -147,7 +167,8 @@ class ManagementWidget(BaseWidget):
         category = self.aux_widget.widget.category_input.text()
         description = self.aux_widget.widget.description_input.text()
         price_text = self.aux_widget.widget.price_input.text()
-        if not brand or not model or not category or not description or not price_text:
+        provider = self.aux_widget.widget.provider_input.currentText()
+        if not brand or not model or not category or not description or not price_text or not provider:
             QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Complete todos los campos.")
             return
         try:
@@ -160,7 +181,7 @@ class ManagementWidget(BaseWidget):
         self.viewmodel.product.update_product(
             self.stores[index - 1]["uuid"],
             self.products[row]["uuid"],
-            Product(brand, model, category, description, price)
+            Product(brand, model, category, description, price, provider)
         )
         # Actualizar UI y datos locales
         self.products_tab.widget.table_widget.setItem(row, 0, QtWidgets.QTableWidgetItem(brand))
@@ -168,6 +189,7 @@ class ManagementWidget(BaseWidget):
         self.products_tab.widget.table_widget.setItem(row, 2, QtWidgets.QTableWidgetItem(category))
         self.products_tab.widget.table_widget.setItem(row, 3, QtWidgets.QTableWidgetItem(description))
         self.products_tab.widget.table_widget.setItem(row, 4, QtWidgets.QTableWidgetItem(str(price)))
+        self.products_tab.widget.table_widget.setItem(row, 5, QtWidgets.QTableWidgetItem(provider))
         QtWidgets.QMessageBox.information(
             self.aux_widget.widget,
             "Información",
@@ -493,101 +515,125 @@ class ManagementWidget(BaseWidget):
             )
             self.widget.store_table_widget.setCurrentCell(-1, -1)
             
-    def init_providers_tab(self):
-        table = self.providers_tab.widget.tabla_proveedores
-        columns = ["ID", "Nombre/Empresa", "Teléfono", "Email", "Dirección"]
-        table.setColumnCount(len(columns))
-        table.setHorizontalHeaderLabels(columns)
-        self.load_providers_table()
-        self.providers_tab.widget.agregar_button.clicked.connect(self.handle_provider_add)
-        self.providers_tab.widget.editar_button.clicked.connect(self.handle_provider_edit)
-        self.providers_tab.widget.eliminar_button.clicked.connect(self.handle_provider_delete)
-
-    def load_providers_table(self):
-        providers = self.viewmodel.provider.read_provider()
-        table = self.providers_tab.widget.tabla_proveedores
-        table.setRowCount(len(providers))
-        for i, provider in enumerate(providers):
-            table.setItem(i, 0, QtWidgets.QTableWidgetItem(str(provider["id"])))
-            table.setItem(i, 1, QtWidgets.QTableWidgetItem(provider["nombre_empresa"]))
-            table.setItem(i, 2, QtWidgets.QTableWidgetItem(provider["telefono"]))
-            table.setItem(i, 3, QtWidgets.QTableWidgetItem(provider["correo"]))
-            table.setItem(i, 4, QtWidgets.QTableWidgetItem(provider["direccion"]))
-
-    def handle_provider_add(self):
+            
+    def handle_provider_create(self):
         self.aux_widget = BaseWidget(os.path.join("ui", "proovedor_add.ui"))
-        ok_button = self.aux_widget.widget.findChild(QtWidgets.QPushButton, "aceptar_button")
-        def on_ok():
-            # id_ = self.aux_widget.widget.id_input.text()
-            nombre = self.aux_widget.widget.nombre_input.text()
-            telefono = self.aux_widget.widget.telefono_input.text()
-            correo = self.aux_widget.widget.email_input.text()
-            direccion = self.aux_widget.widget.direccion_input.text()
-            if not nombre or not telefono or not correo or not direccion:
-                QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Complete todos los campos.")
-                return
-            try:
-                self.viewmodel.provider.create_provider(nombre, telefono, correo, direccion)
-                QtWidgets.QMessageBox.information(self.aux_widget.widget, "Información", "Proveedor agregado con éxito.")
-                self.aux_widget.widget.close()
-                self.load_providers_table()
-            except Exception as e:
-                QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Error", str(e))
-        if ok_button is not None:
-            ok_button.clicked.connect(on_ok)
+        self.aux_widget.widget.aceptar_button.clicked.connect(self.handle_provider_create_ok)
         self.aux_widget.show()
 
-    def handle_provider_edit(self):
-        table = self.providers_tab.widget.tabla_proveedores
-        current_row = table.currentRow()
-        if current_row == -1:
-            QtWidgets.QMessageBox.warning(self.providers_tab.widget, "Advertencia", "Debe seleccionar un proveedor.")
+    def handle_provider_create_ok(self):
+        if not self.aux_widget.widget.nombre_input.text():
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese una Empresa.")
             return
-        providers = self.viewmodel.provider.read_provider()
-        provider = providers[current_row]
+        if not self.aux_widget.widget.direccion_input.text():
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese una dirección.")
+            return
+        if not self.aux_widget.widget.telefono_input.text():
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese un teléfono.")
+            return
+        if not self.aux_widget.widget.email_input.text():
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese un correo.")
+            return
+        # Add the new provider
+        new_provider = Provider(
+            self.aux_widget.widget.nombre_input.text(),
+            self.aux_widget.widget.telefono_input.text(),
+            self.aux_widget.widget.email_input.text(),
+            self.aux_widget.widget.direccion_input.text()
+        )
+        # Update UI
+        self.provider = self.viewmodel.provider.read_provider()
+        row = self.providers_tab.widget.tabla_proveedores.rowCount()
+        self.providers_tab.widget.tabla_proveedores.insertRow(row)
+        self.providers_tab.widget.tabla_proveedores.setItem(row, 1, QtWidgets.QTableWidgetItem(new_provider.name))
+        self.providers_tab.widget.tabla_proveedores.setItem(row, 2, QtWidgets.QTableWidgetItem(new_provider.adress))
+        self.providers_tab.widget.tabla_proveedores.setItem(row, 3, QtWidgets.QTableWidgetItem(new_provider.phone))
+        self.providers_tab.widget.tabla_proveedores.setItem(row, 4, QtWidgets.QTableWidgetItem(new_provider.mail))
+        QtWidgets.QMessageBox.information(self.aux_widget.widget, "Información", "Proveedor agregado con éxito.")
+        self.aux_widget.widget.close()
+        
+
+    def handle_provider_update(self):
+        current_row = self.providers_tab.widget.tabla_proveedores.currentRow()
+        if current_row == -1:
+            QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe seleccionar alguna fila.")
+            return
         self.aux_widget = BaseWidget(os.path.join("ui", "proovedor_add.ui"))
-        self.aux_widget.widget.nombre_input.setText(provider["nombre_empresa"])
-        self.aux_widget.widget.telefono_input.setText(provider["telefono"])
-        self.aux_widget.widget.email_input.setText(provider["correo"])
-        self.aux_widget.widget.direccion_input.setText(provider["direccion"])
-        def on_ok():
-            nombre = self.aux_widget.widget.nombre_input.text()
-            telefono = self.aux_widget.widget.telefono_input.text()
-            correo = self.aux_widget.widget.email_input.text()
-            direccion = self.aux_widget.widget.direccion_input.text()
-            if not nombre or not telefono or not correo or not direccion:
-                QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Complete todos los campos.")
-                return
-            try:
-                self.viewmodel.provider.edit_provider(
-                    provider["id"], nombre, telefono, correo, direccion
-                )
-                QtWidgets.QMessageBox.information(self.aux_widget.widget, "Información", "Proveedor editado con éxito.")
-                self.aux_widget.widget.close()
-                self.load_providers_table()
-            except Exception as e:
-                QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Error", str(e))
-        self.aux_widget.widget.aceptar_button.clicked.connect(on_ok)
+        self.aux_widget.widget.nombre_input.setText(self.providers[current_row]["name"])
+        self.aux_widget.widget.direccion_input.setText(self.providers[current_row]["address"])
+        self.aux_widget.widget.telefono_input.setText(self.providers[current_row]["phone"])
+        self.aux_widget.widget.email_input.setText(self.providers[current_row]["mail"])
+        self.aux_widget.widget.aceptar_button.clicked.connect(self.handle_provider_update_ok_button)
         self.aux_widget.show()
 
     def handle_provider_delete(self):
-        table = self.providers_tab.widget.tabla_proveedores
-        current_row = table.currentRow()
+        current_row = self.providers_tab.widget.tabla_proveedores.currentRow()
         if current_row == -1:
-            QtWidgets.QMessageBox.warning(self.providers_tab.widget, "Advertencia", "Debe seleccionar un proveedor.")
+            QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe seleccionar alguna fila.")
             return
-        providers = self.viewmodel.provider.read_provider()
-        provider = providers[current_row]
         result = QtWidgets.QMessageBox.question(
-            self.providers_tab.widget,
+            self.widget,
             "Pregunta",
-            f"¿Desea borrar el proveedor {provider['nombre_empresa']}?"
+            f"Desea borrar al proveedor {self.providers[current_row]['name']}?"
         )
         if result == QtWidgets.QMessageBox.StandardButton.Yes:
-            try:
-                self.viewmodel.provider.delete_provider(provider["id"])
-                self.load_providers_table()
-                table.setCurrentCell(-1, -1)
-                QtWidgets.QMessageBox.information(self.providers_tab.widget, "Información", "Proveedor borrado con éxito.")
-            except Exception as e:
-                QtWidgets.QMessageBox.warning(self.providers_tab.widget, "Error", str(e))
+            self.viewmodel.provider.delete_provider(self.providers[current_row]["uuid"])
+            self.providers_tab.widget.tabla_proveedores.removeRow(current_row)
+            self.providers_tab.widget.tabla_proveedores.setRowCount(len(self.providers))
+            self.employees_tab.widget.providers_list.clear()
+            self.products_tab.widget.providers_list.clear()
+            self.employees_tab.widget.providers_list.addItems([""] + [provider["name"] for provider in self.providers])
+            self.products_tab.widget.providers_list.addItems([""] + [provider["name"] for provider in self.providers])
+            self.providers_tab.widget.tabla_proveedores.setCurrentCell(-1, -1)
+            QtWidgets.QMessageBox.information(self.widget, "Información", "Tienda borrada con éxito.")
+
+    def handle_provider_update_ok(self):
+        current_row = self.providers_tab.widget.tabla_proveedores.currentRow()
+        if not self.aux_widget.widget.name_input.text():
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese un nombre.")
+            return
+        if not self.aux_widget.widget.address_input.text():
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese una dirección.")
+            return
+        if not self.aux_widget.widget.phone_input.text():
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese un teléfono.")
+            return
+        phone_number = self.aux_widget.widget.phone_input.text()
+        if not (phone_number[0] == "+" and phone_number[1:].isnumeric()):
+            QtWidgets.QMessageBox.warning(
+                self.aux_widget.widget,
+                "Advertencia",
+                "Ingrese un teléfono válido. (anteponga el +)"
+            )
+            return
+        if not self.aux_widget.widget.mail_input.text():
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese un correo.")
+            return
+
+        # Update the provider in the data source
+        updated_provider = Provider(
+            self.aux_widget.widget.nombre_input.text(),
+            self.aux_widget.widget.direccion_input.text(),
+            self.aux_widget.widget.telefono_input.text(),
+            self.aux_widget.widget.mail_input.text()
+        )
+        self.viewmodel.provider.update_provider(
+            self.providers[current_row]["uuid"],
+            updated_provider
+        )
+
+        # Update local data structures and UI
+        self.providers[current_row]["name"] = updated_provider.name
+        self.providers[current_row]["address"] = updated_provider.adress
+        self.providers[current_row]["phone"] = updated_provider.phone
+        self.providers[current_row]["mail"] = updated_provider.mail
+
+        self.providers_tab.widget.tabla_proveedores.setItem(current_row, 1, QtWidgets.QTableWidgetItem(updated_provider.name))
+        self.providers_tab.widget.tabla_proveedores.setItem(current_row, 2, QtWidgets.QTableWidgetItem(updated_provider.adress))
+        self.providers_tab.widget.tabla_proveedores.setItem(current_row, 3, QtWidgets.QTableWidgetItem(updated_provider.phone))
+        self.providers_tab.widget.tabla_proveedores.setItem(current_row, 4, QtWidgets.QTableWidgetItem(updated_provider.mail))
+
+        QtWidgets.QMessageBox.information(self.aux_widget.widget, "Información", "Proveedor actualizada con éxito.")
+        self.aux_widget.widget.close()
+            
+    
