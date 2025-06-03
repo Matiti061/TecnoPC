@@ -527,7 +527,7 @@ class ManagementWidget(BaseWidget):
                 QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Complete todos los campos.")
                 return
             try:
-                self.viewmodel.provider.create_provider(None, nombre, telefono, correo, direccion)
+                self.viewmodel.provider.create_provider(nombre, telefono, correo, direccion)
                 QtWidgets.QMessageBox.information(self.aux_widget.widget, "Información", "Proveedor agregado con éxito.")
                 self.aux_widget.widget.close()
                 self.load_providers_table()
@@ -546,8 +546,6 @@ class ManagementWidget(BaseWidget):
         providers = self.viewmodel.provider.read_provider()
         provider = providers[current_row]
         self.aux_widget = BaseWidget(os.path.join("ui", "proovedor_add.ui"))
-        self.aux_widget.widget.id_input.setText(str(provider["id"]))
-        self.aux_widget.widget.id_input.setEnabled(False)
         self.aux_widget.widget.nombre_input.setText(provider["nombre_empresa"])
         self.aux_widget.widget.telefono_input.setText(provider["telefono"])
         self.aux_widget.widget.email_input.setText(provider["correo"])
@@ -569,7 +567,7 @@ class ManagementWidget(BaseWidget):
                 self.load_providers_table()
             except Exception as e:
                 QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Error", str(e))
-        self.aux_widget.widget.ok_button.clicked.connect(on_ok)
+        self.aux_widget.widget.aceptar_button.clicked.connect(on_ok)
         self.aux_widget.show()
 
     def handle_provider_delete(self):
@@ -589,6 +587,7 @@ class ManagementWidget(BaseWidget):
             try:
                 self.viewmodel.provider.delete_provider(provider["id"])
                 self.load_providers_table()
+                table.setCurrentCell(-1, -1)
                 QtWidgets.QMessageBox.information(self.providers_tab.widget, "Información", "Proveedor borrado con éxito.")
             except Exception as e:
                 QtWidgets.QMessageBox.warning(self.providers_tab.widget, "Error", str(e))
