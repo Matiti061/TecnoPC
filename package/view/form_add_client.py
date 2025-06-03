@@ -9,7 +9,10 @@ from PySide6.QtCore import Signal
 
 class formAddClient(BaseWidget):
     client_create = Signal(bool)
-    def __init__(self, viewmodel: ViewModel):
+    def __init__(self, viewmodel: ViewModel, is_editing: bool = False, client = None):
+        self.is_editing = is_editing
+        if client:
+            self.client = client
         super().__init__(os.path.join("ui","modify_client.ui"))
         self.viewmodel = viewmodel
 
@@ -39,22 +42,35 @@ class formAddClient(BaseWidget):
             return
 
         client_data = self.viewmodel.client.get_client()
-        for client in client_data:
-            if client["identification"] == str(rut.rut):
-                QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "El rut ya existe en la base de datos.")
-                return
-
-        self.viewmodel.client.create_client(
-            str(rut.rut),
-            Person(
-                str(self.widget.name_input.text()),
-                str(self.widget.last_name_input.text()),
-                str(self.widget.phone_input.text()),
-                str(self.widget.mail_input.text()),
-                "0"
-            ),
-            str(self.widget.address_input.text())
-        )
+        if not self.is_editing:
+            for client in client_data:
+                if client["identification"] == str(rut.rut):
+                    QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "El rut ya existe en la base de datos.")
+                    return
+            self.viewmodel.client.create_client(
+                str(rut.rut),
+                Person(
+                    str(self.widget.name_input.text()),
+                    str(self.widget.last_name_input.text()),
+                    str(self.widget.phone_input.text()),
+                    str(self.widget.mail_input.text()),
+                    "0"
+                ),
+                str(self.widget.address_input.text())
+            )
+        else:
+            self.viewmodel.client.update_client(
+                self.client["uuid"],
+                Person(
+                    str(self.widget.name_input.text()),
+                    str(self.widget.last_name_input.text()),
+                    str(self.widget.phone_input.text()),
+                    str(self.widget.mail_input.text()),
+                    "0"
+                ),
+                str(rut.rut),
+                str(self.widget.address_input.text())
+            )
         QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Cliente ingresado con exito.")
         self.client_create.emit(True)
         self.widget.close()
