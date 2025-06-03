@@ -1,5 +1,6 @@
 import json
 import os
+import uuid
 
 class ProviderModel:
     DATA_FILE = 'data.json'
@@ -30,14 +31,11 @@ class ProviderModel:
         with open(self.DATA_FILE, 'w', encoding='utf-8') as f:
             json.dump(data, f, indent=4)
 
-    def create_provider(self, provider_id, nombre_empresa, telefono, correo, direccion):
+    def create_provider(self, nombre_empresa, telefono, correo, direccion):
         data = self._load_data()
         providers = data.get('providers', [])
-        # Check if provider with same ID exists
-        if any(str(p['id']) == str(provider_id) for p in providers):
-            raise ValueError("Provider with this ID already exists.")
         provider = {
-            'id': str(provider_id),
+            'id': str(uuid.uuid4()),
             'nombre_empresa': nombre_empresa,
             'telefono': telefono,
             'correo': correo,
