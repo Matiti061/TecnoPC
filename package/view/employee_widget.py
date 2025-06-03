@@ -69,7 +69,7 @@ class EmployeeWidget(BaseWidget):
     def handle_tabs(self, index: int):
         if not index:  # sale tab
             self.handle_update(self.widget.sell_table_widget, self.widget.groupBox, self.widget.sell_total_label)
-            self.widget.client_comboBox.addItems(self.viewmodel.client.read_all_client)
+            self.widget.client_comboBox.addItems(self.list_client)
         elif index == 1:  # warranty tab
             self.handle_update(self.widget.warranty_table)
         elif index == 2:
@@ -129,7 +129,7 @@ class EmployeeWidget(BaseWidget):
             if self.employee_uuid == item["uuid"]:
                 seller = item
                 break
-        if self.widget.client_comboBox.currentIndex == 0:
+        if self.widget.client_comboBox.currentText() == "-- seleccione una opcion --":
             QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe seleccionar una opcion valida.")
             return
 
