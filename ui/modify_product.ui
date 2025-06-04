@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Agregar/Editar Producto</string>
+   <string>Pedir/Editar Producto</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
@@ -51,47 +51,38 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QLabel" name="label_6">
+       <property name="text">
+        <string>Proveedor</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item row="0" column="1">
     <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
-      <widget class="QLineEdit" name="brand_input">
-       <property name="alignment">
-        <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
-       </property>
-      </widget>
+      <widget class="QLineEdit" name="brand_input"/>
      </item>
      <item>
-      <widget class="QLineEdit" name="model_input">
-       <property name="alignment">
-        <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
-       </property>
-      </widget>
+      <widget class="QLineEdit" name="model_input"/>
      </item>
      <item>
-      <widget class="QLineEdit" name="category_input">
-       <property name="alignment">
-        <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
-       </property>
-      </widget>
+      <widget class="QLineEdit" name="category_input"/>
      </item>
      <item>
-      <widget class="QLineEdit" name="description_input">
-       <property name="alignment">
-        <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
-       </property>
-      </widget>
+      <widget class="QLineEdit" name="description_input"/>
      </item>
      <item>
       <widget class="QLineEdit" name="price_input">
        <property name="inputMask">
         <string/>
        </property>
-       <property name="alignment">
-        <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
-       </property>
       </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="provider_input"/>
      </item>
     </layout>
    </item>

@@ -8,5 +8,7 @@ class Model:
         self.manager = CRUD(self.model, "managers")
         self.store = CRUD(self.model, "stores")
         self.employee = CRUD(self.model, "employees", "stores")
+        self.client = ClientModel(self.model)
         self.product = CRUD(self.model, "products", "stores")
         self.sale = CRUD(self.model, "sales")
+        self.provider = ProviderModel(self.model)

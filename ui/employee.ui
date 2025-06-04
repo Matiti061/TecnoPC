@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>551</width>
-    <height>314</height>
+    <width>578</width>
+    <height>317</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <item row="0" column="0">
     <widget class="QTabWidget" name="tab_widget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="sells_tab">
       <attribute name="title">
@@ -78,7 +78,7 @@
        <item row="0" column="1">
         <widget class="QLabel" name="name_label">
          <property name="text">
-          <string>empty</string>
+          <string/>
          </property>
         </widget>
        </item>
@@ -92,12 +92,19 @@
        <item row="1" column="0">
         <widget class="QLabel" name="label_3">
          <property name="text">
-          <string>Rut del cliente:</string>
+          <string>Cliente:</string>
          </property>
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="QLineEdit" name="client_rut"/>
+        <widget class="QComboBox" name="client_comboBox"/>
+       </item>
+       <item row="1" column="2">
+        <widget class="QPushButton" name="sale_history_button">
+         <property name="text">
+          <string>Historial de ventas</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -130,6 +137,37 @@
            </widget>
           </item>
          </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="client_tab">
+      <attribute name="title">
+       <string>Clientes</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_7">
+       <item row="0" column="0" colspan="3">
+        <widget class="QTableWidget" name="client_table_widget"/>
+       </item>
+       <item row="1" column="2">
+        <widget class="QPushButton" name="client_delete_button">
+         <property name="text">
+          <string>Borrar</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QPushButton" name="client_update_button">
+         <property name="text">
+          <string>Editar</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QPushButton" name="client_create_button">
+         <property name="text">
+          <string>Agregar</string>
+         </property>
         </widget>
        </item>
       </layout>
