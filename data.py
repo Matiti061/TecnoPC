@@ -4,6 +4,7 @@ from package.model import Model
 from package.dataclasses.store import Store
 from package.dataclasses.person import Person
 from package.dataclasses.product import Product
+from package.dataclasses.provider import Provider
 
 if pathlib.Path("data.json").exists():
     raise FileExistsError("Data file already exists")
@@ -28,8 +29,8 @@ store_uuids = []
 for store in stores:
     store_uuids.append(model.store.create_store(store))
 
-model.provider.create_provider("Proveedor 1", "12121212", "a@a.com", "1212")
-model.provider.create_provider("Proveedor 2", "12121212", "a@a.com", "1212")
+model.provider.create_provider(Provider("Proveedor 1", "12121212", "a@a.com", "1212"))
+model.provider.create_provider(Provider("Proveedor 2", "12121212", "a@a.com", "1212"))
 
 del model
 model = Model()

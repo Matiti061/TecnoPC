@@ -23,7 +23,7 @@ class InternalModel:
         self.save()
 
     def locate_entity(self, key: str, entity_uuid: str):
-        if key not in ["managers", "stores", "employees", "products", "sales", "client"]:
+        if key not in ["managers", "stores", "employees", "products", "sales", "client", "providers"]:
             raise ValueError("Invalid key")
         for index, value in enumerate(self.data[key]):  # type: int, dict
             if value["uuid"] == entity_uuid:
