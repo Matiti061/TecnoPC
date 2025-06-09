@@ -22,7 +22,7 @@ class formAddClient(BaseWidget):
         try:
             rut = RUT(self.widget.rut_input.text())
         except ValueError:
-            QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe ingresar un rut valido.")
+            QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe ingresar un rut válido.")
             return
 
         if self.widget.name_input.text() == "":
@@ -32,13 +32,13 @@ class formAddClient(BaseWidget):
             QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe ingresar un apellido.")
             return
         if self.widget.mail_input.text() == "":
-            QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe ingresar un correo valido.")
+            QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe ingresar un correo válido.")
             return
         if self.widget.phone_input.text() == "" or not validate_phone(str(self.widget.phone_input.text())):
-            QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe ingresar un telefono valido.")
+            QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe ingresar un teléfono válido.")
             return
         if self.widget.address_input.text() == "":
-            QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe ingresar una direccion valida.")
+            QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe ingresar una dirección válida.")
             return
 
         client_data = self.viewmodel.client.get_client()

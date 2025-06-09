@@ -523,7 +523,7 @@ class ManagementWidget(BaseWidget):
 
     def handle_provider_create_ok(self):
         if not self.aux_widget.widget.nombre_input.text():
-            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese una Empresa.")
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese una empresa.")
             return
         if not self.aux_widget.widget.direccion_input.text():
             QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese una dirección.")
@@ -587,7 +587,7 @@ class ManagementWidget(BaseWidget):
             self.employees_tab.widget.tabla_proveedores.addItems([""] + [provider["name"] for provider in self.providers])
             self.products_tab.widget.tabla_proveedores.addItems([""] + [provider["name"] for provider in self.providers])
             self.providers_tab.widget.tabla_proveedores.setCurrentCell(-1, -1)
-            QtWidgets.QMessageBox.information(self.widget, "Información", "Tienda borrada con éxito.")
+            QtWidgets.QMessageBox.information(self.widget, "Información", "Proveedor borrado con éxito.")
 
     def handle_provider_update_ok(self):
         current_row = self.providers_tab.widget.tabla_proveedores.currentRow()
@@ -635,7 +635,7 @@ class ManagementWidget(BaseWidget):
         self.providers_tab.widget.tabla_proveedores.setItem(current_row, 2, QtWidgets.QTableWidgetItem(updated_provider.phone))
         self.providers_tab.widget.tabla_proveedores.setItem(current_row, 3, QtWidgets.QTableWidgetItem(updated_provider.mail))
 
-        QtWidgets.QMessageBox.information(self.aux_widget.widget, "Información", "Proveedor actualizada con éxito.")
+        QtWidgets.QMessageBox.information(self.aux_widget.widget, "Información", "Proveedor actualizado con éxito.")
         self.aux_widget.widget.close()
             
     
