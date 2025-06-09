@@ -51,7 +51,7 @@ class EmployeeWidget(BaseWidget):
 
         # sale tab
         self.list_client = self.viewmodel.client.get_client()
-        self.widget.client_comboBox.insertItem(0, "-- seleccione una opción --")
+        self.widget.client_comboBox.insertItem(0, "-- seleccione un cliente --")
         for client in self.list_client:
             self.widget.client_comboBox.addItem(f"{client["name"]} {client["lastName"]}")
 
@@ -80,7 +80,7 @@ class EmployeeWidget(BaseWidget):
         if not index:  # sale tab
             self.handle_update(self.widget.sell_table_widget, self.widget.groupBox, self.widget.sell_total_label)
             self.widget.client_comboBox.clear()
-            self.widget.client_comboBox.addItems(["-- seleccione una opción --"] + [f"{value["name"]} {value["lastName"]}" for value in self.list_client])
+            self.widget.client_comboBox.addItems(["-- seleccione un cliente --"] + [f"{value["name"]} {value["lastName"]}" for value in self.list_client])
         elif index == 1:  # warranty tab
             self.handle_update(self.widget.warranty_table, None, None)
         elif index == 2:
@@ -140,8 +140,8 @@ class EmployeeWidget(BaseWidget):
             if self.employee_uuid == item["uuid"]:
                 seller = item
                 break
-        if self.widget.client_comboBox.currentText() == "-- seleccione una opción --":
-            QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe seleccionar una opcion valida.")
+        if self.widget.client_comboBox.currentText() == "-- seleccione un cliente --":
+            QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe seleccionar un cliente.")
             return
 
         if not self.products_to_sell:
@@ -203,7 +203,7 @@ class EmployeeWidget(BaseWidget):
         if clientData:
             self.handle_update_client_2(self.widget.client_table_widget)
         else:
-            QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "se canceló la creacion del cliente.")
+            QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "se canceló la creación del cliente.")
             return
     
     def handle_update_client_1(self):
