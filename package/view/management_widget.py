@@ -19,6 +19,9 @@ class ManagementWidget(BaseWidget):
         self.employees_tab = BaseWidget(os.path.join("ui", "management_widget.ui"))
         self.products_tab = BaseWidget(os.path.join("ui", "management_widget.ui"))
         self.providers_tab = BaseWidget(os.path.join("ui", "proovedores.ui"))
+        self.managers_tab = BaseWidget(os.path.join("ui", "management_widget.ui"))
+        self.widget.tab_widget.addTab(self.managers_tab.widget, "Gerentes")
+        self.init_managers_tab()
         
         self.stores = self.viewmodel.store.read_stores()
         self.widget.tab_widget.addTab(self.employees_tab.widget, "Empleados")
@@ -62,6 +65,8 @@ class ManagementWidget(BaseWidget):
         self.providers_tab.widget.agregar_button.clicked.connect(self.handle_provider_create)
         self.providers_tab.widget.editar_button.clicked.connect(self.handle_provider_update)
         self.providers_tab.widget.eliminar_button.clicked.connect(self.handle_provider_delete)
+        # managers CRUD
+        
 
 
     # ...existing store handlers...
@@ -637,5 +642,107 @@ class ManagementWidget(BaseWidget):
 
         QtWidgets.QMessageBox.information(self.aux_widget.widget, "Información", "Proveedor actualizado con éxito.")
         self.aux_widget.widget.close()
+
+
+
+    def init_managers_tab(self):
+        columns = ["RUT", "Nombre", "Apellido", "Teléfono", "Correo electrónico"]
+        values = ["identification", "name", "lastName", "phone", "mail"]
+        self.managers_tab.widget.table_widget.setColumnCount(len(columns))
+        self.managers_tab.widget.table_widget.setHorizontalHeaderLabels(columns)
+        self.load_managers_table()
+        # Conectar botones
+        self.managers_tab.widget.create_button.clicked.connect(self.handle_manager_create)
+        self.managers_tab.widget.update_button.clicked.connect(self.handle_manager_update)
+        self.managers_tab.widget.delete_button.clicked.connect(self.handle_manager_delete)
+
+    def load_managers_table(self):
+        self.managers = self.viewmodel.manager.read_managers()
+        table = self.managers_tab.widget.table_widget
+        table.setRowCount(len(self.managers))
+        for i, manager in enumerate(self.managers):
+            table.setItem(i, 0, QtWidgets.QTableWidgetItem(str(manager["identification"])))
+            table.setItem(i, 1, QtWidgets.QTableWidgetItem(manager["name"]))
+            table.setItem(i, 2, QtWidgets.QTableWidgetItem(manager["lastName"]))
+            table.setItem(i, 3, QtWidgets.QTableWidgetItem(manager["phone"]))
+            table.setItem(i, 4, QtWidgets.QTableWidgetItem(manager["mail"]))
+
+    def handle_manager_create(self):
+        self.aux_widget = BaseWidget(os.path.join("ui", "modify_manager.ui"))
+        self.aux_widget.widget.ok_button.clicked.connect(self.handle_manager_create_ok)
+        self.aux_widget.widget.password_input.setPlaceholderText("Requerido")
+        self.aux_widget.show()
+
+    def handle_manager_create_ok(self):
+        rut = self.aux_widget.widget.rut_input.text()
+        name = self.aux_widget.widget.name_input.text()
+        last_name = self.aux_widget.widget.last_name_input.text()
+        phone = self.aux_widget.widget.phone_input.text()
+        mail = self.aux_widget.widget.mail_input.text()
+        password = self.aux_widget.widget.password_input.text()
+        if not rut or not name or not last_name or not phone or not mail or not password:
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Complete todos los campos.")
+            return
+        if len(password) < 8:
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "La contraseña debe tener al menos 8 caracteres.")
+            return
+        new_manager = Person(name, last_name, phone, mail, password)
+        self.viewmodel.manager.create_manager(rut, new_manager)
+        self.load_managers_table()
+        QtWidgets.QMessageBox.information(self.aux_widget.widget, "Información", "Gerente agregado con éxito.")
+        self.aux_widget.widget.close()
+
+    def handle_manager_update(self):
+        current_row = self.managers_tab.widget.table_widget.currentRow()
+        if current_row == -1:
+            QtWidgets.QMessageBox.warning(self.managers_tab.widget, "Advertencia", "Debe seleccionar un gerente.")
+            return
+        manager = self.managers[current_row]
+        self.aux_widget = BaseWidget(os.path.join("ui", "modify_manager.ui"))
+        self.aux_widget.widget.rut_input.setText(str(manager["identification"]))
+        self.aux_widget.widget.rut_input.setEnabled(False)
+        self.aux_widget.widget.name_input.setText(manager["name"])
+        self.aux_widget.widget.last_name_input.setText(manager["lastName"])
+        self.aux_widget.widget.phone_input.setText(manager["phone"])
+        self.aux_widget.widget.mail_input.setText(manager["mail"])
+        self.aux_widget.widget.password_input.setPlaceholderText("Opcional")
+        self.aux_widget.widget.ok_button.clicked.connect(lambda: self.handle_manager_update_ok(current_row))
+        self.aux_widget.show()
+
+    def handle_manager_update_ok(self, row):
+        name = self.aux_widget.widget.name_input.text()
+        last_name = self.aux_widget.widget.last_name_input.text()
+        phone = self.aux_widget.widget.phone_input.text()
+        mail = self.aux_widget.widget.mail_input.text()
+        password = self.aux_widget.widget.password_input.text()
+        if not name or not last_name or not phone or not mail:
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Complete todos los campos.")
+            return
+        if password and len(password) < 8:
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "La contraseña debe tener al menos 8 caracteres.")
+            return
+        if not password:
+            password = self.managers[row]["password"]
+        updated_manager = Person(name, last_name, phone, mail, password)
+        self.viewmodel.manager.update_manager(self.managers[row]["uuid"], updated_manager)
+        self.load_managers_table()
+        QtWidgets.QMessageBox.information(self.aux_widget.widget, "Información", "Gerente actualizado con éxito.")
+        self.aux_widget.widget.close()
+
+    def handle_manager_delete(self):
+        current_row = self.managers_tab.widget.table_widget.currentRow()
+        if current_row == -1:
+            QtWidgets.QMessageBox.warning(self.managers_tab.widget, "Advertencia", "Debe seleccionar un gerente.")
+            return
+        manager = self.managers[current_row]
+        result = QtWidgets.QMessageBox.question(
+            self.managers_tab.widget,
+            "Pregunta",
+            f"Desea borrar al gerente {manager['name']} {manager['lastName']}?"
+        )
+        if result == QtWidgets.QMessageBox.StandardButton.Yes:
+            self.viewmodel.manager.delete_manager(manager["uuid"])
+            self.load_managers_table()
+            QtWidgets.QMessageBox.information(self.managers_tab.widget, "Información", "Gerente borrado con éxito.")
             
     
