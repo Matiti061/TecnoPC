@@ -686,6 +686,16 @@ class ManagementWidget(BaseWidget):
         if len(password) < 8:
             QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "La contraseña debe tener al menos 8 caracteres.")
             return
+        if len(name) < 3:
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese un nombre válido.")
+            return
+        if len(last_name) < 3:
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese un apellido válido.")
+            return
+        if "@" not in mail or "." not in mail:
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese un correo electrónico válido.")
+            return
+        
         new_manager = Person(name, last_name, phone, mail, password)
         self.viewmodel.manager.create_manager(rut, new_manager)
         self.load_managers_table()
