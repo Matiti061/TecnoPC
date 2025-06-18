@@ -13,6 +13,7 @@ class ViewModel:
         self.sale = self.model.sale
         self.client = self.model.client
         self.provider = self.model.provider
+        self.discount = self.model.discount
     
 
     def try_login(self, identification: int, password: str, store_uuid: str = None):
