@@ -112,6 +112,7 @@ class ManagementWidget(BaseWidget):
         brand=brand.strip()
         model=model.strip()
         category=category.strip()
+        description=description.strip()
         if not brand or not model or not category or not description or not price_text:
             QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Complete todos los campos.")
             return
@@ -190,6 +191,32 @@ class ManagementWidget(BaseWidget):
         description = self.aux_widget.widget.description_input.text()
         price_text = self.aux_widget.widget.price_input.text()
         provider = self.aux_widget.widget.provider_input.currentText()
+        
+        brand=brand.strip()
+        model=model.strip()
+        category=category.strip()
+        description=description.strip()
+        if not brand or not model or not category or not description or not price_text:
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Complete todos los campos.")
+            return
+        if brand.replace(" ", "") == "" or len(brand) < 2:
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese una marca válida.")
+            return
+        if model.replace(" ", "") == "" or len(model) < 2:
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese un modelo válido.")
+            return
+        if category.replace(" ", "") == "" or len(category) < 2:
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese una categoría válida.")
+            return
+        if description.replace(" ", "") == "":
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese una descripción válida.")
+            return
+        
+        try:
+            price = int(price_text)
+        except ValueError:
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "El precio debe ser un número.")
+            return
         if not brand or not model or not category or not description or not price_text or not provider:
             QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Complete todos los campos.")
             return
@@ -249,28 +276,40 @@ class ManagementWidget(BaseWidget):
         self.aux_widget.show()
 
     def handle_store_create_ok_button(self):
-        if not self.aux_widget.widget.name_input.text():
-            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese un nombre.")
+        name = self.aux_widget.widget.name_input.text()
+        address = self.aux_widget.widget.address_input.text()
+        city = self.aux_widget.widget.city_input.text()
+        phone = self.aux_widget.widget.phone_input.text()
+        mail = self.aux_widget.widget.mail_input.text()
+        
+        name=name.strip()
+        address=address.strip()
+        city=city.strip()
+        phone=phone.replace(" ", "")
+        mail=mail.replace(" ", "")
+        
+        if not name or len(name) < 3 or name.replace(" ", "") == "":
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese un nombre válido.")
             return
-        if not self.aux_widget.widget.address_input.text():
-            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese una dirección.")
+        if not address or len(address) < 5 or address.replace(" ", "") == "":
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese una dirección válida.")
             return
-        if not self.aux_widget.widget.city_input.text():
-            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese una ciudad.")
+        if not city or len(city) < 3 or city.replace(" ", "") == "":
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese una ciudad válida.")
             return
-        if not self.aux_widget.widget.phone_input.text():
-            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese un teléfono.")
+        if not phone or len(phone) < 5 or phone.replace(" ", "") == "":
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese un teléfono válido.")
             return
         phone_number = self.aux_widget.widget.phone_input.text()
         if not (phone_number[0] == "+" and phone_number[1:].isnumeric()):
             QtWidgets.QMessageBox.warning(
                 self.aux_widget.widget,
                 "Advertencia",
-                "Ingrese un teléfono válido. (anteponga el +)"
+                "Ingrese un teléfono válido."
             )
             return
-        if not self.aux_widget.widget.mail_input.text():
-            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese un correo.")
+        if not mail or "@" not in mail or "." not in mail or len(mail) < 5 or mail.replace(" ", "") == "":
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese un correo válido.")
             return
         # Add the new store
         new_store = Store(
@@ -331,28 +370,40 @@ class ManagementWidget(BaseWidget):
 
     def handle_store_update_ok_button(self):
         current_row = self.widget.store_table_widget.currentRow()
-        if not self.aux_widget.widget.name_input.text():
-            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese un nombre.")
+        name = self.aux_widget.widget.name_input.text()
+        address = self.aux_widget.widget.address_input.text()
+        city = self.aux_widget.widget.city_input.text()
+        phone = self.aux_widget.widget.phone_input.text()
+        mail = self.aux_widget.widget.mail_input.text()
+        
+        name=name.strip()
+        address=address.strip()
+        city=city.strip()
+        phone=phone.replace(" ", "")
+        mail=mail.replace(" ", "")
+        
+        if not name or len(name) < 3 or name.replace(" ", "") == "":
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese un nombre válido.")
             return
-        if not self.aux_widget.widget.address_input.text():
-            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese una dirección.")
+        if not address or len(address) < 5 or address.replace(" ", "") == "":
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese una dirección válida.")
             return
-        if not self.aux_widget.widget.city_input.text():
-            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese una ciudad.")
+        if not city or len(city) < 3 or city.replace(" ", "") == "":
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese una ciudad válida.")
             return
-        if not self.aux_widget.widget.phone_input.text():
-            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese un teléfono.")
+        if not phone or len(phone) < 5 or phone.replace(" ", "") == "":
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese un teléfono válido.")
             return
         phone_number = self.aux_widget.widget.phone_input.text()
         if not (phone_number[0] == "+" and phone_number[1:].isnumeric()):
             QtWidgets.QMessageBox.warning(
                 self.aux_widget.widget,
                 "Advertencia",
-                "Ingrese un teléfono válido. (anteponga el +)"
+                "Ingrese un teléfono válido."
             )
             return
-        if not self.aux_widget.widget.mail_input.text():
-            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese un correo.")
+        if not mail or "@" not in mail or "." not in mail or len(mail) < 5 or mail.replace(" ", "") == "":
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese un correo válido.")
             return
 
         # Update the store in the data source
@@ -427,8 +478,27 @@ class ManagementWidget(BaseWidget):
         phone = self.aux_widget.widget.phone_input.text()
         mail = self.aux_widget.widget.mail_input.text()
         password = self.aux_widget.widget.password_input.text()
+        
+        name=name.strip()
+        last_name=last_name.strip()
+        phone=phone.replace(" ", "")
+        mail=mail.replace(" ", "")
+        password=password.strip()
+        
         if not name or not last_name or not phone or not mail or not password:
             QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Complete todos los campos.")
+            return
+        if name.replace(" ", "") == "" or len(name) < 3:
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese un nombre válido.")
+            return
+        if last_name.replace(" ", "") == "" or len(last_name) < 3:
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese un apellido válido.")
+            return
+        if phone.replace(" ", "") == "" or len(phone) < 5:
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese un teléfono válido.")
+            return
+        if mail.replace(" ", "") == "" or "@" not in mail or "." not in mail or len(mail) < 5:
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese un correo válido.")
             return
         if len(password) < 8:
             QtWidgets.QMessageBox.warning(
@@ -437,6 +507,7 @@ class ManagementWidget(BaseWidget):
                 "Por política su contraseña debe tener 8 o más caracteres."
             )
             return
+        
         # Crear empleado
         new_employee = Person(name, last_name, phone, mail, password)
         index = self.employees_tab.widget.stores_list.currentIndex()
@@ -482,12 +553,29 @@ class ManagementWidget(BaseWidget):
         phone = self.aux_widget.widget.phone_input.text()
         mail = self.aux_widget.widget.mail_input.text()
         password = self.aux_widget.widget.password_input.text()
-        if not name or not last_name or not phone or not mail:
+        
+        name=name.strip()
+        last_name=last_name.strip()
+        phone=phone.replace(" ", "")
+        mail=mail.replace(" ", "")
+        password=password.strip()
+        
+        if not name or not last_name or not phone or not mail or not password:
             QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Complete todos los campos.")
             return
-        if not password:
-            password = self.employees[row]["password"]
-        elif len(password) < 8:
+        if name.replace(" ", "") == "" or len(name) < 3:
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese un nombre válido.")
+            return
+        if last_name.replace(" ", "") == "" or len(last_name) < 3:
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese un apellido válido.")
+            return
+        if phone.replace(" ", "") == "" or len(phone) < 5:
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese un teléfono válido.")
+            return
+        if mail.replace(" ", "") == "" or "@" not in mail or "." not in mail or len(mail) < 5:
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese un correo válido.")
+            return
+        if len(password) < 8:
             QtWidgets.QMessageBox.warning(
                 self.aux_widget.widget,
                 "Advertencia",
@@ -627,7 +715,7 @@ class ManagementWidget(BaseWidget):
             QtWidgets.QMessageBox.warning(
                 self.aux_widget.widget,
                 "Advertencia",
-                "Ingrese un teléfono válido. (anteponga el +)"
+                "Ingrese un teléfono válido."
             )
             return
         if not self.aux_widget.widget.email_input.text():
@@ -699,6 +787,12 @@ class ManagementWidget(BaseWidget):
         mail = self.aux_widget.widget.mail_input.text()
         password = self.aux_widget.widget.password_input.text()
         rut = rut.replace(".", "").replace("-", "").replace(" ", "")
+        name = name.strip()
+        last_name = last_name.strip()
+        phone = phone.replace(" ", "")
+        mail = mail.replace(" ", "")
+        password = password.strip()
+        
         if not rut or not name or not last_name or not phone or not mail or not password:
             QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Complete todos los campos.")
             return
@@ -726,7 +820,7 @@ class ManagementWidget(BaseWidget):
             QtWidgets.QMessageBox.warning(
                 self.aux_widget.widget,
                 "Advertencia",
-                "Ingrese un teléfono válido. (anteponga el +)"
+                "Ingrese un teléfono válido."
             )
             return
         
@@ -749,7 +843,6 @@ class ManagementWidget(BaseWidget):
         self.aux_widget.widget.last_name_input.setText(manager["lastName"])
         self.aux_widget.widget.phone_input.setText(manager["phone"])
         self.aux_widget.widget.mail_input.setText(manager["mail"])
-        self.aux_widget.widget.password_input.setPlaceholderText("Opcional")
         self.aux_widget.widget.ok_button.clicked.connect(lambda: self.handle_manager_update_ok(current_row))
         self.aux_widget.show()
 
@@ -780,7 +873,7 @@ class ManagementWidget(BaseWidget):
             QtWidgets.QMessageBox.warning(
                 self.aux_widget.widget,
                 "Advertencia",
-                "Ingrese un teléfono válido. (anteponga el +)"
+                "Ingrese un teléfono válido."
             )
             return
         if not password:
