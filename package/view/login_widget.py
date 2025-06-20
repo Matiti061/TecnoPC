@@ -35,6 +35,15 @@ class LoginWidget(BaseWidget):
 
         raise ValueError("Empleado no encontrado o credenciales incorrectas")
 
+    def try_login(self, identification: int, password: str):
+        for manager in self.viewmodel.model.managers.read():
+            if manager["identification"] == str(identification) and manager["password"] == password:
+                return f"{manager['name']} {manager['lastName']}", "manager"
+        for employee in self.viewmodel.model.employees.read():
+            if employee["identification"] == str(identification) and employee["password"] == password:
+                return f"{employee['name']} {employee['lastName']}", "employee"
+        raise ValueError("Invalid credentials")
+
     def handle_ok_button(self):
         password: str = self.widget.password_input.text()
         if not self.widget.store_combo_box.currentText() and self.user_type != "manager":
