@@ -1,5 +1,11 @@
 from .internal_model import InternalModel
-from .crud import CRUD
+from .manager_model import ManagerModel
+from .store_model import StoreModel
+from .employee_model import EmployeeModel
+from .client_model import ClientModel
+from .product_model import ProductModel
+from .sale_model import SaleModel
+from .provider_model import ProviderModel
 
 
 class Model:
@@ -12,3 +18,4 @@ class Model:
         self.product = CRUD(self.model, "products", "stores")
         self.sale = CRUD(self.model, "sales")
         self.provider = ProviderModel(self.model)
+        self.discount = DiscountModel(self.model)

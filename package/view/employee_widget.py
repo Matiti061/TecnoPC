@@ -2,8 +2,7 @@ import os
 from PySide6 import QtCore, QtWidgets
 from .base_widget import BaseWidget
 from .custom_dialog import CustomDialog
-from .form_add_product import FormAddProduct
-from .form_add_client import formAddClient
+from .form_add import FormAddProduct, FormAddClient, FormAddDiscount
 from ..viewmodel import ViewModel
 from ..rut import RUT
 from ..dataclasses.sale import Sale
@@ -38,7 +37,13 @@ class EmployeeWidget(BaseWidget):
             "Correo": "mail",
             "Dirección": "address"
         }
-
+        self.column_mapping_discount = {
+            "Nombre": "discount_name",
+            "Porcentaje": "percentage",
+            "Descripcion": "description",
+            "Productos afectados": "items_affected",
+            "Categoria": "category"
+        }
         self.store = None
         for store in self.viewmodel.store.read_stores():
             employees = self.viewmodel.employee.read_employees(store["uuid"])
@@ -49,11 +54,17 @@ class EmployeeWidget(BaseWidget):
 
         self.widget.tab_widget.currentChanged.connect(self.handle_tabs)
 
+        # discount tab
+        self.discount_data = self.viewmodel.discount.read_discount()
+
+        self.widget.discount_table
+        self.widget.discount_add_button.clicked.connect(self.handle_create_discount)
+        self.widget.discount_apply_button
+        self.widget.discount_edit_button
+        self.widget.discount_delete_button
+
         # sale tab
         self.list_client = self.viewmodel.client.get_client()
-        self.widget.client_comboBox.insertItem(0, "-- seleccione una opción --")
-        for client in self.list_client:
-            self.widget.client_comboBox.addItem(f"{client["name"]} {client["lastName"]}")
 
         self.widget.sell_table_widget.setColumnCount(len(self.column_mapping))
         self.widget.sell_table_widget.setHorizontalHeaderLabels(list(self.column_mapping.keys()))
@@ -69,22 +80,24 @@ class EmployeeWidget(BaseWidget):
         self.widget.warranty_table.setHorizontalHeaderLabels(list(self.column_mapping.keys()))
         self.widget.warranty_table.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
         self.widget.warranty_add_button.clicked.connect(self.handle_add_warranty)
-        self.handle_update(self.widget.sell_table_widget, self.widget.groupBox, self.widget.sell_total_label)
 
         # client tab
         self.widget.client_create_button.clicked.connect(self.handle_create_client)
         self.widget.client_delete_button.clicked.connect(self.handle_discard_client)
         self.widget.client_update_button.clicked.connect(self.handle_update_client_1)
-        
+        self.handle_update(self.widget.discount_table)
+
     def handle_tabs(self, index: int):
-        if not index:  # sale tab
+        if index == 0:
+            self.handle_update_discount(self.widget.discount_table)
+        elif index == 1:  # sale tab
             self.handle_update(self.widget.sell_table_widget, self.widget.groupBox, self.widget.sell_total_label)
             self.widget.client_comboBox.clear()
-            self.widget.client_comboBox.addItems(["-- seleccione una opción --"] + [f"{value["name"]} {value["lastName"]}" for value in self.list_client])
-        elif index == 1:  # warranty tab
+            self.widget.client_comboBox.addItems(["-- seleccione un cliente --"] + [f"{value["name"]} {value["lastName"]}" for value in self.list_client])
+        elif index == 2:  # warranty tab
             self.handle_update(self.widget.warranty_table, None, None)
-        elif index == 2:
-            self.handle_update_client_2(self.widget.client_table_widget)
+        elif index == 3:
+            self.handle_update_client(self.widget.client_table_widget)
 
     def handle_add_product(self):  # note: just for the sale
         self.aux_widget = FormAddProduct(self.viewmodel, self.store)
@@ -140,8 +153,8 @@ class EmployeeWidget(BaseWidget):
             if self.employee_uuid == item["uuid"]:
                 seller = item
                 break
-        if self.widget.client_comboBox.currentText() == "-- seleccione una opción --":
-            QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe seleccionar una opcion valida.")
+        if self.widget.client_comboBox.currentText() == "-- seleccione un cliente --":
+            QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe seleccionar un cliente.")
             return
 
         if not self.products_to_sell:
@@ -194,7 +207,7 @@ class EmployeeWidget(BaseWidget):
         self.handle_update(self.widget.warranty_table)
 
     def handle_create_client(self):
-        self.aux_widget = formAddClient(self.viewmodel)
+        self.aux_widget = FormAddClient(self.viewmodel)
         self.aux_widget.client_create.connect(self.handle_createClient)
         self.aux_widget.show()
     
@@ -203,7 +216,7 @@ class EmployeeWidget(BaseWidget):
         if clientData:
             self.handle_update_client_2(self.widget.client_table_widget)
         else:
-            QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "se canceló la creacion del cliente.")
+            QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "se canceló la creación del cliente.")
             return
     
     def handle_update_client_1(self):
@@ -214,7 +227,7 @@ class EmployeeWidget(BaseWidget):
             return
         
         client = self.viewmodel.client.get_client(self.list_client[current_row]["uuid"])
-        self.aux_widget = formAddClient(self.viewmodel, True, self.list_client[current_row])
+        self.aux_widget = FormAddClient(self.viewmodel, True, self.list_client[current_row])
         self.aux_widget.widget.rut_input.setText(RUT.get_pretty_rut_static(int(client["identification"])))
         self.aux_widget.widget.rut_input.setEnabled(False)
         self.aux_widget.widget.name_input.setText(client["name"])
@@ -357,6 +370,27 @@ class EmployeeWidget(BaseWidget):
             self.widget.client_table_widget.setCurrentCell(-1, -1)
             QtWidgets.QMessageBox.information(self.widget, "Información", "Cliente borrado con éxito.")
     
+    def handle_create_discount(self):
+        self.aux_widget = FormAddDiscount(self.viewmodel,self.store)
+        self.aux_widget.discount_create.connect(self.handle_createDiscount)
+        self.aux_widget.show()
+
+    @QtCore.Slot(bool)
+    def handle_createDiscount(self):
+        pass
+
+    def handle_update_discount(self, table_widget: QtWidgets.QTableWidget):
+        table_widget.clearContents()
+
+        table_widget.setRowCount(len(self.discount_data))
+        column_keys = list(self.column_mapping_discount.keys())
+        table_widget.setColumnCount(len(self.column_mapping_discount))
+        table_widget.setHorizontalHeaderLabels(list(self.column_mapping_discount.keys()))
+
+        for i, discount in enumerate(self.discount_data):
+            for j, key in enumerate(column_keys):
+                table_widget.setItem(i,j, QtWidgets.QTableWidgetItem(str(discount.get(self.column_mapping_discount[key]))))
+        
     def handle_update(
             self,
             table_widget: QtWidgets.QTableWidget,
@@ -393,7 +427,7 @@ class EmployeeWidget(BaseWidget):
             total = f"{self.total:,}".replace(',', '.')
             total_label.setText(f"Total: ${total}")
     
-    def handle_update_client_2(self, table_widget: QtWidgets.QTableWidget):
+    def handle_update_client(self, table_widget: QtWidgets.QTableWidget):
         data = self.viewmodel.client.get_client()
         table_widget.clearContents()
         table_widget.setRowCount(len(data))
