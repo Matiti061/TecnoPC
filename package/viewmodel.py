@@ -1,26 +1,15 @@
-# For documentation please check the Model itself, not the ViewModel.
-
+# pylint: disable=R0902
 from .model import Model
 
 
 class ViewModel:
     def __init__(self, model: Model):
         self.model = model
-        self.manager = self.model.manager
-        self.store = self.model.store
-        self.employee = self.model.employee
-        self.product = self.model.product
-        self.sale = self.model.sale
-        self.client = self.model.client
-        self.provider = self.model.provider
-        self.discount = self.model.discount
-    
-
-    def try_login(self, identification: int, password: str, store_uuid: str = None):
-        for manager in self.model.manager.read_managers():
-            if manager["identification"] == str(identification) and manager["password"] == password:
-                return f"{manager['name']} {manager['lastName']}", "manager"
-        for employee in self.model.employee.read_employees(store_uuid):
-            if employee["identification"] == str(identification) and employee["password"] == password:
-                return f"{employee['name']} {employee['lastName']}", "employee"
-        raise ValueError("Credentials are invalid")
+        self.clients = self.model.clients
+        self.discounts = self.model.discounts
+        self.employees = self.model.employees
+        self.managers = self.model.managers
+        self.products = self.model.products
+        self.providers = self.model.providers
+        self.sales = self.model.sales
+        self.stores = self.model.stores
