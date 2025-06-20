@@ -12,7 +12,7 @@ class CRUD:
         item_uuid = str(uuid.uuid4())
         metadata = {
             "uuid": item_uuid,
-            "createdAt": time.time(),
+            "createdAt": int(time.time()),
             "updatedAt": None
         }
         payload.update(metadata)
@@ -25,7 +25,7 @@ class CRUD:
 
     def update(self, payload: dict):
         metadata = {
-            "updatedAt": time.time()
+            "updatedAt": int(time.time())
         }
         payload.update(metadata)
         index = self.model.index_of(self.key, payload["uuid"])
