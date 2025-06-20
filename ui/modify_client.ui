@@ -54,7 +54,7 @@
      <item>
       <widget class="QLabel" name="label_5">
        <property name="text">
-        <string>Direccion</string>
+        <string>Dirección</string>
        </property>
       </widget>
      </item>
@@ -63,39 +63,19 @@
    <item row="0" column="1">
     <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
-      <widget class="QLineEdit" name="rut_input">
-       <property name="alignment">
-        <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
-       </property>
-      </widget>
+      <widget class="QLineEdit" name="rut_input"/>
      </item>
      <item>
-      <widget class="QLineEdit" name="name_input">
-       <property name="alignment">
-        <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
-       </property>
-      </widget>
+      <widget class="QLineEdit" name="name_input"/>
      </item>
      <item>
-      <widget class="QLineEdit" name="last_name_input">
-       <property name="alignment">
-        <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
-       </property>
-      </widget>
+      <widget class="QLineEdit" name="last_name_input"/>
      </item>
      <item>
-      <widget class="QLineEdit" name="phone_input">
-       <property name="alignment">
-        <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
-       </property>
-      </widget>
+      <widget class="QLineEdit" name="phone_input"/>
      </item>
      <item>
-      <widget class="QLineEdit" name="mail_input">
-       <property name="alignment">
-        <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
-       </property>
-      </widget>
+      <widget class="QLineEdit" name="mail_input"/>
      </item>
      <item>
       <widget class="QLineEdit" name="address_input"/>
