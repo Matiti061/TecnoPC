@@ -6,7 +6,7 @@ from .form_add import FormAddProduct, FormAddClient, FormAddDiscount
 from ..viewmodel import ViewModel
 from ..rut import RUT
 from ..dataclasses.sale import Sale
-from ..dataclasses.person import Person
+from ..dataclasses.employee import Employee
 from ..dataclasses.phone import validate_phone
 
 
@@ -251,7 +251,7 @@ class EmployeeWidget(BaseWidget):
         index = self.widget.client_table_widget.currentIndex()
         self.viewmodel.client.update_employee(
             self.stores[index - 1]["uuid"],
-            self.employees[row], Person(name, last_name, phone, mail)
+            self.employees[row], Employee(name, last_name, phone, mail)
         )
         # Actualizar UI y datos locales
         self.employees_tab.widget.table_widget.setItem(row, 1, QtWidgets.QTableWidgetItem(name))

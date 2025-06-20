@@ -2,7 +2,7 @@ import os
 from PySide6 import QtWidgets
 from .base_widget import BaseWidget
 from ..viewmodel import ViewModel
-from ..dataclasses.person import Person
+from ..dataclasses.employee import Employee
 from ..dataclasses.product import Product
 from ..dataclasses.store import Store
 from ..dataclasses.provider import Provider
@@ -416,7 +416,7 @@ class ManagementWidget(BaseWidget):
             )
             return
         # Crear empleado
-        new_employee = Person(name, last_name, phone, mail, password)
+        new_employee = Employee(name, last_name, phone, mail, password)
         index = self.employees_tab.widget.stores_list.currentIndex()
         self.viewmodel.employee.create_employee(self.stores[index - 1]["uuid"], str(identification.rut), new_employee)
         # Actualizar UI y datos locales
@@ -476,7 +476,7 @@ class ManagementWidget(BaseWidget):
         index = self.employees_tab.widget.stores_list.currentIndex()
         self.viewmodel.employee.update_employee(
             self.stores[index - 1]["uuid"],
-            self.employees[row]["uuid"], Person(name, last_name, phone, mail, password)
+            self.employees[row]["uuid"], Employee(name, last_name, phone, mail, password)
         )
         # Actualizar UI y datos locales
         self.employees_tab.widget.table_widget.setItem(row, 1, QtWidgets.QTableWidgetItem(name))
@@ -548,7 +548,7 @@ class ManagementWidget(BaseWidget):
         row = self.providers_tab.widget.tabla_proveedores.rowCount()
         self.providers_tab.widget.tabla_proveedores.insertRow(row)
         self.providers_tab.widget.tabla_proveedores.setItem(row, 1, QtWidgets.QTableWidgetItem(new_provider.name))
-        self.providers_tab.widget.tabla_proveedores.setItem(row, 2, QtWidgets.QTableWidgetItem(new_provider.adress))
+        self.providers_tab.widget.tabla_proveedores.setItem(row, 2, QtWidgets.QTableWidgetItem(new_provider.address))
         self.providers_tab.widget.tabla_proveedores.setItem(row, 3, QtWidgets.QTableWidgetItem(new_provider.phone))
         self.providers_tab.widget.tabla_proveedores.setItem(row, 4, QtWidgets.QTableWidgetItem(new_provider.mail))
         QtWidgets.QMessageBox.information(self.aux_widget.widget, "Información", "Proveedor agregado con éxito.")
@@ -562,7 +562,7 @@ class ManagementWidget(BaseWidget):
             return
         self.aux_widget = BaseWidget(os.path.join("ui", "proovedor_add.ui"))
         self.aux_widget.widget.nombre_input.setText(self.providers[current_row]["name"])
-        self.aux_widget.widget.direccion_input.setText(self.providers[current_row]["adress"])
+        self.aux_widget.widget.direccion_input.setText(self.providers[current_row]["address"])
         self.aux_widget.widget.telefono_input.setText(self.providers[current_row]["phone"])
         self.aux_widget.widget.email_input.setText(self.providers[current_row]["mail"])
         self.aux_widget.widget.aceptar_button.clicked.connect(self.handle_provider_update_ok)
@@ -626,12 +626,12 @@ class ManagementWidget(BaseWidget):
 
         # Update local data structures and UI
         self.providers[current_row]["name"] = updated_provider.name
-        self.providers[current_row]["address"] = updated_provider.adress
+        self.providers[current_row]["address"] = updated_provider.address
         self.providers[current_row]["phone"] = updated_provider.phone
         self.providers[current_row]["mail"] = updated_provider.mail
 
         self.providers_tab.widget.tabla_proveedores.setItem(current_row, 1, QtWidgets.QTableWidgetItem(updated_provider.name))
-        self.providers_tab.widget.tabla_proveedores.setItem(current_row, 4, QtWidgets.QTableWidgetItem(updated_provider.adress))
+        self.providers_tab.widget.tabla_proveedores.setItem(current_row, 4, QtWidgets.QTableWidgetItem(updated_provider.address))
         self.providers_tab.widget.tabla_proveedores.setItem(current_row, 2, QtWidgets.QTableWidgetItem(updated_provider.phone))
         self.providers_tab.widget.tabla_proveedores.setItem(current_row, 3, QtWidgets.QTableWidgetItem(updated_provider.mail))
 

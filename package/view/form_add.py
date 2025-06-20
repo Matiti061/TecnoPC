@@ -2,10 +2,8 @@ import os
 from .base_widget import BaseWidget
 from ..viewmodel import ViewModel
 from ..rut import RUT
-from ..dataclasses.phone import validate_phone
-from ..dataclasses.person import Person
-from ..dataclasses.discount import Discount
-from PySide6 import QtWidgets, QtCore
+from ..dataclasses.client import Client
+from PySide6 import QtWidgets
 from PySide6.QtCore import Signal, QDateTime
 
 class FormAddClient(BaseWidget):
@@ -50,7 +48,7 @@ class FormAddClient(BaseWidget):
                     return
             self.viewmodel.client.create_client(
                 str(rut.rut),
-                Person(
+                Client(
                     str(self.widget.name_input.text()),
                     str(self.widget.last_name_input.text()),
                     str(self.widget.phone_input.text()),
@@ -62,7 +60,7 @@ class FormAddClient(BaseWidget):
         else:
             self.viewmodel.client.update_client(
                 self.client["uuid"],
-                Person(
+                Client(
                     str(self.widget.name_input.text()),
                     str(self.widget.last_name_input.text()),
                     str(self.widget.phone_input.text()),

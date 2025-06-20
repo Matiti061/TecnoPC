@@ -1,4 +1,5 @@
 import os
+from PySide6 import QtCore, QtGui
 from .base_widget import BaseWidget
 from .employee_widget import EmployeeWidget
 from .login_widget import LoginWidget
@@ -11,6 +12,8 @@ class View(BaseWidget):
         super().__init__(os.path.join("ui", "main.ui"))
         self.viewmodel = viewmodel
         self.aux_widget = None
+        # pixmap
+        self.widget.logo_label.setPixmap(QtGui.QPixmap(QtGui.QImage(os.path.join("assets", "TecnoPC.png"))).scaled(QtCore.QSize(400, 400), QtCore.Qt.AspectRatioMode.KeepAspectRatio, QtCore.Qt.TransformationMode.SmoothTransformation))
         # Employee button
         self.widget.employee_button.clicked.connect(self.handle_employee_login)
         # Manager button

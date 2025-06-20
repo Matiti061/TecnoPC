@@ -1,8 +1,7 @@
 import dataclasses
+from ..abc.business import Business
+
 
 @dataclasses.dataclass
-class Provider:
-    name: str
-    phone: str
-    mail: str
-    adress: str
+class Provider(Business):
+    pass
