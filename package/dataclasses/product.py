@@ -8,4 +8,4 @@ class Product:
     category: str
     description: str
     price: int
-    provider: str
+    provider_uuid: str

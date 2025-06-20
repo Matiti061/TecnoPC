@@ -2,9 +2,9 @@ import dataclasses
 
 
 @dataclasses.dataclass
-class Person:
+class Business:
     name: str
-    last_name: str
+    address: str
+    city: str
     phone: str
     mail: str
-    password: str

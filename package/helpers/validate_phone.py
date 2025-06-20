@@ -13,9 +13,4 @@ def validate_phone(number: str):
     pattern_movil = r"^9\d{8}$"
     pattern_fixed = r"^[2-8]\d{7}$"
 
-    if re.match(pattern_movil, number_without_prefixed):
-        return True
-    elif re.match(pattern_fixed, number_without_prefixed):
-        return True
-    else:
-        return False
+    return re.match(pattern_movil, number_without_prefixed) or re.match(pattern_fixed, number_without_prefixed)
