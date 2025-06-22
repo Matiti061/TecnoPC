@@ -6,54 +6,244 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>397</width>
-    <height>381</height>
+    <width>380</width>
+    <height>430</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Agregar/Editar Descuento</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <item row="2" column="0">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>Descripcion</string>
+     </property>
+    </widget>
+   </item>
    <item row="3" column="0" colspan="3">
-    <widget class="QGroupBox" name="time_groupbox">
+    <widget class="QGroupBox" name="details_groupbox">
      <property name="title">
-      <string>Tiempo del descuento</string>
+      <string>Detalles</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_5">
-        <property name="text">
-         <string>Fecha y hora de inicio</string>
-        </property>
+      <item row="6" column="0" colspan="2">
+       <widget class="QWidget" name="value_discount_widget" native="true">
+        <layout class="QHBoxLayout" name="value_discount_hl">
+         <property name="topMargin">
+          <number>4</number>
+         </property>
+         <property name="bottomMargin">
+          <number>4</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="label_8">
+           <property name="text">
+            <string>Valor del descuento</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="type_disc_combo">
+           <property name="baseSize">
+            <size>
+             <width>16</width>
+             <height>16</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="value_disc_spinbox"/>
+         </item>
+        </layout>
        </widget>
       </item>
-      <item row="2" column="1" colspan="2">
-       <widget class="QDateTimeEdit" name="end_dateTime"/>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="label_6">
-        <property name="text">
-         <string>Fecha y hora de termíno</string>
-        </property>
+      <item row="8" column="0" colspan="2">
+       <widget class="QWidget" name="student_widget" native="true">
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <property name="leftMargin">
+          <number>9</number>
+         </property>
+         <property name="topMargin">
+          <number>4</number>
+         </property>
+         <property name="rightMargin">
+          <number>9</number>
+         </property>
+         <property name="bottomMargin">
+          <number>4</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="label_9">
+           <property name="text">
+            <string>Validar id de estudiante</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="student_combo"/>
+         </item>
+        </layout>
        </widget>
       </item>
-      <item row="1" column="1" colspan="2">
-       <widget class="QDateTimeEdit" name="start_dateTime"/>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="label_8">
-        <property name="text">
-         <string>Valor del descuento</string>
-        </property>
+      <item row="9" column="0" colspan="2">
+       <widget class="QWidget" name="item_affected_widget" native="true">
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <property name="leftMargin">
+          <number>9</number>
+         </property>
+         <property name="topMargin">
+          <number>4</number>
+         </property>
+         <property name="rightMargin">
+          <number>9</number>
+         </property>
+         <property name="bottomMargin">
+          <number>4</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="label_7">
+           <property name="text">
+            <string>Producto afectado</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="affected_combo"/>
+         </item>
+        </layout>
        </widget>
       </item>
-      <item row="3" column="1">
-       <widget class="QComboBox" name="time_combo"/>
+      <item row="3" column="0" colspan="2">
+       <widget class="QWidget" name="start_time_widget" native="true">
+        <layout class="QGridLayout" name="time_grid">
+         <property name="topMargin">
+          <number>4</number>
+         </property>
+         <property name="bottomMargin">
+          <number>4</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_5">
+           <property name="text">
+            <string>Fecha y hora de inicio</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QDateTimeEdit" name="start_dateTime">
+           <property name="calendarPopup">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
       </item>
-      <item row="3" column="2">
-       <widget class="QSpinBox" name="time_spinbox"/>
+      <item row="7" column="0" colspan="2">
+       <widget class="QWidget" name="client_selection_widget" native="true">
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <property name="topMargin">
+          <number>4</number>
+         </property>
+         <property name="bottomMargin">
+          <number>4</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="label_4">
+           <property name="text">
+            <string>Buscar cliente</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="client_combo"/>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="5" column="0" colspan="2">
+       <widget class="QWidget" name="end_time_widget" native="true">
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <property name="leftMargin">
+          <number>9</number>
+         </property>
+         <property name="topMargin">
+          <number>4</number>
+         </property>
+         <property name="rightMargin">
+          <number>9</number>
+         </property>
+         <property name="bottomMargin">
+          <number>4</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="label_6">
+           <property name="text">
+            <string>Fecha y hora de termíno</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QDateTimeEdit" name="end_dateTime">
+           <property name="calendarPopup">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="10" column="0" colspan="2">
+       <widget class="QWidget" name="quantity_widget" native="true">
+        <layout class="QHBoxLayout" name="quantity_l">
+         <property name="leftMargin">
+          <number>9</number>
+         </property>
+         <property name="topMargin">
+          <number>4</number>
+         </property>
+         <property name="rightMargin">
+          <number>9</number>
+         </property>
+         <property name="bottomMargin">
+          <number>4</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="label_10">
+           <property name="text">
+            <string>Cantidad</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="quantity_spinbox">
+           <property name="maximum">
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
       </item>
      </layout>
+    </widget>
+   </item>
+   <item row="1" column="1" colspan="2">
+    <widget class="QComboBox" name="type_combo"/>
+   </item>
+   <item row="0" column="1" colspan="2">
+    <widget class="QLineEdit" name="name_input"/>
+   </item>
+   <item row="8" column="0" colspan="3">
+    <widget class="QPushButton" name="ok_button">
+     <property name="text">
+      <string>OK</string>
+     </property>
     </widget>
    </item>
    <item row="0" column="0">
@@ -63,19 +253,6 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="0">
-    <widget class="QLabel" name="label_3">
-     <property name="text">
-      <string>Descripcion</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1" colspan="2">
-    <widget class="QComboBox" name="type_combo"/>
-   </item>
-   <item row="5" column="1" colspan="2">
-    <widget class="QLineEdit" name="desc_input"/>
-   </item>
    <item row="1" column="0">
     <widget class="QLabel" name="label_2">
      <property name="text">
@@ -83,54 +260,8 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="1" colspan="2">
-    <widget class="QLineEdit" name="name_input"/>
-   </item>
-   <item row="7" column="0" colspan="3">
-    <widget class="QPushButton" name="ok_button">
-     <property name="text">
-      <string>OK</string>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="1" colspan="2">
-    <widget class="QComboBox" name="affected_combo"/>
-   </item>
-   <item row="6" column="0">
-    <widget class="QLabel" name="label_7">
-     <property name="text">
-      <string>Producto/categoria afectada</string>
-     </property>
-     <property name="wordWrap">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="0" colspan="3">
-    <widget class="QGroupBox" name="details_groupbox">
-     <property name="title">
-      <string>Detalles</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_2">
-      <item row="2" column="0">
-       <layout class="QHBoxLayout" name="direct_discount_hl">
-        <item>
-         <widget class="QLabel" name="label_4">
-          <property name="text">
-           <string>Valor del descuento</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QComboBox" name="direct_combo"/>
-        </item>
-        <item>
-         <widget class="QSpinBox" name="direct_spinbox"/>
-        </item>
-       </layout>
-      </item>
-     </layout>
-    </widget>
+   <item row="2" column="1" colspan="2">
+    <widget class="QLineEdit" name="desc_input"/>
    </item>
   </layout>
  </widget>

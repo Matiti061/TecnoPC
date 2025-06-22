@@ -14,27 +14,33 @@ class DiscountModel:
         self.model.data["discount"].append({
             "uuid": discount_uuid,
             "name": discount.discount_name,
+            "type": discount.type,
             "description": discount.description,
-            "affected items": discount.items_affected,
-            "percentage": discount.percentage   
+            "details": discount.details
         })
         self.model.save()
         return discount_uuid
     
+    def get_discount(self, discount_uuid: str = None):
+        if discount_uuid:
+            return self.model.data["discount"][self.model.locate_entity("discount", discount_uuid)]
+        else:
+            return self.model.data["discount"]
+
+    
     def update_discount(self, discount_uuid: str, discount: Discount):
-        index = self.model.locate_nested_entity("discount", discount_uuid)
+        index = self.model.locate_entity("discount", discount_uuid)
         update_data = {
             "name": discount.discount_name,
-            "percentage": discount.percentage,
+            "type": discount.type,
             "description": discount.description,
-            "items_affected": discount.items_affected,
-            "category": discount.category
+            "details": discount.details
         }
         self.model.data["discount"][index].update(update_data)
         self.model.save()
+        return discount_uuid
     
     def delete_discount(self, discount_uuid: str):
-        index = self.model.locate_nested_entity("discount", discount_uuid)
-        del self.model.data["discount"][index]
+        self.model.delete_entity("discount", discount_uuid)
         self.model.save()
         

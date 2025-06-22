@@ -16,6 +16,7 @@ class SaleModel:
             "employee_uuid": sale.employee_uuid,
             "client_rut": sale.client_rut,
             "products": sale.products,
+            "discount used": sale.discount,
             "createdAt": f"{int(time.time())}",
             "updatedAt": None
         })
