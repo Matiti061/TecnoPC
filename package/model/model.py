@@ -6,6 +6,7 @@ from .client_model import ClientModel
 from .product_model import ProductModel
 from .sale_model import SaleModel
 from .provider_model import ProviderModel
+from .discount_model import DiscountModel
 
 
 class Model:
@@ -18,3 +19,4 @@ class Model:
         self.product = ProductModel(self.model)
         self.sale = SaleModel(self.model)
         self.provider = ProviderModel(self.model)
+        self.discount = DiscountModel(self.model)
