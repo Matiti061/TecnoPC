@@ -7,7 +7,7 @@ class InternalModel:
             with open("data.json", encoding="utf-8") as file:
                 self.data: dict = json.load(file)
         except FileNotFoundError:
-            self.data = json.loads('{"managers": [], "stores": [], "sales": [], "client": [], "providers": []}')
+            self.data = json.loads('{"managers": [], "stores": [], "sales": [], "client": [], "providers": [], "discount": []}')
             self.save()
         except json.decoder.JSONDecodeError as e:
             raise RuntimeError(f"JSON decoding error, manual intervention needed: {e}") from e
