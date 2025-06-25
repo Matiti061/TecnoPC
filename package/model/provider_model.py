@@ -29,7 +29,7 @@ class ProviderModel:
     def edit_provider(self, provider_uuid: str, provider: Provider):
         self.model.edit_entity("providers", provider_uuid, {
             "name": provider.name,
-            "address": provider.adress,
+            "adress": provider.adress,
             "phone": provider.phone,
             "mail": provider.mail,
             "updatedAt": f"{int(time.time())}"
