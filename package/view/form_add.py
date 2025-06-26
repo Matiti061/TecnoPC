@@ -24,19 +24,19 @@ class FormAddClient(BaseWidget):
             QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe ingresar un rut válido.")
             return
 
-        if self.widget.name_input.text() == "":
+        if self.widget.name_input.text().strip() == "":
             QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe ingresar un nombre.")
             return
-        if self.widget.last_name_input.text() == "":
+        if self.widget.last_name_input.text().strip() == "":
             QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe ingresar un apellido.")
             return
-        if self.widget.mail_input.text() == "":
+        if self.widget.mail_input.text().strip() == "":
             QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe ingresar un correo válido.")
             return
-        if self.widget.phone_input.text() == "" or not validate_phone(str(self.widget.phone_input.text())):
+        if self.widget.phone_input.text().strip() == "" or not validate_phone(str(self.widget.phone_input.text())):
             QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe ingresar un teléfono válido.")
             return
-        if self.widget.address_input.text() == "":
+        if self.widget.address_input.text().strip() == "":
             QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe ingresar una dirección válida.")
             return
 
@@ -164,95 +164,174 @@ class FormAddDiscount(BaseWidget):
         if discount:
             self.discount = discount
         self.viewmodel = viewmodel
-        self.category = [
-            "Procesador", 
-            "RAM", 
-            "Placa madre", 
-            "Fuente de poder", 
-            "SSD", 
-            "Tarjeta gráfica", 
-            "HDD"
-        ]
+
         self.discount_type = [
-            "Descuento Directo",# 1
-            "Oferta por Combo / Pack",# 2
-            "Descuento por Cantidad",# 3
-            "Oferta Flash / Tiempo Limitado",# 4
-            "Envío Gratuito",# 5
-            "Producto de Regalo / Complementario",# 6
-            "Financiación sin Intereses",# 7
-            "Programa de Puntos / Lealtad",# 8
-            "Pre-compra / Lanzamiento",# 9
-            "Reembolso (Cashback)",# 10
-            "Descuento Educativo / Estudiantes"# 11
+            "--- seleccione una opcion ---",
+            "Descuento directo",
+            "Oferta de tiempo limitado",
+            "Producto de regalo / complementario",
+            "Programa de lealtad",
+            "Pre-compra / Lanzamiento",
+            "Descuento para estudiantes"
         ]
 
-        self.widget.type_combo.addItem("--- seleccione una opcion ---")
         self.widget.type_combo.addItems(self.discount_type)
-
-        self.widget.affected_combo.addItem("--- seleccione una opcion ---")
-        # category or specific product
-        self.widget.affected_combo.addItems(self.category)
-        self.widget.affected_combo.addItems(self.products)
-        
-        self.widget.start_dateTime.setDateTime(QDateTime.currentDateTime())
-        self.widget.end_dateTime.setDateTime(QDateTime.currentDateTime())
 
         self.widget.start_dateTime.setDisplayFormat("dd-MM-yyyy")
         self.widget.end_dateTime.setDisplayFormat("dd-MM-yyyy")
+        self.widget.start_dateTime.setDateTime(QDateTime.currentDateTime())
+        self.widget.end_dateTime.setDateTime(QDateTime.currentDateTime())
+    
+        self.widget.type_disc_combo.addItems(["--- seleccione una opcion ---","%","CLP"])
+        self.widget.type_disc_combo.currentIndexChanged.connect(self.on_index)
+        self.widget.client_combo.addItem("--- seleccione una opcion ---")
+        for client in self.viewmodel.client.get_client():
+            self.widget.client_combo.addItem(client["name"])
 
-        self.widget.time_groupbox.hide()
-        self.widget.details_groupbox.hide()
+        self.widget.student_combo.addItems(["--- seleccione una opcion ---","ID valido", "ID invalido"])
+
+        self.widget.affected_combo.addItem("--- seleccione una opcion ---")
+        for product in self.products:
+            self.widget.affected_combo.addItem(f"{product["brand"]} {product["model"]}")
+
+        self.on_index_change(0)
         
         self.widget.type_combo.currentIndexChanged.connect(self.on_index_change)
         self.widget.ok_button.clicked.connect(self.create_discount)
 
+        if is_editing:
+            self.widget.name_input.setText(self.discount["name"])
+            type_index = self.discount_type.index(self.discount["type"]) if self.discount["type"] in self.discount_type else 0
+            self.widget.type_combo.setCurrentIndex(type_index)
+            self.widget.desc_input.setText(self.discount["description"])
+            if self.discount["details"].get("type"):
+                self.widget.type_disc_combo.setCurrentText(self.discount["details"]["type"])
+                self.widget.value_disc_spinbox.setValue(int(self.discount["details"]["value"]))
+            if self.discount["details"].get("start date") and self.discount["details"].get("end date"):
+                self.widget.start_dateTime.setTime(self.discount["details"]["start date"])
+                self.widget.end_dateTime.setTime(self.discount["details"]["end date"])
+            if self.discount["details"].get("item affected") and self.discount["details"].get("quantity"):
+                self.widget.affected_combo.setCurrentText(str(self.discount["details"]["item affected"]))
+                self.widget.quantity_spinbox.setValue(int(self.discount["details"]["quantity"]))
+            if self.discount["details"].get("client"):
+                self.widget.client_combo.setCurrentText(str(self.discount["details"]["client"]))
+            if self.discount["details"].get("student ID"):
+                self.widget.student_combo.setCurrentText(
+                    "ID valido" if self.discount["details"]["student ID"] == "validated" else "ID invalido"
+                    )
+
     def create_discount(self):
+        index = self.widget.type_combo.currentIndex()
+        data = {}
         # general case
         if self.widget.name_input.text().strip() == "":
             QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe ingresar un nombre valido.")
             return
-        if self.widget.type_combo.currentIndex() == 0 or self.widget.type_combo.currentIndex() == -1:
-            QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe seleccionar un tipo valido.")
+        if index == 0 or index == -1:
+            QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe seleccionar un tipo de descuento valido.")
             return
         if self.widget.desc_input.text().strip() == "":
             QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe ingresar una descripcion valida.")
             return
-        if self.widget.affected_combo.currentIndex() == 0 or self.widget.affected_combo.currentIndex() == -1:
-            QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe seleccionar una categoria/producto valido.")
-            return
         
-        if self.widget.type_combo.currentIndex() == 1: # direct discount
-            if self.widget.direct_spinbox.text() == 0:
-                QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe ingresar un valor mayor a 0.")
+        if index in [1,2,4,5,6]:
+            if self.widget.type_disc_combo.currentIndex() == 0:
+                QtWidgets.QMessageBox.warning(
+                    self.widget, "Advertencia", "Debe seleccionar un tipo de valor para el descuento valido."
+                )
                 return
-            if self.widget.direct_combo.currentIndex() == 0 or self.widget.direct_combo.currentIndex() == -1:
-                QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe seleccionar una opcion.")
+            if self.widget.value_disc_spinbox.value() == 0:
+                QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe ingresar un valor mayor a 0 valido.")
                 return
-        elif self.widget.type_combo.currentIndex() == 3:
-            if self.widget.start_dateTime.dateTime() > QDateTime.currentDateTime():
+            data["type"] = self.widget.type_disc_combo.currentText()
+            data["value"] = str(self.widget.value_disc_spinbox.value())
+        if index in [2,5]:
+            if self.widget.start_dateTime.date() < QDateTime.currentDateTime().date():
                 QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe ingresar una fecha a partir de hoy en adelante.")
                 return
-            if self.widget.end_dateTime.dateTime() < self.widget.start_dateTime.dateTime():
-                QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe ingresar una fecha mayor a la de inicio.")
+            if self.widget.end_dateTime.date() < QDateTime.currentDateTime().date():
+                QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe ingresar una fecha a partir de hoy en adelante.")
                 return
-            if self.widget.time_spinbox.text() == 0:
-                QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe ingresar un valor mayor a 0.")
+            if self.widget.start_dateTime.date() == self.widget.end_dateTime.date():
+                QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe ingresar una fecha que tenga al menos 2 dias de diferencia.")
                 return
-            if self.widget.time_combo.currentIndex() == 0 or self.widget.direct_combo.currentIndex() == -1:
-                QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe seleccionar una opcion.")
+            if self.widget.end_dateTime.date() < self.widget.start_dateTime.date().addDays(2):
+                QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe ingresar una fecha que tenga al menos 2 dias de diferencia.")
                 return
-
-
-        QtWidgets.QMessageBox.warning(self.widget, "Advertencia","Descuento ingresado con exito.")
+            data["start date"] = str(self.widget.start_dateTime.date().toString("dd-MM-yyyy"))
+            data["end date"] = str(self.widget.end_dateTime.date().toString("dd-MM-yyyy"))
+        if index in [3,5]:
+            if self.widget.affected_combo.currentIndex() in [-1,0]:
+                QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe seleccionar un producto valido.")
+                return
+            data["item affected"] = self.widget.affected_combo.currentText()
+        if index == 3:
+            if self.widget.quantity_spinbox.value() == 0:
+                QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe ingresar una cantidad valida.")
+                return
+            data["quantity"] = self.widget.quantity_spinbox.value()
+        if index == 4:
+            if self.widget.client_combo.currentIndex() in [-1,0]:
+                QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe seleccionar un cliente valido.")
+                return
+            data["client"] = self.widget.client_combo.currentText()
+        if index == 6:
+            if self.widget.student_combo.currentIndex() in [-1,0]:
+                QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe seleccionar un producto valido.")
+                return
+            data["student ID"] = ["validated" if self.widget.student_combo.currentIndex() == 1 else "not validated"]
+        
+        # saving discount
+        if not self.is_editing:
+            self.viewmodel.discount.create_discount(Discount(
+                self.widget.name_input.text(),
+                self.widget.type_combo.currentText(),
+                self.widget.desc_input.text(),
+                data
+            ))
+            QtWidgets.QMessageBox.warning(self.widget, "Advertencia","Descuento ingresado con exito.")
+        else:
+            self.viewmodel.discount.update_discount(self.discount["uuid"],Discount(
+                self.widget.name_input.text(),
+                self.widget.type_combo.currentText(),
+                self.widget.desc_input.text(),
+                data
+            ))
+            QtWidgets.QMessageBox.warning(self.widget, "Advertencia","Descuento actualizado con exito.")
         self.discount_create.emit(True)
         self.widget.close()
     
     def on_index_change(self, index):
-        self.widget.time_groupbox.hide()
-        self.widget.details_groupbox.hide()
-        if index == 1: # direct discount
-            self.widget.details_groupbox.show()
-        elif index == 4: # discount flash
-            self.widget.time_groupbox.show()
-            self.widget.details_groupbox.show()
+        self.widget.start_time_widget.hide()
+        self.widget.end_time_widget.hide()
+        self.widget.value_discount_widget.hide()
+        self.widget.client_selection_widget.hide()
+        self.widget.student_widget.hide()
+        self.widget.item_affected_widget.hide()
+        self.widget.quantity_widget.hide()
+
+        if index == 1: # directo
+            self.widget.value_discount_widget.show()
+        elif index == 2: # tiempo limitado
+            self.widget.start_time_widget.show()
+            self.widget.end_time_widget.show()
+            self.widget.value_discount_widget.show()
+        elif index == 3: # producto de regalo
+            self.widget.item_affected_widget.show()
+            self.widget.quantity_widget.show()
+        elif index == 4: # programa de lealtad
+            self.widget.value_discount_widget.show()
+            self.widget.client_selection_widget.show()
+        elif index == 5: # pre-lanzamiento
+            self.widget.item_affected_widget.show()
+            self.widget.value_discount_widget.show()
+            self.widget.start_time_widget.show()
+            self.widget.end_time_widget.show()
+        elif index == 6: # descuento estudiantes
+            self.widget.value_discount_widget.show()
+            self.widget.student_widget.show()
+    def on_index(self,index:int):
+        if index == 1:
+            self.widget.value_disc_spinbox.setMaximum(100)
+        elif index == 2:
+            self.widget.value_disc_spinbox.setMaximum(100000)

@@ -18,9 +18,10 @@ class EmployeeWidget(BaseWidget):
         self.employee_uuid = employee_uuid
         self.total = 0
         self.products_to_sell = []
+        self.discount_apply = []
         self.widget.name_label.setText(employee_name)
 
-        self.column_mapping = {
+        self.column_mapping_products = {
             "Nombre": "model",
             "Categoría": "category",
             "Marca": "brand",
@@ -38,11 +39,10 @@ class EmployeeWidget(BaseWidget):
             "Dirección": "address"
         }
         self.column_mapping_discount = {
-            "Nombre": "discount_name",
-            "Porcentaje": "percentage",
+            "Nombre": "name",
+            "Tipo": "type",
             "Descripcion": "description",
-            "Productos afectados": "items_affected",
-            "Categoria": "category"
+            "detalles": "details"
         }
         self.store = None
         for store in self.viewmodel.store.read_stores():
@@ -51,23 +51,21 @@ class EmployeeWidget(BaseWidget):
                 if employee.get("uuid") == self.employee_uuid:
                     self.store = store
                     break
+        self.discount_data = self.viewmodel.discount.read_discount()
+        self.list_client = self.viewmodel.client.get_client()
 
         self.widget.tab_widget.currentChanged.connect(self.handle_tabs)
 
         # discount tab
-        self.discount_data = self.viewmodel.discount.read_discount()
-
-        self.widget.discount_table
         self.widget.discount_add_button.clicked.connect(self.handle_create_discount)
-        self.widget.discount_apply_button
-        self.widget.discount_edit_button
-        self.widget.discount_delete_button
+        self.widget.discount_apply_button.clicked.connect(self.handle_apply_discount)
+        self.widget.discount_edit_button.clicked.connect(self.handle_edit_discount)
+        self.widget.discount_delete_button.clicked.connect(self.handle_delete_discount)
+        self.widget.discount_table.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
 
         # sale tab
-        self.list_client = self.viewmodel.client.get_client()
-
-        self.widget.sell_table_widget.setColumnCount(len(self.column_mapping))
-        self.widget.sell_table_widget.setHorizontalHeaderLabels(list(self.column_mapping.keys()))
+        self.widget.sell_table_widget.setColumnCount(len(self.column_mapping_products))
+        self.widget.sell_table_widget.setHorizontalHeaderLabels(list(self.column_mapping_products.keys()))
         self.widget.sell_table_widget.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
         self.widget.sell_add_product.clicked.connect(self.handle_add_product)
         self.widget.sell_delete_product.clicked.connect(self.handle_delete_product)
@@ -76,8 +74,8 @@ class EmployeeWidget(BaseWidget):
         self.widget.sale_history_button.clicked.connect(self.handle_sale_history_button)
 
         # warranty tab
-        self.widget.warranty_table.setColumnCount(len(self.column_mapping))
-        self.widget.warranty_table.setHorizontalHeaderLabels(list(self.column_mapping.keys()))
+        self.widget.warranty_table.setColumnCount(len(self.column_mapping_products))
+        self.widget.warranty_table.setHorizontalHeaderLabels(list(self.column_mapping_products.keys()))
         self.widget.warranty_table.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
         self.widget.warranty_add_button.clicked.connect(self.handle_add_warranty)
 
@@ -85,7 +83,8 @@ class EmployeeWidget(BaseWidget):
         self.widget.client_create_button.clicked.connect(self.handle_create_client)
         self.widget.client_delete_button.clicked.connect(self.handle_discard_client)
         self.widget.client_update_button.clicked.connect(self.handle_update_client_1)
-        self.handle_update(self.widget.discount_table)
+
+        self.handle_tabs(0)
 
     def handle_tabs(self, index: int):
         if index == 0:
@@ -95,7 +94,7 @@ class EmployeeWidget(BaseWidget):
             self.widget.client_comboBox.clear()
             self.widget.client_comboBox.addItems(["-- seleccione un cliente --"] + [f"{value["name"]} {value["lastName"]}" for value in self.list_client])
         elif index == 2:  # warranty tab
-            self.handle_update(self.widget.warranty_table, None, None)
+            self.handle_update(self.widget.warranty_table)
         elif index == 3:
             self.handle_update_client(self.widget.client_table_widget)
 
@@ -165,26 +164,57 @@ class EmployeeWidget(BaseWidget):
         receipt += f"Nombre del cliente: {self.list_client[index]["name"]} {self.list_client[index]["lastName"]}\n"
         receipt += f"RUT del cliente: {RUT.get_pretty_rut_static(int(self.list_client[index]['identification']))}\nItems:\n"
         total = 0
+        data = self.discount_apply["details"]
         for product in self.products_to_sell:
             model = product["model"]
             quantity = int(product["quantity"])
             price = int(product["price"])
-            subtotal = quantity * price
+
+            if data.get("start date") and data.get("start date"):
+                start_date = int(data["start date"])
+                end_date = int(data["end date"])
+                if start_date >= int(self.viewmodel.sale.get_current_time()) >= end_date:
+                    QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "El descuento no es válido en este momento.")
+                    return
+
+            if data.get("item affected") and data["item affected"] == f"{product["brand"]} {model}":
+                    subtotal = quantity * [price - (price * int(data["value"]) / 100)]
+            else:
+                subtotal = quantity * price
             if product["warranty"] is not None:
                 warranty = product["warranty"]
             else:
                 warranty = "sin garantía"
             receipt += f"{model} ({warranty}) - {quantity} x ${f"{price:,}".replace(',','.')} = ${f"{subtotal:,}".replace(',','.')}\n"
             total += subtotal
+        studentID = True
+        if data.get("student ID"): 
+            if data["student ID"] != "validated":
+                QtWidgets.QMessageBox.warning(
+                    self.widget, 
+                    "Advertencia", 
+                    "por que no se valido el id del estudiante no se aplicara el descuento"
+                )
+                studentID = False
+
+        if data.get("type") and data.get("value") and studentID:
+            if data["type"] == "%":
+                total -= int(total * int(data["value"]) / 100)
+            elif data["type"] == "CLP":
+                total -= int(data["value"])
+            receipt += f"{self.discount_apply["name"]}: - {data["type"]}{data["value"]}\n"
+        
+        
         total = f"{total:,}".replace(',', '.')
         receipt += f"Total: ${total}\nGracias por su compra!"
         self.viewmodel.sale.create_sale(
-            Sale(self.store["uuid"], self.employee_uuid, self.list_client[index]["identification"], self.products_to_sell)
+            Sale(self.store["uuid"], self.employee_uuid, self.list_client[index]["identification"], self.products_to_sell, self.discount_apply)
         )
 
         QtWidgets.QMessageBox.information(self.widget, "Recibo de Venta", receipt)
 
         self.products_to_sell = []
+        self.discount_apply = []
         self.total = 0
         self.handle_update(self.widget.sell_table_widget, self.widget.groupBox, self.widget.sell_total_label)
         self.widget.client_comboBox.setCurrentIndex(0)
@@ -214,7 +244,7 @@ class EmployeeWidget(BaseWidget):
     @QtCore.Slot(bool)
     def handle_createClient(self, clientData):
         if clientData:
-            self.handle_update_client_2(self.widget.client_table_widget)
+            self.handle_update_client(self.widget.client_table_widget)
         else:
             QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "se canceló la creación del cliente.")
             return
@@ -375,22 +405,58 @@ class EmployeeWidget(BaseWidget):
         self.aux_widget.discount_create.connect(self.handle_createDiscount)
         self.aux_widget.show()
 
+    def handle_apply_discount(self):
+        index = self.widget.discount_table.currentRow()
+        if index == -1:
+            QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe seleccionar alguna fila.")
+            return
+        """
+        tipos de descuentos:                  | efectos
+        Descuento directo                     | x descuento al precio final
+        Oferta de tiempo limitado             | x descuento al precio final dentro del tiempo establecido
+        Producto de regalo / complementario   | x producto con x cantidad gratis
+        Programa de lealtad                   | x cliente seleccionado al precio final
+        Pre-compra / Lanzamiento              | x producto especifico dentro del tiempo establecido
+        Descuento para estudiante             | x producto con x descuento si es valido
+        """
+        result = QtWidgets.QMessageBox.question(
+            self.widget,
+            "Pregunta",
+            f"Desea aplicar el descuento: '{self.discount_data[index]["type"]}' al precio final?"
+        )
+        if result == QtWidgets.QMessageBox.StandardButton.Yes:
+            self.discount_apply = self.discount_data[index]
+            self.widget.tab_widget.setCurrentIndex(1)
+
     @QtCore.Slot(bool)
-    def handle_createDiscount(self):
-        pass
+    def handle_createDiscount(self, discountData):
+        if discountData:
+            self.handle_update_discount(self.widget.discount_table)
+        else:
+            QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "se canceló la creación del descuento.")
+            return
+    
+    def handle_delete_discount(self):
+        current_row = self.widget.discount_table.currentRow()
+        if current_row == -1:
+            QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe seleccionar alguna fila.")
+            return
+        result = QtWidgets.QMessageBox.question(
+            self.widget,
+            "Pregunta",
+            f"Desea borrar el descuento número {current_row +  1}?"
+        )
+        if result == QtWidgets.QMessageBox.StandardButton.Yes:
+            self.viewmodel.discount.delete_discount(self.discount_data[current_row]["uuid"])
+            self.handle_update_discount(self.widget.discount_table)
+            QtWidgets.QMessageBox.information(self.widget, "Información", "Descuento borrado con éxito.")
 
-    def handle_update_discount(self, table_widget: QtWidgets.QTableWidget):
-        table_widget.clearContents()
-
-        table_widget.setRowCount(len(self.discount_data))
-        column_keys = list(self.column_mapping_discount.keys())
-        table_widget.setColumnCount(len(self.column_mapping_discount))
-        table_widget.setHorizontalHeaderLabels(list(self.column_mapping_discount.keys()))
-
-        for i, discount in enumerate(self.discount_data):
-            for j, key in enumerate(column_keys):
-                table_widget.setItem(i,j, QtWidgets.QTableWidgetItem(str(discount.get(self.column_mapping_discount[key]))))
-        
+    def handle_edit_discount(self):
+        index = self.widget.discount_table.currentRow()
+        self.aux_widget = FormAddDiscount(self.viewmodel, self.store, True, self.discount_data[index])
+        self.aux_widget.discount_create.connect(self.handle_createDiscount)
+        self.aux_widget.show()
+      
     def handle_update(
             self,
             table_widget: QtWidgets.QTableWidget,
@@ -407,10 +473,10 @@ class EmployeeWidget(BaseWidget):
                 group_box.setTitle("No hay componentes para vender")
 
         if self.products_to_sell:
-            column_keys = list(self.column_mapping.keys())
+            column_keys = list(self.column_mapping_products.keys())
             for i, product in enumerate(self.products_to_sell):
                 for j, key in enumerate(column_keys):
-                    value = product.get(self.column_mapping[key], "no tiene")
+                    value = product.get(self.column_mapping_products[key], "no tiene")
                     if value is None:
                         value = "no tiene"
                     if key == "Precio":
@@ -422,10 +488,16 @@ class EmployeeWidget(BaseWidget):
             table_widget.setRowCount(0)
 
         self.total = sum(int(product["quantity"]) * int(product["price"]) for product in self.products_to_sell)
-
         if total_label is not None:
             total = f"{self.total:,}".replace(',', '.')
-            total_label.setText(f"Total: ${total}")
+            if self.discount_apply:
+                data = self.discount_apply["details"]
+                if data.get("type") and data.get("value"):
+                    total_label.setText(f"Total: ${total} - con un descuento del {data['type']}{data['value']}")
+                elif data.get("item affected"):
+                    total_label.setText(f"Total: ${total} - con un descuento al producto: {data['item affected']}")
+            else:
+                total_label.setText(f"Total: ${total}")
     
     def handle_update_client(self, table_widget: QtWidgets.QTableWidget):
         data = self.viewmodel.client.get_client()
@@ -438,3 +510,16 @@ class EmployeeWidget(BaseWidget):
         for i, client in enumerate(data):
             for j, key in enumerate(column_keys):
                 table_widget.setItem(i,j, QtWidgets.QTableWidgetItem(str(client.get(self.column_mapping_client[key]))))
+    
+    def handle_update_discount(self, table_widget: QtWidgets.QTableWidget):
+        table_widget.clearContents()
+        self.discount_data = self.viewmodel.discount.read_discount()
+        table_widget.setRowCount(len(self.discount_data))
+        column_keys = list(self.column_mapping_discount.keys())
+        table_widget.setColumnCount(len(self.column_mapping_discount))
+        table_widget.setHorizontalHeaderLabels(list(self.column_mapping_discount.keys()))
+
+        for i, discount in enumerate(self.discount_data):
+            for j, key in enumerate(column_keys):
+                table_widget.setItem(i,j, QtWidgets.QTableWidgetItem(str(discount.get(self.column_mapping_discount[key]))))
+      
