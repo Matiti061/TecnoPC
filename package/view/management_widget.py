@@ -19,14 +19,15 @@ class ManagementWidget(BaseWidget):
         self.employees_tab = BaseWidget(os.path.join("ui", "management_widget.ui"))
         self.products_tab = BaseWidget(os.path.join("ui", "management_widget.ui"))
         self.providers_tab = BaseWidget(os.path.join("ui", "proovedores.ui"))
-        self.managers_tab = BaseWidget(os.path.join("ui", "management_widget.ui"))
-        self.widget.tab_widget.addTab(self.managers_tab.widget, "Gerentes")
+        self.managers_tab = BaseWidget(os.path.join("ui", "managers.ui"))
+        
         self.init_managers_tab()
         
         self.stores = self.viewmodel.store.read_stores()
         self.widget.tab_widget.addTab(self.employees_tab.widget, "Empleados")
         self.widget.tab_widget.addTab(self.products_tab.widget, "Componentes")
         self.widget.tab_widget.addTab(self.providers_tab.widget, "Proveedores")
+        self.widget.tab_widget.addTab(self.managers_tab.widget, "Gerentes")
         # store table view
         columns = ["Nombre", "Dirección", "Ciudad", "Teléfono", "Correo electrónico"]
         values = ["name", "address", "city", "phone", "mail"]
@@ -855,7 +856,15 @@ class ManagementWidget(BaseWidget):
         if current_row == -1:
             QtWidgets.QMessageBox.warning(self.managers_tab.widget, "Advertencia", "Debe seleccionar un gerente.")
             return
+
         manager = self.managers[current_row]
+        if str(manager["identification"]) == "12345678":
+            QtWidgets.QMessageBox.warning(
+                self.managers_tab.widget,
+                "Advertencia",
+                "No se puede editar los datos del gerente Matias Barrientos."
+            )
+            return
         self.aux_widget = BaseWidget(os.path.join("ui", "modify_manager.ui"))
         self.aux_widget.widget.rut_input.setText(str(manager["identification"]))
         self.aux_widget.widget.rut_input.setEnabled(False)
@@ -917,6 +926,14 @@ class ManagementWidget(BaseWidget):
             QtWidgets.QMessageBox.warning(self.managers_tab.widget, "Advertencia", "Debe seleccionar un gerente.")
             return
         manager = self.managers[current_row]
+        # Impedir borrar al manager Matias Barrientos con identificación "12345678"
+        if str(manager["identification"]) == "12345678":
+            QtWidgets.QMessageBox.warning(
+                self.managers_tab.widget,
+                "Advertencia",
+                "No se puede borrar al gerente Matias Barrientos."
+            )
+            return
         result = QtWidgets.QMessageBox.question(
             self.managers_tab.widget,
             "Pregunta",
@@ -926,5 +943,4 @@ class ManagementWidget(BaseWidget):
             self.viewmodel.manager.delete_manager(manager["uuid"])
             self.load_managers_table()
             QtWidgets.QMessageBox.information(self.managers_tab.widget, "Información", "Gerente borrado con éxito.")
-            
     
