@@ -13,9 +13,10 @@ class ProviderModel:
         self.model.data["providers"].append({
             "uuid": provider_uuid,
             "name": provider.name,
-            "adress": provider.adress,
             "phone": provider.phone,
             "mail": provider.mail,
+            "adress": provider.adress,
+
             "createdAt": f"{int(time.time())}",
             "updatedAt": None
         })
@@ -29,9 +30,9 @@ class ProviderModel:
     def edit_provider(self, provider_uuid: str, provider: Provider):
         self.model.edit_entity("providers", provider_uuid, {
             "name": provider.name,
-            "address": provider.adress,
             "phone": provider.phone,
             "mail": provider.mail,
+            "adress": provider.adress,
             "updatedAt": f"{int(time.time())}"
         })
         
