@@ -7,3 +7,4 @@ class Sale:
     employee_uuid: str
     client_rut: str
     products: list
+    discount: list
