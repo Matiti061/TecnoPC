@@ -453,6 +453,9 @@ class EmployeeWidget(BaseWidget):
 
     def handle_edit_discount(self):
         index = self.widget.discount_table.currentRow()
+        if index == -1:
+            QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe seleccionar alguna fila.")
+            return
         self.aux_widget = FormAddDiscount(self.viewmodel, self.store, True, self.discount_data[index])
         self.aux_widget.discount_create.connect(self.handle_createDiscount)
         self.aux_widget.show()
