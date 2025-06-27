@@ -1,5 +1,5 @@
 import os
-from PySide6 import QtCore, QtWidgets
+from PySide6 import QtCore, QtWidgets, QtGui
 from .base_widget import BaseWidget
 from .custom_dialog import CustomDialog
 from .form_add import FormAddProduct, FormAddClient, FormAddDiscount
@@ -85,6 +85,9 @@ class EmployeeWidget(BaseWidget):
         self.widget.client_update_button.clicked.connect(self.handle_update_client_1)
 
         self.handle_tabs(0)
+        # OIRS
+        self.widget.oirs_send.clicked.connect(self.oirs_send)
+        self.widget.oirs_clear.clicked.connect(self.oirs_clear)
 
     def handle_tabs(self, index: int):
         if index == 0:
@@ -97,6 +100,11 @@ class EmployeeWidget(BaseWidget):
             self.handle_update(self.widget.warranty_table)
         elif index == 3:
             self.handle_update_client(self.widget.client_table_widget)
+        elif index == 4:
+            self.widget.oirs_client.clear()
+            self.widget.oirs_client.addItems(
+                ["-- seleccione un cliente --"] + [f"{value["name"]} {value["lastName"]}" for value in
+                                                   self.list_client])
 
     def handle_add_product(self):  # note: just for the sale
         self.aux_widget = FormAddProduct(self.viewmodel, self.store)
@@ -525,4 +533,23 @@ class EmployeeWidget(BaseWidget):
         for i, discount in enumerate(self.discount_data):
             for j, key in enumerate(column_keys):
                 table_widget.setItem(i,j, QtWidgets.QTableWidgetItem(str(discount.get(self.column_mapping_discount[key]))))
-      
+
+    def oirs_send(self):
+        if self.widget.oirs_client.currentText() == "-- seleccione un cliente --":
+            QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe seleccionar un cliente.")
+            return
+        if not self.widget.oirs_message.toPlainText().strip():
+            QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe escribir un mensaje válido.")
+            return
+        # call model after checks
+        index = self.widget.oirs_client.currentIndex() - 1
+        self.viewmodel.oirs.create_oirs(self.list_client[index]["identification"], self.list_client[index]["name"], self.list_client[index]["lastName"], self.widget.oirs_subject.currentText(), self.widget.oirs_message.toPlainText().strip())
+        # ui info
+        QtWidgets.QMessageBox.information(self.widget, "Información", "Formulario enviado con éxito.")
+        self.oirs_clear()
+
+    def oirs_clear(self):
+        self.widget.oirs_client.setCurrentText("-- seleccione un cliente --")
+        doc = QtGui.QTextDocument()
+        doc.setDocumentLayout(QtWidgets.QPlainTextDocumentLayout(doc))
+        self.widget.oirs_message.setDocument(doc)

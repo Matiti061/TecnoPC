@@ -14,7 +14,8 @@ class ViewModel:
         self.client = self.model.client
         self.provider = self.model.provider
         self.discount = self.model.discount
-    
+        self.oirs = self.model.oirs
+
 
     def try_login(self, identification: int, password: str, store_uuid: str = None):
         for manager in self.model.manager.read_managers():
