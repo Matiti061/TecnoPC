@@ -91,6 +91,7 @@ class FormAddProduct(BaseWidget):
             "Marca": "brand",
             "Descripción": "description",
             "Precio": "price",
+            "Stock": "stock",  # <-- Agrega esta línea
             "ID": "uuid"
         }
 
@@ -107,11 +108,14 @@ class FormAddProduct(BaseWidget):
         column_keys = list(column_mapping.keys())
         for i, product in enumerate(self.products):
             for j, key in enumerate(column_keys):
-                self.widget.products_table.setItem(
-                    i,
-                    j,
-                    QtWidgets.QTableWidgetItem(str(product[column_mapping[key]]) if column_mapping[key] != "price" else f"${product[column_mapping[key]]:,}".replace(',','.'))
-                )
+                value = product.get(column_mapping[key], "no tiene")
+                if value is None:
+                    value = "no tiene"
+                if key == "Precio":
+                    price = f"${int(value):,}".replace(',', '.') if value != "no tiene" else value
+                    self.widget.products_table.setItem(i, j, QtWidgets.QTableWidgetItem(str(price)))
+                else:
+                    self.widget.products_table.setItem(i, j, QtWidgets.QTableWidgetItem(str(value)))
 
         self.widget.add_product.clicked.connect(self.handle_add_product)
         self.selected_products = []
@@ -130,9 +134,26 @@ class FormAddProduct(BaseWidget):
 
         selected_product: dict = self.products[current_row]
         product_uuid = selected_product["uuid"]
+        stock_disponible = int(selected_product.get("stock", 0))
+
+        # Verifica que la cantidad no exceda el stock
+        if quantity > stock_disponible:
+            QtWidgets.QMessageBox.warning(
+                self.widget,
+                "Advertencia",
+                f"No hay suficiente stock para {selected_product['model']}.\nStock disponible: {stock_disponible}, solicitado: {quantity}."
+            )
+            return
 
         for prod in self.selected_products:
             if prod["uuid"] == product_uuid:
+                if prod["quantity"] + quantity > stock_disponible:
+                    QtWidgets.QMessageBox.warning(
+                        self.widget,
+                        "Advertencia",
+                        f"No hay suficiente stock para {selected_product['model']}.\nStock disponible: {stock_disponible}, solicitado: {prod['quantity'] + quantity}."
+                    )
+                    return
                 prod["quantity"] += quantity
                 QtWidgets.QMessageBox.information(
                     self.widget,
