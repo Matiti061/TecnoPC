@@ -837,18 +837,20 @@ class ManagementWidget(BaseWidget):
         mail = self.aux_widget.widget.mail_input.text()
         password = self.aux_widget.widget.password_input.text()
         
-        rut = rut.replace(".", "").replace("-", "").replace(" ", "")
         name = name.strip()
         last_name = last_name.strip()
         phone = phone.replace(" ", "")
         mail = mail.replace(" ", "")
         password = password.replace(" ", "")
         
+        try:
+            rut1 = RUT(rut)
+        except ValueError:
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "RUT inválido.")
+            return
+        
         if not rut or not name or not last_name or not phone or not mail or not password:
             QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Complete todos los campos.")
-            return
-        if len(rut) < 8 or len(rut) >= 9:
-            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese un RUT válido.")
             return
         
         if password.replace(" ","") == "" or len(password.replace(" ", "")) < 8:
@@ -876,7 +878,7 @@ class ManagementWidget(BaseWidget):
             return
         
         new_manager = Person(name, last_name, phone, mail, password)
-        self.viewmodel.manager.create_manager(rut, new_manager)
+        self.viewmodel.manager.create_manager(str(rut1.rut), new_manager)
         self.load_managers_table()
         QtWidgets.QMessageBox.information(self.aux_widget.widget, "Información", "Gerente agregado con éxito.")
         self.aux_widget.widget.close()
