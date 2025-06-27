@@ -18,7 +18,8 @@ class View(BaseWidget):
 
     def callback(self, user_type: str, employee_uuid: str = None, employee_name: str = None):
         self.widget.close()
-        del self.aux_widget
+        if hasattr(self, "aux_widget"):
+            del self.aux_widget
         if user_type == "employee":
             self.aux_widget = EmployeeWidget(self.viewmodel, employee_uuid, employee_name)
             self.aux_widget.show()
