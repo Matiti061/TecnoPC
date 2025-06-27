@@ -7,6 +7,7 @@ from .product_model import ProductModel
 from .sale_model import SaleModel
 from .provider_model import ProviderModel
 from .discount_model import DiscountModel
+from .oirs_model import OirsModel
 
 
 class Model:
@@ -20,3 +21,4 @@ class Model:
         self.sale = SaleModel(self.model)
         self.provider = ProviderModel(self.model)
         self.discount = DiscountModel(self.model)
+        self.oirs = OirsModel(self.model)

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>578</width>
+    <width>591</width>
     <height>317</height>
    </rect>
   </property>
@@ -225,6 +225,127 @@
         </widget>
        </item>
       </layout>
+     </widget>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>OIRS</string>
+      </attribute>
+      <widget class="QWidget" name="horizontalLayoutWidget_2">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>230</y>
+         <width>561</width>
+         <height>36</height>
+        </rect>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QPushButton" name="oirs_send">
+          <property name="text">
+           <string>Enviar formulario</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="oirs_clear">
+          <property name="text">
+           <string>Limpiar formulario</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="verticalLayoutWidget">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>10</y>
+         <width>561</width>
+         <height>102</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QLabel" name="label_5">
+            <property name="text">
+             <string>Asunto</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="oirs_subject">
+            <item>
+             <property name="text">
+              <string>Consulta</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Felicitaciones</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Reclamo</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Solicitud</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Sugerencia</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <widget class="QLabel" name="label_7">
+            <property name="text">
+             <string>Cliente</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="oirs_client"/>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <widget class="QLabel" name="label_6">
+            <property name="text">
+             <string>Mensaje</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QPlainTextEdit" name="oirs_message">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>110</y>
+         <width>561</width>
+         <height>111</height>
+        </rect>
+       </property>
+       <property name="placeholderText">
+        <string>Escriba el contenido de la solicitud.</string>
+       </property>
+      </widget>
      </widget>
     </widget>
    </item>
