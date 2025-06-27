@@ -138,7 +138,7 @@ class ManagementWidget(BaseWidget):
         model = self.aux_widget.widget.model_input.text()
         category = self.aux_widget.widget.category_input.text()
         description = self.aux_widget.widget.description_input.text()
-        price_text = self.aux_widget.widget.price_input.text()
+        price_text = self.aux_widget.widget.price_input.text().strip()
         
         brand=brand.strip()
         model=model.strip()
