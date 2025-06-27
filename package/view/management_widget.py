@@ -1,5 +1,7 @@
 import os
-from PySide6 import QtWidgets
+import time
+
+from PySide6 import QtCore, QtGui, QtWidgets
 from .base_widget import BaseWidget
 from ..viewmodel import ViewModel
 from ..dataclasses.person import Person
@@ -20,14 +22,17 @@ class ManagementWidget(BaseWidget):
         self.products_tab = BaseWidget(os.path.join("ui", "management_widget.ui"))
         self.providers_tab = BaseWidget(os.path.join("ui", "proovedores.ui"))
         self.managers_tab = BaseWidget(os.path.join("ui", "managers.ui"))
-        
+        self.oirs_tab = BaseWidget(os.path.join("ui", "oirs.ui"))
+
         self.init_managers_tab()
         
         self.stores = self.viewmodel.store.read_stores()
+        self.oirs = self.viewmodel.oirs.read_oirs()
         self.widget.tab_widget.addTab(self.employees_tab.widget, "Empleados")
         self.widget.tab_widget.addTab(self.products_tab.widget, "Componentes")
         self.widget.tab_widget.addTab(self.providers_tab.widget, "Proveedores")
         self.widget.tab_widget.addTab(self.managers_tab.widget, "Gerentes")
+        self.widget.tab_widget.addTab(self.oirs_tab.widget, "OIRS")
         # store table view
         columns = ["Nombre", "Dirección", "Ciudad", "Teléfono", "Correo electrónico"]
         values = ["name", "address", "city", "phone", "mail"]
@@ -68,7 +73,13 @@ class ManagementWidget(BaseWidget):
         self.providers_tab.widget.editar_button.clicked.connect(self.handle_provider_update)
         self.providers_tab.widget.eliminar_button.clicked.connect(self.handle_provider_delete)
         self.load_providers_table()
-        
+
+        # OIRS
+        self.oirs_tab.widget.oirs_read.clicked.connect(self.oirs_read)
+        self.oirs_tab.widget.oirs_update.clicked.connect(self.oirs_update)
+        self.oirs_tab.widget.oirs_delete.clicked.connect(self.oirs_delete)
+        self.oirs_load()
+
     def load_providers_table(self):
         self.providers = self.viewmodel.provider.read_provider()
         table = self.providers_tab.widget.tabla_proveedores
@@ -943,4 +954,110 @@ class ManagementWidget(BaseWidget):
             self.viewmodel.manager.delete_manager(manager["uuid"])
             self.load_managers_table()
             QtWidgets.QMessageBox.information(self.managers_tab.widget, "Información", "Gerente borrado con éxito.")
-    
+
+    def oirs_load(self):
+        keys = ["RUT", "Nombre", "Apellido", "Asunto", "Resuelto?", "Fecha de creación", "Fecha de modificación"]
+        values = ["client_identification", "client_name", "client_last_name", "subject", "is_solved", "createdAt", "updatedAt"]
+        self.oirs_tab.widget.table_widget.setColumnCount(len(keys))
+        self.oirs_tab.widget.table_widget.setHorizontalHeaderLabels(keys)
+        self.oirs_tab.widget.table_widget.setRowCount(len(self.oirs))
+        for i, key in enumerate(self.oirs):
+            for j, value in enumerate(values):
+                if value == "client_identification":
+                    self.oirs_tab.widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(
+                        RUT.get_pretty_rut_static(int(key[value]))))
+                elif value == "is_solved":
+                    self.oirs_tab.widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem("Sí" if key[value] else "No"))
+                elif value == "createdAt":
+                    date = QtCore.QDateTime()
+                    date.setSecsSinceEpoch(int(key[value]))
+                    self.oirs_tab.widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem((date.toString())))
+                elif value == "updatedAt":
+                    if not key[value]:
+                        self.oirs_tab.widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem("No modificado"))
+                    else:
+                        date = QtCore.QDateTime()
+                        date.setSecsSinceEpoch(int(key[value]))
+                        self.oirs_tab.widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem((date.toString())))
+                else:
+                    self.oirs_tab.widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(str(key[value])))
+
+    def oirs_read(self):
+        current_row = self.oirs_tab.widget.table_widget.currentRow()
+        if current_row == -1:
+            QtWidgets.QMessageBox.warning(self.oirs_tab.widget, "Advertencia", "Debe seleccionar un caso.")
+            return
+        case = self.oirs[current_row]
+        message = f"RUT: {self.oirs_tab.widget.table_widget.item(current_row, 0).text()}\n"
+        message += f"Nombre: {self.oirs_tab.widget.table_widget.item(current_row, 1).text()}\n"
+        message += f"Apellido: {self.oirs_tab.widget.table_widget.item(current_row, 2).text()}\n"
+        message += f"Asunto: {self.oirs_tab.widget.table_widget.item(current_row, 3).text()}\n"
+        message += f"Resuelto?: {self.oirs_tab.widget.table_widget.item(current_row, 4).text()}\n"
+        message += f"Fecha de creación: {self.oirs_tab.widget.table_widget.item(current_row, 5).text()}\n"
+        message += f"Fecha de modificación: {self.oirs_tab.widget.table_widget.item(current_row, 6).text()}\n"
+        message += f"\nMensaje:\n{case['message']}"
+        if case["response"]:
+            message += f"\nResolución:\n{case['response']}"
+        QtWidgets.QMessageBox.information(self.oirs_tab.widget, "Información", message)
+
+    def oirs_delete(self):
+        current_row = self.oirs_tab.widget.table_widget.currentRow()
+        if current_row == -1:
+            QtWidgets.QMessageBox.warning(self.oirs_tab.widget, "Advertencia", "Debe seleccionar alguna fila.")
+            return
+        result = QtWidgets.QMessageBox.question(
+            self.oirs_tab.widget,
+            "Pregunta",
+            f"Desea borrar el reclamo número {current_row + 1}?"
+        )
+        if result == QtWidgets.QMessageBox.StandardButton.Yes:
+            self.viewmodel.oirs.delete_oirs(self.oirs[current_row]["uuid"])
+            self.oirs_tab.widget.table_widget.removeRow(current_row)
+            self.oirs_tab.widget.table_widget.setRowCount(len(self.oirs))
+            self.oirs_tab.widget.table_widget.setCurrentCell(-1, -1)
+            QtWidgets.QMessageBox.information(self.widget, "Información", "Reclamo borrado con éxito.")
+
+    def oirs_update(self):
+        current_row = self.oirs_tab.widget.table_widget.currentRow()
+        if current_row == -1:
+            QtWidgets.QMessageBox.warning(self.oirs_tab.widget, "Advertencia", "Debe seleccionar alguna fila.")
+            return
+        if self.oirs[current_row]["is_solved"]:
+            QtWidgets.QMessageBox.warning(self.oirs_tab.widget, "Advertencia", "Este caso ya fue resuelto.")
+            return
+        self.aux_widget = BaseWidget(os.path.join("ui", "oirs2.ui"))
+        # logic
+        self.aux_widget.widget.save.clicked.connect(lambda: self.oirs_resolution_save(self.oirs_tab.widget.table_widget.currentRow()))
+        self.aux_widget.widget.clear.clicked.connect(self.oirs_resolution_clear_form)
+        self.aux_widget.widget.yes_button.clicked.connect(self.yes_button)
+        self.aux_widget.widget.no_button.clicked.connect(self.no_button)
+        self.aux_widget.show()
+
+    def oirs_resolution_save(self, index: int):
+        msg = self.aux_widget.widget.resolution.toPlainText().strip()
+        if not msg:
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Debe escribir una resolución válida.")
+            return
+        # after checks
+        self.viewmodel.oirs.update_oirs(True, self.oirs[index]["uuid"], msg)
+        QtWidgets.QMessageBox.information(self.aux_widget.widget, "Información", "Guardado con éxito.")
+        self.oirs_tab.widget.table_widget.setItem(index, 4, QtWidgets.QTableWidgetItem("Sí"))
+        date = QtCore.QDateTime()
+        date.setSecsSinceEpoch(int(time.time()))
+        self.oirs_tab.widget.table_widget.setItem(index, 6, QtWidgets.QTableWidgetItem((date.toString())))
+        del self.aux_widget
+
+    def oirs_resolution_clear_form(self):
+        # input
+        doc = QtGui.QTextDocument()
+        doc.setDocumentLayout(QtWidgets.QPlainTextDocumentLayout(doc))
+        self.aux_widget.widget.resolution.setDocument(doc)
+
+    def yes_button(self):
+        self.aux_widget.widget.resolution.setEnabled(True)
+        self.aux_widget.widget.clear.setEnabled(True)
+
+    def no_button(self):
+        self.oirs_resolution_clear_form()
+        self.aux_widget.widget.resolution.setEnabled(False)
+        self.aux_widget.widget.clear.setEnabled(False)
