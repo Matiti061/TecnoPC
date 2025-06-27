@@ -21,6 +21,7 @@ class ManagementWidget(BaseWidget):
         self.employees_tab = BaseWidget(os.path.join("ui", "management_widget.ui"))
         self.products_tab = BaseWidget(os.path.join("ui", "management_widget.ui"))
         self.providers_tab = BaseWidget(os.path.join("ui", "proovedores.ui"))
+        self.stock_tab = BaseWidget(os.path.join("ui", "stock_widget.ui"))
         self.managers_tab = BaseWidget(os.path.join("ui", "managers.ui"))
         self.oirs_tab = BaseWidget(os.path.join("ui", "oirs.ui"))
 
@@ -31,6 +32,7 @@ class ManagementWidget(BaseWidget):
         self.widget.tab_widget.addTab(self.employees_tab.widget, "Empleados")
         self.widget.tab_widget.addTab(self.products_tab.widget, "Componentes")
         self.widget.tab_widget.addTab(self.providers_tab.widget, "Proveedores")
+        self.widget.tab_widget.addTab(self.stock_tab.widget, "Stock")
         self.widget.tab_widget.addTab(self.managers_tab.widget, "Gerentes")
         self.widget.tab_widget.addTab(self.oirs_tab.widget, "OIRS")
         # store table view
@@ -47,12 +49,13 @@ class ManagementWidget(BaseWidget):
         # add employees tab stores
         self.employees_tab.widget.stores_list.addItems([""] + [store["name"] for store in self.stores])
         self.products_tab.widget.stores_list.addItems([""] + [store["name"] for store in self.stores])
+        self.stock_tab.widget.stores_list.addItems([""] + [store["name"] for store in self.stores])
+
         # store CRUD
         self.widget.store_table_widget.setCurrentCell(-1, -1)
         self.widget.store_create_button.clicked.connect(self.handle_store_create)
         self.widget.store_update_button.clicked.connect(self.handle_store_update)
         self.widget.store_delete_button.clicked.connect(self.handle_store_delete)
-        # employee CRUD
 
         # product CRUD
         self.products_tab.widget.create_button.clicked.connect(self.handle_product_create)
@@ -67,7 +70,12 @@ class ManagementWidget(BaseWidget):
         self.employees_tab.widget.delete_button.clicked.connect(self.handle_employee_delete)
         self.employees_tab.widget.stores_list.currentTextChanged.connect(self.handle_employee_store_change)
         self.handle_employee_store_change()
-        
+
+        # stock CRUD
+        self.stock_tab.widget.administrar_stock_button.clicked.connect(self.handle_administrar_stock)
+        self.stock_tab.widget.stores_list.currentTextChanged.connect(self.handle_stock_store_change)
+        self.handle_stock_store_change()
+
         # provider CRUD
         self.providers_tab.widget.agregar_button.clicked.connect(self.handle_provider_create)
         self.providers_tab.widget.editar_button.clicked.connect(self.handle_provider_update)
@@ -938,6 +946,7 @@ class ManagementWidget(BaseWidget):
             return
         manager = self.managers[current_row]
         # Impedir borrar al manager Matias Barrientos con identificación "12345678"
+        # Borra la cuenta xfa
         if str(manager["identification"]) == "12345678":
             QtWidgets.QMessageBox.warning(
                 self.managers_tab.widget,
@@ -1061,3 +1070,69 @@ class ManagementWidget(BaseWidget):
         self.oirs_resolution_clear_form()
         self.aux_widget.widget.resolution.setEnabled(False)
         self.aux_widget.widget.clear.setEnabled(False)
+    
+    def handle_stock_store_change(self):
+        index = self.stock_tab.widget.stores_list.currentIndex()
+        stock_columns = ["Marca", "Modelo", "Categoría", "Descripción", "Precio", "Proveedor", "Stock"]
+        stock_values = ["brand", "model", "category", "description", "price", "provider", "stock"]
+        self.stock_tab.widget.table_widget.setColumnCount(len(stock_columns))
+        self.stock_tab.widget.table_widget.setHorizontalHeaderLabels(stock_columns)
+        if not index:
+            self.stock_tab.widget.table_widget.setRowCount(0)
+            return
+        products = self.viewmodel.product.read_products(self.stores[index - 1]["uuid"])
+        self.stock_tab.widget.table_widget.setRowCount(len(products))
+        for i, product in enumerate(products):
+            for j, value in enumerate(stock_values):
+                self.stock_tab.widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(str(product.get(value, ""))))
+    
+    def handle_administrar_stock(self):
+        if not self.stock_tab.widget.stores_list.currentText():
+            QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe seleccionar una tienda.")
+            return
+        current_row = self.stock_tab.widget.table_widget.currentRow()
+        if current_row == -1:
+            QtWidgets.QMessageBox.warning(self.stock_tab.widget, "Advertencia", "Debe seleccionar un producto.")
+            return
+
+        self.aux_widget = BaseWidget(os.path.join("ui", "modify_stock.ui"))
+        stock_value = self.stock_tab.widget.table_widget.item(current_row, 6)
+        if stock_value is None or stock_value.text() == "":
+            self.aux_widget.widget.quantity_spinbox.setValue(0)
+        else:
+            self.aux_widget.widget.quantity_spinbox.setValue(int(stock_value.text()))
+
+        index = self.stock_tab.widget.stores_list.currentIndex()
+        products = self.viewmodel.product.read_products(self.stores[index - 1]["uuid"])
+        product = products[current_row]
+        self.aux_widget.widget.value_brand.setText(str(product["brand"]))
+        self.aux_widget.widget.value_model.setText(str(product["model"]))
+        self.aux_widget.widget.value_category.setText(str(product["category"]))
+        self.aux_widget.widget.value_description.setText(str(product["description"]))
+        self.aux_widget.widget.value_price.setText(str(product["price"]))
+        self.aux_widget.widget.value_provider.setText(str(product["provider"]))
+
+        self.aux_widget.widget.cancel_button.clicked.connect(self.aux_widget.widget.close)
+        self.aux_widget.widget.apply_button.clicked.connect(lambda: self.handle_apply_stock(current_row))
+        self.aux_widget.show()
+
+    def handle_apply_stock(self, row):
+        try:
+            new_stock = self.aux_widget.widget.quantity_spinbox.value()
+        except Exception:
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Valor de stock inválido.")
+            return
+        index = self.stock_tab.widget.stores_list.currentIndex()
+        products = self.viewmodel.product.read_products(self.stores[index - 1]["uuid"])
+        product = products[row]
+        self.viewmodel.product.update_stock(self.stores[index - 1]["uuid"], product["uuid"], new_stock)
+        self.stock_tab.widget.table_widget.setItem(row, 6, QtWidgets.QTableWidgetItem(str(new_stock)))
+        QtWidgets.QMessageBox.information(self.aux_widget.widget, "Información", "Stock actualizado con éxito.")
+        self.aux_widget.widget.close()
+        product = self.viewmodel.product.read_products(self.stores[self.stock_tab.widget.stores_list.currentIndex() - 1]["uuid"])[row]
+        self.aux_widget.widget.value_brand.setText(str(product["brand"]))
+        self.aux_widget.widget.value_model.setText(str(product["model"]))
+        self.aux_widget.widget.value_category.setText(str(product["category"]))
+        self.aux_widget.widget.value_description.setText(str(product["description"]))
+        self.aux_widget.widget.value_price.setText(str(product["price"]))
+        self.aux_widget.widget.value_provider.setText(str(product["provider"]))

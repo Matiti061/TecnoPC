@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ModifyStockForm</class>
+ <widget class="QWidget" name="ModifyStockForm">
+  <property name="windowTitle">
+   <string>Administrar Stock</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QFormLayout" name="formLayout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_brand">
+       <property name="text"><string>Marca:</string></property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLabel" name="value_brand"/>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_model">
+       <property name="text"><string>Modelo:</string></property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLabel" name="value_model"/>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_category">
+       <property name="text"><string>Categoría:</string></property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLabel" name="value_category"/>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="label_description">
+       <property name="text"><string>Descripción:</string></property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QLabel" name="value_description"/>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="label_price">
+       <property name="text"><string>Precio:</string></property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QLabel" name="value_price"/>
+     </item>
+     <item row="5" column="0">
+      <widget class="QLabel" name="label_provider">
+       <property name="text"><string>Proveedor:</string></property>
+      </widget>
+     </item>
+     <item row="5" column="1">
+      <widget class="QLabel" name="value_provider"/>
+     </item>
+     <item row="6" column="0">
+      <widget class="QLabel" name="label_quantity">
+       <property name="text"><string>Cantidad:</string></property>
+      </widget>
+     </item>
+     <item row="6" column="1">
+      <widget class="QSpinBox" name="quantity_spinbox"/>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="buttonLayout">
+     <item>
+      <widget class="QPushButton" name="cancel_button">
+       <property name="text"><string>Cancelar</string></property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="apply_button">
+       <property name="text"><string>Aplicar</string></property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

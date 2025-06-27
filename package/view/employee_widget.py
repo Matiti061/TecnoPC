@@ -167,12 +167,43 @@ class EmployeeWidget(BaseWidget):
         if not self.products_to_sell:
             QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe haber algún item.")
             return
+
+        store_uuid = self.store["uuid"]
+        productos_actuales = self.viewmodel.product.read_products(store_uuid)
+
+        for product in self.products_to_sell:
+            cantidad_a_vender = int(product.get("quantity", 1))
+            producto_real = next((p for p in productos_actuales if p["uuid"] == product["uuid"]), None)
+            if producto_real is None:
+                QtWidgets.QMessageBox.warning(self.widget, "Advertencia", f"Producto {product['model']} no encontrado en stock.")
+                return
+            stock_actual = int(producto_real.get("stock", 0))
+            if stock_actual < cantidad_a_vender:
+                QtWidgets.QMessageBox.warning(
+                    self.widget,
+                    "Advertencia",
+                    f"No hay suficiente stock para {product['model']}.\nStock disponible: {stock_actual}, solicitado: {cantidad_a_vender}."
+                )
+                return
+
+        # Si todo OK, descuenta el stock y realiza la venta
+        for product in self.products_to_sell:
+            cantidad_a_vender = int(product.get("quantity", 1))
+            producto_real = next((p for p in productos_actuales if p["uuid"] == product["uuid"]), None)
+            if producto_real:
+                nuevo_stock = int(producto_real["stock"]) - cantidad_a_vender
+                self.viewmodel.product.update_stock(
+                    store_uuid,
+                    product["uuid"],
+                    nuevo_stock
+                )
+
         index = self.widget.client_comboBox.currentIndex() - 1
         receipt = f"Recibo de venta\nTienda: {self.store['name']}\nVendedor: {seller['name']}\n"
         receipt += f"Nombre del cliente: {self.list_client[index]["name"]} {self.list_client[index]["lastName"]}\n"
         receipt += f"RUT del cliente: {RUT.get_pretty_rut_static(int(self.list_client[index]['identification']))}\nItems:\n"
         total = 0
-        data = self.discount_apply["details"]
+        data = self.discount_apply["details"] if isinstance(self.discount_apply, dict) and "details" in self.discount_apply else {}
         for product in self.products_to_sell:
             model = product["model"]
             quantity = int(product["quantity"])
@@ -532,6 +563,7 @@ class EmployeeWidget(BaseWidget):
 
         for i, discount in enumerate(self.discount_data):
             for j, key in enumerate(column_keys):
+
                 table_widget.setItem(i,j, QtWidgets.QTableWidgetItem(str(discount.get(self.column_mapping_discount[key]))))
 
     def oirs_send(self):

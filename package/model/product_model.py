@@ -1,5 +1,7 @@
 import time
 import uuid
+import os
+import json
 from .internal_model import InternalModel
 from ..dataclasses.product import Product
 
@@ -53,4 +55,10 @@ class ProductModel:
     def delete_product(self, store_uuid: str, product_uuid: str):
         i, j = self.model.locate_nested_entity(["stores", "products"], [store_uuid, product_uuid])
         del self.model.data["stores"][i]["products"][j]
+        self.model.save()
+
+    def update_stock(self, store_uuid, product_uuid, new_stock):
+        # Usa el sistema centralizado de tu InternalModel
+        i, j = self.model.locate_nested_entity(["stores", "products"], [store_uuid, product_uuid])
+        self.model.data["stores"][i]["products"][j]["stock"] = new_stock
         self.model.save()
