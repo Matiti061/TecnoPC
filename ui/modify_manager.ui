@@ -86,7 +86,7 @@
         <enum>QLineEdit::Normal</enum>
        </property>
        <property name="placeholderText">
-        <string>Opcional</string>
+        <string>Requerido</string>
        </property>
       </widget>
      </item>

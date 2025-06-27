@@ -131,6 +131,7 @@ class ManagementWidget(BaseWidget):
         self.aux_widget = BaseWidget(os.path.join("ui", "modify_product.ui"))
         self.aux_widget.widget.ok_button.clicked.connect(self.handle_product_create_ok)
         self.aux_widget.widget.provider_input.addItems(_providers_2)
+        self.aux_widget.widget.price_input.setPlaceholderText("Requerido, solo números")
         self.aux_widget.show()
 
     def handle_product_create_ok(self):
@@ -297,6 +298,8 @@ class ManagementWidget(BaseWidget):
     def handle_store_create(self):
         self.aux_widget = BaseWidget(os.path.join("ui", "modify_store.ui"))
         self.aux_widget.widget.ok_button.clicked.connect(self.handle_store_create_ok_button)
+        self.aux_widget.widget.phone_input.setPlaceholderText("Anteponga el +")
+        self.aux_widget.widget.mail_input.setPlaceholderText("@ y . requeridos")
         self.aux_widget.show()
 
     def handle_store_create_ok_button(self):
@@ -489,6 +492,10 @@ class ManagementWidget(BaseWidget):
         self.aux_widget = BaseWidget(os.path.join("ui", "modify_employee.ui"))
         self.aux_widget.widget.ok_button.clicked.connect(self.handle_employee_create_ok)
         self.aux_widget.widget.password_input.setPlaceholderText("Requerido")
+        self.aux_widget.widget.rut_input.setPlaceholderText("Ingrese un RUT válido")
+        self.aux_widget.widget.phone_input.setPlaceholderText("Anteponga el +")
+        self.aux_widget.widget.mail_input.setPlaceholderText("@ y . requeridos")
+        self.aux_widget.widget.password_input.setPlaceholderText("Requerido, mínimo 8 caracteres")
         self.aux_widget.show()
 
     def handle_employee_create_ok(self):
@@ -653,6 +660,8 @@ class ManagementWidget(BaseWidget):
     def handle_provider_create(self):
         self.aux_widget = BaseWidget(os.path.join("ui", "proovedor_add.ui"))
         self.aux_widget.widget.aceptar_button.clicked.connect(self.handle_provider_create_ok)
+        self.aux_widget.widget.telefono_input.setPlaceholderText("Anteponga el +")
+        self.aux_widget.widget.email_input.setPlaceholderText("@ y . requeridos")
         self.aux_widget.show()
 
     def handle_provider_create_ok(self):
@@ -815,7 +824,9 @@ class ManagementWidget(BaseWidget):
         self.aux_widget = BaseWidget(os.path.join("ui", "modify_manager.ui"))
         self.aux_widget.widget.ok_button.clicked.connect(self.handle_manager_create_ok)
         self.aux_widget.widget.password_input.setPlaceholderText("Requerido")
-        self.aux_widget.widget.rut_input.setPlaceholderText("RUT sin puntos, guión ni digito verificador")
+        self.aux_widget.widget.rut_input.setPlaceholderText("Debe ingresar un RUT válido")
+        self.aux_widget.widget.phone_input.setPlaceholderText("Anteponga el +")
+        self.aux_widget.widget.mail_input.setPlaceholderText("@, y . son requeridos")
         self.aux_widget.show()
 
     def handle_manager_create_ok(self):
@@ -872,6 +883,7 @@ class ManagementWidget(BaseWidget):
 
     def handle_manager_update(self):
         current_row = self.managers_tab.widget.table_widget.currentRow()
+        self.aux_widget.widget.password_input.setPlaceholderText("Requerido")
         if current_row == -1:
             QtWidgets.QMessageBox.warning(self.managers_tab.widget, "Advertencia", "Debe seleccionar un gerente.")
             return
