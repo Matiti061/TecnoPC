@@ -115,8 +115,10 @@ class ManagementWidget(BaseWidget):
         self.products_tab.widget.table_widget.setRowCount(len(self.products))
         for i, key in enumerate(self.products):
             for j, value in enumerate(product_values):
-                self.products_tab.widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(
-                    str(key[value])))
+                cell_value = key[value]
+                if value == "price":
+                    cell_value = f"${int(cell_value):,}".replace(",", ".")
+                self.products_tab.widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(str(cell_value)))
 
     def handle_product_create(self):
         if not self.products_tab.widget.stores_list.currentText():
@@ -185,7 +187,7 @@ class ManagementWidget(BaseWidget):
         self.products_tab.widget.table_widget.setItem(row, 1, QtWidgets.QTableWidgetItem(model))
         self.products_tab.widget.table_widget.setItem(row, 2, QtWidgets.QTableWidgetItem(category))
         self.products_tab.widget.table_widget.setItem(row, 3, QtWidgets.QTableWidgetItem(description))
-        self.products_tab.widget.table_widget.setItem(row, 4, QtWidgets.QTableWidgetItem(str(price)))
+        self.products_tab.widget.table_widget.setItem(row, 4, QtWidgets.QTableWidgetItem(f"${int(price):,}".replace(",", ".")))
         self.products_tab.widget.table_widget.setItem(row, 5, QtWidgets.QTableWidgetItem(self.aux_widget.widget.provider_input.currentText()))
         QtWidgets.QMessageBox.information(self.aux_widget.widget, "Información", "Componente agregado con éxito.")
         self.aux_widget.widget.close()
@@ -262,7 +264,7 @@ class ManagementWidget(BaseWidget):
         self.products_tab.widget.table_widget.setItem(row, 1, QtWidgets.QTableWidgetItem(model))
         self.products_tab.widget.table_widget.setItem(row, 2, QtWidgets.QTableWidgetItem(category))
         self.products_tab.widget.table_widget.setItem(row, 3, QtWidgets.QTableWidgetItem(description))
-        self.products_tab.widget.table_widget.setItem(row, 4, QtWidgets.QTableWidgetItem(str(price)))
+        self.products_tab.widget.table_widget.setItem(row, 4, QtWidgets.QTableWidgetItem(f"${int(price):,}".replace(",", ".")))
         self.products_tab.widget.table_widget.setItem(row, 5, QtWidgets.QTableWidgetItem(provider))
         QtWidgets.QMessageBox.information(
             self.aux_widget.widget,
@@ -346,6 +348,7 @@ class ManagementWidget(BaseWidget):
             phone,
             mail
         )
+        self.viewmodel.store.create_store(new_store)
         # Update UI
         self.stores = self.viewmodel.store.read_stores()
         row = self.widget.store_table_widget.rowCount()
@@ -994,14 +997,18 @@ class ManagementWidget(BaseWidget):
                 elif value == "createdAt":
                     date = QtCore.QDateTime()
                     date.setSecsSinceEpoch(int(key[value]))
-                    self.oirs_tab.widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem((date.toString())))
+                    date = date.toLocalTime()
+                    locale = QtCore.QLocale(QtCore.QLocale.Spanish, QtCore.QLocale.Chile)
+                    self.oirs_tab.widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem((date.toString(locale.dateTimeFormat(QtCore.QLocale.ShortFormat)))))
                 elif value == "updatedAt":
                     if not key[value]:
                         self.oirs_tab.widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem("No modificado"))
                     else:
                         date = QtCore.QDateTime()
                         date.setSecsSinceEpoch(int(key[value]))
-                        self.oirs_tab.widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem((date.toString())))
+                        date = date.toLocalTime()
+                        locale = QtCore.QLocale(QtCore.QLocale.Spanish, QtCore.QLocale.Chile)
+                        self.oirs_tab.widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(date.toString(locale.dateTimeFormat(QtCore.QLocale.ShortFormat))))
                 else:
                     self.oirs_tab.widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(str(key[value])))
 
@@ -1067,7 +1074,9 @@ class ManagementWidget(BaseWidget):
         self.oirs_tab.widget.table_widget.setItem(index, 4, QtWidgets.QTableWidgetItem("Sí"))
         date = QtCore.QDateTime()
         date.setSecsSinceEpoch(int(time.time()))
-        self.oirs_tab.widget.table_widget.setItem(index, 6, QtWidgets.QTableWidgetItem((date.toString())))
+        date = date.toLocalTime()
+        locale = QtCore.QLocale(QtCore.QLocale.Spanish, QtCore.QLocale.Chile)
+        self.oirs_tab.widget.table_widget.setItem(index, 6, QtWidgets.QTableWidgetItem(date.toString(locale.dateTimeFormat(QtCore.QLocale.ShortFormat))))
         del self.aux_widget
 
     def oirs_resolution_clear_form(self):
@@ -1098,7 +1107,13 @@ class ManagementWidget(BaseWidget):
         self.stock_tab.widget.table_widget.setRowCount(len(products))
         for i, product in enumerate(products):
             for j, value in enumerate(stock_values):
-                self.stock_tab.widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(str(product.get(value, ""))))
+                cell_value = product.get(value, "")
+                if value == "price":
+                    try:
+                        cell_value = f"${int(cell_value):,}".replace(",", ".")
+                    except Exception:
+                        cell_value = str(cell_value)
+                self.stock_tab.widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(str(cell_value)))
     
     def handle_administrar_stock(self):
         if not self.stock_tab.widget.stores_list.currentText():
