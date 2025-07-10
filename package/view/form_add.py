@@ -26,21 +26,27 @@ class FormAddClient(BaseWidget):
             QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe ingresar un rut válido.")
             return
 
-        if self.widget.name_input.text().strip() == "":
+        if len(self.widget.name_input.text().replace(" ", "")) < 3:
             QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe ingresar un nombre.")
             return
-        if self.widget.last_name_input.text().strip() == "":
+        if len(self.widget.last_name_input.text().replace(" ", "")) < 3:
             QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe ingresar un apellido.")
             return
-        if self.widget.mail_input.text().strip() == "":
+        if len(self.widget.mail_input.text().replace(" ", "")) < 5 or "@" not in self.widget.mail_input.text() or "." not in self.widget.mail_input.text():
             QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe ingresar un correo válido.")
             return
-        if self.widget.phone_input.text().strip() == "" or not validate_phone(str(self.widget.phone_input.text())):
+        if self.widget.phone_input.text().replace(" ", "") == "" or not validate_phone(str(self.widget.phone_input.text())):
             QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe ingresar un teléfono válido.")
             return
-        if self.widget.address_input.text().strip() == "":
+        if len(self.widget.address_input.text().replace(" ","")) < 5 :
             QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe ingresar una dirección válida.")
             return
+        
+        name = self.widget.name_input.text().strip()
+        last_name = self.widget.last_name_input.text().strip()
+        phone = self.widget.phone_input.text().replace(" ", "")
+        mail = self.widget.mail_input.text().replace(" ", "")
+        address = self.widget.address_input.text().strip()
 
         client_data = self.viewmodel.client.get_client()
         if not self.is_editing:
@@ -51,26 +57,26 @@ class FormAddClient(BaseWidget):
             self.viewmodel.client.create_client(
                 str(rut.rut),
                 Person(
-                    str(self.widget.name_input.text()),
-                    str(self.widget.last_name_input.text()),
-                    str(self.widget.phone_input.text()),
-                    str(self.widget.mail_input.text()),
+                    name,
+                    last_name,
+                    phone,
+                    mail,
                     "0"
                 ),
-                str(self.widget.address_input.text())
+                address
             )
         else:
             self.viewmodel.client.update_client(
                 self.client["uuid"],
                 Person(
-                    str(self.widget.name_input.text()),
-                    str(self.widget.last_name_input.text()),
-                    str(self.widget.phone_input.text()),
-                    str(self.widget.mail_input.text()),
+                    name,
+                    last_name,
+                    phone,
+                    mail,
                     "0"
                 ),
                 str(rut.rut),
-                str(self.widget.address_input.text())
+                address
             )
         QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Cliente ingresado con exito.")
         self.client_create.emit(True)
