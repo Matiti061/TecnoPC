@@ -1138,7 +1138,7 @@ class ManagementWidget(BaseWidget):
         self.aux_widget.widget.value_model.setText(str(product["model"]))
         self.aux_widget.widget.value_category.setText(str(product["category"]))
         self.aux_widget.widget.value_description.setText(str(product["description"]))
-        self.aux_widget.widget.value_price.setText(str(product["price"]))
+        self.aux_widget.widget.value_price.setText(f"${int(product['price']):,}".replace(",", "."))
         self.aux_widget.widget.value_provider.setText(str(product["provider"]))
 
         self.aux_widget.widget.cancel_button.clicked.connect(self.aux_widget.widget.close)
@@ -1163,5 +1163,5 @@ class ManagementWidget(BaseWidget):
         self.aux_widget.widget.value_model.setText(str(product["model"]))
         self.aux_widget.widget.value_category.setText(str(product["category"]))
         self.aux_widget.widget.value_description.setText(str(product["description"]))
-        self.aux_widget.widget.value_price.setText(str(product["price"]))
+        self.aux_widget.widget.value_price.setText(f"${int(product['price']):,}".replace(",", "."))
         self.aux_widget.widget.value_provider.setText(str(product["provider"]))
