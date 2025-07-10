@@ -277,11 +277,14 @@ class EmployeeWidget(BaseWidget):
 
     def handle_create_client(self):
         self.aux_widget = FormAddClient(self.viewmodel)
+        self.aux_widget.widget.phone_input.setPlaceholderText("Anteponga el '+'")
+        self.aux_widget.widget.mail_input.setPlaceholderText("'@' y '.' requeridos")
         self.aux_widget.client_create.connect(self.handle_createClient)
         self.aux_widget.show()
     
     @QtCore.Slot(bool)
     def handle_createClient(self, clientData):
+
         if clientData:
             self.handle_update_client(self.widget.client_table_widget)
         else:
@@ -312,8 +315,30 @@ class EmployeeWidget(BaseWidget):
         last_name = self.aux_widget.widget.last_name_input.text()
         phone = self.aux_widget.widget.phone_input.text()
         mail = self.aux_widget.widget.mail_input.text()
+        
+        name= name.strip()
+        last_name = last_name.strip()
+        phone = phone.replace(" ", "")
+        mail = mail.replace(" ", "")
+        
         if not name or not last_name or not phone or not mail:
             QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Complete todos los campos.")
+            return
+        
+        if len(name.replace(" ", "")) < 3:
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese un nombre válido")
+            return
+        
+        if len(last_name.replace(" ", "")) < 3:
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese un apellido válido")
+            return
+        
+        if validate_phone(phone) is False:
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese un teléfono válido")
+            return
+        
+        if len(mail.replace(" ", "")) < 5 and "@" not in mail and "." not in mail:
+            QtWidgets.QMessageBox.warning(self.aux_widget.widget, "Advertencia", "Ingrese un correo electrónico válido")
             return
         
         # Actualizar empleado
