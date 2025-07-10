@@ -361,22 +361,26 @@ class EmployeeWidget(BaseWidget):
                 elif key == "createdAt":
                     date = QtCore.QDateTime()
                     date.setSecsSinceEpoch(int(sale[key]))
-                    self.aux_widget.widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem((date.toString())))
+                    date = date.toLocalTime()
+                    locale = QtCore.QLocale(QtCore.QLocale.Spanish, QtCore.QLocale.Chile)
+                    self.aux_widget.widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(date.toString(locale.dateTimeFormat(QtCore.QLocale.ShortFormat))))
                 elif key == "updatedAt":
                     if not sale[key]:
                         self.aux_widget.widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem("No modificado"))
                     else:
                         date = QtCore.QDateTime()
                         date.setSecsSinceEpoch(int(sale[key]))
-                        self.aux_widget.widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem((date.toString())))
+                        date = date.toLocalTime()
+                        locale = QtCore.QLocale(QtCore.QLocale.Spanish, QtCore.QLocale.Chile)
+                        self.aux_widget.widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(date.toString(locale.dateTimeFormat(QtCore.QLocale.ShortFormat))))
                 else:
                     self.aux_widget.widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(str(sale[key])))
         self.aux_widget.widget.table_widget.setCurrentCell(-1, -1)
-        # Button connections
+# Button connections
         self.aux_widget.widget.details_button.clicked.connect(self.handle_details_button)
         self.aux_widget.widget.delete_button.clicked.connect(self.handle_delete_button)
         self.aux_widget.widget.update_button.clicked.connect(self.handle_update_button)
-
+        
     def handle_details_button(self):
         current_row = self.aux_widget.widget.table_widget.currentRow()
         if current_row == -1:
