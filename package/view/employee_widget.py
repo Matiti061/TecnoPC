@@ -42,7 +42,7 @@ class EmployeeWidget(BaseWidget):
             "Nombre": "name",
             "Tipo": "type",
             "Descripcion": "description",
-            "detalles": "details"
+            "Detalles": "details"
         }
         self.store = None
         for store in self.viewmodel.store.read_stores():
