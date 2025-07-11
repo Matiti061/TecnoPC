@@ -29,23 +29,23 @@ store_uuids = []
 for store in stores:
     store_uuids.append(model.store.create_store(store))
 
-model.provider.create_provider(Provider("TecnoProductos", "12121212", "tecnoproductos@tecnopc.cl", "1212"))
-model.provider.create_provider(Provider("Atlas PC", "12121212", "atlaspc@tecnopc.cl", "1212"))
+model.provider.create_provider(Provider("TecnoProductos", "+56912121212", "tecnoproductos@tecnopc.cl", "1212"))
+model.provider.create_provider(Provider("Atlas PC", "+56912121212", "atlaspc@tecnopc.cl", "1212"))
 
 del model
 model = Model()
 # Employees
 employees = [
     # 22.000.000-1
-    ["22000000", Person("Juan", "Pérez", "987654321", "juan.perez@tecnopc.cl", "juanperez123")],
+    ["22000000", Person("Juan", "Pérez", "+56987654321", "juan.perez@tecnopc.cl", "juanperez123")],
     # 23.000.000-K
-    ["23000000", Person("María", "Gomez", "987654322", "maria.gomez@tecnopc.cl", "mariagomez123")],
+    ["23000000", Person("María", "Gomez", "+56987654322", "maria.gomez@tecnopc.cl", "mariagomez123")],
     # 24.000.000-8
-    ["24000000", Person("Carlos", "López", "987654323", "carlos.lopez@tecnopc.cl", "carloslopez123")],
+    ["24000000", Person("Carlos", "López", "+56987654323", "carlos.lopez@tecnopc.cl", "carloslopez123")],
     # 25.000.000-6
-    ["25000000", Person("Esteban", "Martínez", "987654324", "esteban.martinez@tecnopc.cl", "estebanmartinez123")],
+    ["25000000", Person("Esteban", "Martínez", "+56987654324", "esteban.martinez@tecnopc.cl", "estebanmartinez123")],
     # 27.000.000-2
-    ["27000000", Person("Jesús", "Minnitti", "945612783", "jesus.minnitti@tecnopc.cl", "jesusminnitti123")]
+    ["27000000", Person("Jesús", "Minnitti", "+56945612783", "jesus.minnitti@tecnopc.cl", "jesusminnitti123")]
 ]
 employee_uuids = []
 for employee in employees:

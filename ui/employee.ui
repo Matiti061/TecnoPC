@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>591</width>
+    <width>643</width>
     <height>317</height>
    </rect>
   </property>
@@ -17,7 +17,7 @@
    <item row="0" column="0">
     <widget class="QTabWidget" name="tab_widget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>4</number>
      </property>
      <widget class="QWidget" name="discount_tab">
       <attribute name="title">
@@ -64,7 +64,7 @@
           <item row="0" column="0" colspan="4">
            <widget class="QLabel" name="label_4">
             <property name="text">
-             <string>Aviso: solo se aplicara un descuento en caso de aplicar otro se sobreescribira</string>
+             <string>Aviso: Sólo se aplicará un descuento. En caso de aplicar otro descuento el actual se sobreescribirá.</string>
             </property>
            </widget>
           </item>
@@ -179,7 +179,7 @@
           <item row="0" column="0">
            <widget class="QLabel" name="label">
             <property name="text">
-             <string>Los productos que siguen en la venta se mostrarán.</string>
+             <string>Aviso: Los productos que siguen en la venta se mostrarán.</string>
             </property>
            </widget>
           </item>
@@ -233,7 +233,7 @@
       <widget class="QWidget" name="horizontalLayoutWidget_2">
        <property name="geometry">
         <rect>
-         <x>0</x>
+         <x>40</x>
          <y>230</y>
          <width>561</width>
          <height>36</height>
@@ -259,7 +259,7 @@
       <widget class="QWidget" name="verticalLayoutWidget">
        <property name="geometry">
         <rect>
-         <x>0</x>
+         <x>40</x>
          <y>10</y>
          <width>561</width>
          <height>102</height>
@@ -336,7 +336,7 @@
       <widget class="QPlainTextEdit" name="oirs_message">
        <property name="geometry">
         <rect>
-         <x>0</x>
+         <x>40</x>
          <y>110</y>
          <width>561</width>
          <height>111</height>

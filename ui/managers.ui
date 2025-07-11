@@ -14,13 +14,7 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout"/>
-   </item>
    <item row="2" column="0">
-    <widget class="QTableWidget" name="table_widget"/>
-   </item>
-   <item row="3" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <widget class="QPushButton" name="create_button">
@@ -46,11 +40,10 @@
     </layout>
    </item>
    <item row="1" column="0">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Lista de Gerentes: </string>
-     </property>
-    </widget>
+    <widget class="QTableWidget" name="table_widget"/>
+   </item>
+   <item row="0" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout"/>
    </item>
   </layout>
  </widget>

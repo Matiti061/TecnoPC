@@ -361,10 +361,6 @@ class EmployeeWidget(BaseWidget):
             QtWidgets.QMessageBox.warning(self.widget, "Advertencia", "Debe seleccionar un cliente para esta funcionalidad.")
             return
         # logic
-        self.aux_widget = BaseWidget(os.path.join("ui", "saleHistory.ui"))
-        self.aux_widget.show()
-        keys = ["createdAt", "client_rut", "updatedAt"]
-        values = ["Fecha de venta", "RUT de cliente", "Fecha de modificación"]
         self.sales = []
         for sale in self.viewmodel.sale.read_sales():
             if sale["client_rut"] == self.list_client[index - 1]["identification"]:
@@ -372,6 +368,10 @@ class EmployeeWidget(BaseWidget):
         if len(self.sales) == 0:
             QtWidgets.QMessageBox.information(self.widget, "Información", "Este cliente no posee ventas registradas.")
             return
+        self.aux_widget = BaseWidget(os.path.join("ui", "saleHistory.ui"))
+        self.aux_widget.show()
+        keys = ["createdAt", "client_rut", "updatedAt"]
+        values = ["Fecha de venta", "RUT de cliente", "Fecha de modificación"]
         # TableWidget
         self.aux_widget.widget.table_widget.setColumnCount(len(keys))
         self.aux_widget.widget.table_widget.setHorizontalHeaderLabels(values)
@@ -401,10 +401,9 @@ class EmployeeWidget(BaseWidget):
                 else:
                     self.aux_widget.widget.table_widget.setItem(i, j, QtWidgets.QTableWidgetItem(str(sale[key])))
         self.aux_widget.widget.table_widget.setCurrentCell(-1, -1)
-# Button connections
+        # Button connections
         self.aux_widget.widget.details_button.clicked.connect(self.handle_details_button)
         self.aux_widget.widget.delete_button.clicked.connect(self.handle_delete_button)
-        self.aux_widget.widget.update_button.clicked.connect(self.handle_update_button)
         
     def handle_details_button(self):
         current_row = self.aux_widget.widget.table_widget.currentRow()
@@ -446,9 +445,6 @@ class EmployeeWidget(BaseWidget):
             self.aux_widget.widget.table_widget.setRowCount(len(self.sales))
             self.aux_widget.widget.table_widget.setCurrentCell(-1, -1)
             QtWidgets.QMessageBox.information(self.aux_widget.widget, "Información", "Venta borrada con éxito.")
-
-    def handle_update_button(self):
-        pass
 
     def handle_discard_client(self):
         current_row = self.widget.client_table_widget.currentRow()

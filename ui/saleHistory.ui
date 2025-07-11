@@ -17,9 +17,9 @@
    <item row="1" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QPushButton" name="update_button">
+      <widget class="QPushButton" name="details_button">
        <property name="text">
-        <string>Editar</string>
+        <string>Ver productos vendidos</string>
        </property>
       </widget>
      </item>
@@ -34,13 +34,6 @@
    </item>
    <item row="0" column="0">
     <widget class="QTableWidget" name="table_widget"/>
-   </item>
-   <item row="2" column="0">
-    <widget class="QPushButton" name="details_button">
-     <property name="text">
-      <string>Ver productos vendidos</string>
-     </property>
-    </widget>
    </item>
   </layout>
  </widget>
