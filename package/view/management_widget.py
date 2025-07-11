@@ -817,7 +817,7 @@ class ManagementWidget(BaseWidget):
         table = self.managers_tab.widget.table_widget
         table.setRowCount(len(self.managers))
         for i, manager in enumerate(self.managers):
-            table.setItem(i, 0, QtWidgets.QTableWidgetItem(str(manager["identification"])))
+            table.setItem(i, 0, QtWidgets.QTableWidgetItem(RUT.get_pretty_rut_static(int(manager["identification"]))))
             table.setItem(i, 1, QtWidgets.QTableWidgetItem(manager["name"]))
             table.setItem(i, 2, QtWidgets.QTableWidgetItem(manager["lastName"]))
             table.setItem(i, 3, QtWidgets.QTableWidgetItem(manager["phone"]))
@@ -888,7 +888,6 @@ class ManagementWidget(BaseWidget):
 
     def handle_manager_update(self):
         current_row = self.managers_tab.widget.table_widget.currentRow()
-        self.aux_widget.widget.password_input.setPlaceholderText("Requerido")
         if current_row == -1:
             QtWidgets.QMessageBox.warning(self.managers_tab.widget, "Advertencia", "Debe seleccionar un gerente.")
             return
@@ -902,6 +901,7 @@ class ManagementWidget(BaseWidget):
             )
             return
         self.aux_widget = BaseWidget(os.path.join("ui", "modify_manager.ui"))
+        self.aux_widget.widget.password_input.setPlaceholderText("Requerido")
         self.aux_widget.widget.rut_input.setText(str(manager["identification"]))
         self.aux_widget.widget.rut_input.setEnabled(False)
         self.aux_widget.widget.name_input.setText(manager["name"])
@@ -1107,7 +1107,7 @@ class ManagementWidget(BaseWidget):
         self.stock_tab.widget.table_widget.setRowCount(len(products))
         for i, product in enumerate(products):
             for j, value in enumerate(stock_values):
-                cell_value = product.get(value, "")
+                cell_value = product.get(value, "No tiene")
                 if value == "price":
                     try:
                         cell_value = f"${int(cell_value):,}".replace(",", ".")

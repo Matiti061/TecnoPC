@@ -109,7 +109,7 @@
         <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
        </property>
        <property name="placeholderText">
-        <string>Opcional</string>
+        <string>Requerido</string>
        </property>
       </widget>
      </item>

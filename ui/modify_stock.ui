@@ -2,15 +2,25 @@
 <ui version="4.0">
  <class>ModifyStockForm</class>
  <widget class="QWidget" name="ModifyStockForm">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>188</width>
+    <height>232</height>
+   </rect>
+  </property>
   <property name="windowTitle">
-   <string>Administrar Stock</string>
+   <string>Stock</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QFormLayout" name="formLayout">
      <item row="0" column="0">
       <widget class="QLabel" name="label_brand">
-       <property name="text"><string>Marca:</string></property>
+       <property name="text">
+        <string>Marca:</string>
+       </property>
       </widget>
      </item>
      <item row="0" column="1">
@@ -18,7 +28,9 @@
      </item>
      <item row="1" column="0">
       <widget class="QLabel" name="label_model">
-       <property name="text"><string>Modelo:</string></property>
+       <property name="text">
+        <string>Modelo:</string>
+       </property>
       </widget>
      </item>
      <item row="1" column="1">
@@ -26,7 +38,9 @@
      </item>
      <item row="2" column="0">
       <widget class="QLabel" name="label_category">
-       <property name="text"><string>Categoría:</string></property>
+       <property name="text">
+        <string>Categoría:</string>
+       </property>
       </widget>
      </item>
      <item row="2" column="1">
@@ -34,7 +48,9 @@
      </item>
      <item row="3" column="0">
       <widget class="QLabel" name="label_description">
-       <property name="text"><string>Descripción:</string></property>
+       <property name="text">
+        <string>Descripción:</string>
+       </property>
       </widget>
      </item>
      <item row="3" column="1">
@@ -42,7 +58,9 @@
      </item>
      <item row="4" column="0">
       <widget class="QLabel" name="label_price">
-       <property name="text"><string>Precio:</string></property>
+       <property name="text">
+        <string>Precio:</string>
+       </property>
       </widget>
      </item>
      <item row="4" column="1">
@@ -50,7 +68,9 @@
      </item>
      <item row="5" column="0">
       <widget class="QLabel" name="label_provider">
-       <property name="text"><string>Proveedor:</string></property>
+       <property name="text">
+        <string>Proveedor:</string>
+       </property>
       </widget>
      </item>
      <item row="5" column="1">
@@ -58,7 +78,9 @@
      </item>
      <item row="6" column="0">
       <widget class="QLabel" name="label_quantity">
-       <property name="text"><string>Cantidad:</string></property>
+       <property name="text">
+        <string>Cantidad:</string>
+       </property>
       </widget>
      </item>
      <item row="6" column="1">
@@ -70,12 +92,16 @@
     <layout class="QHBoxLayout" name="buttonLayout">
      <item>
       <widget class="QPushButton" name="cancel_button">
-       <property name="text"><string>Cancelar</string></property>
+       <property name="text">
+        <string>Cancelar</string>
+       </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="apply_button">
-       <property name="text"><string>Aplicar</string></property>
+       <property name="text">
+        <string>Aplicar</string>
+       </property>
       </widget>
      </item>
     </layout>
