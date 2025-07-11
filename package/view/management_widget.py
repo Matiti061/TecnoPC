@@ -1107,7 +1107,7 @@ class ManagementWidget(BaseWidget):
         self.stock_tab.widget.table_widget.setRowCount(len(products))
         for i, product in enumerate(products):
             for j, value in enumerate(stock_values):
-                cell_value = product.get(value, "No tiene")
+                cell_value = product.get(value, "0")
                 if value == "price":
                     try:
                         cell_value = f"${int(cell_value):,}".replace(",", ".")
@@ -1126,7 +1126,7 @@ class ManagementWidget(BaseWidget):
 
         self.aux_widget = BaseWidget(os.path.join("ui", "modify_stock.ui"))
         stock_value = self.stock_tab.widget.table_widget.item(current_row, 6)
-        if stock_value is None or stock_value.text() == "":
+        if stock_value is None or stock_value.text() == "" or stock_value.text().isdigit() :
             self.aux_widget.widget.quantity_spinbox.setValue(0)
         else:
             self.aux_widget.widget.quantity_spinbox.setValue(int(stock_value.text()))
