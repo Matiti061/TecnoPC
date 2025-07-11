@@ -370,8 +370,8 @@ class EmployeeWidget(BaseWidget):
             return
         self.aux_widget = BaseWidget(os.path.join("ui", "saleHistory.ui"))
         self.aux_widget.show()
-        keys = ["createdAt", "client_rut", "updatedAt"]
-        values = ["Fecha de venta", "RUT de cliente", "Fecha de modificación"]
+        keys = ["createdAt", "client_rut"]
+        values = ["Fecha de venta", "RUT de cliente"]
         # TableWidget
         self.aux_widget.widget.table_widget.setColumnCount(len(keys))
         self.aux_widget.widget.table_widget.setHorizontalHeaderLabels(values)
