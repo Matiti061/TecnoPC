@@ -1,3 +1,4 @@
+#GG
 import sys
 from package.model import Model
 from package.view import View
