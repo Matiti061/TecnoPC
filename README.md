@@ -105,3 +105,5 @@ para los mensajes de commits.
 
 - [Sumario rápido](https://www.conventionalcommits.org/en/v1.0.0/#summary) de
 Conventional Commits
+
+## GG

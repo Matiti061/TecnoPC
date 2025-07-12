@@ -1,3 +1,4 @@
+#GG
 import pathlib
 import random
 from package.model import Model

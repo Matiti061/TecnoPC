@@ -1,3 +1,4 @@
+#GG
 class RUT:
     def __init__(self, rut: str):
         self.rut = int(rut.replace('-', '').replace('.', '')[:-1])
